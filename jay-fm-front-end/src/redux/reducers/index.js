@@ -8,7 +8,6 @@ const initColor = {
         backgroundColor:'var(--default-background-color)'
     }
 }
-
 export function colorSwatchHandler(prev = initColor,obj) {
     const {type,data} = obj;
     if (type === BACKGROUND_SWITCHING) {
