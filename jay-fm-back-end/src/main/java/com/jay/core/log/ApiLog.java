@@ -1,4 +1,4 @@
-package com.template.core.log;
+package com.jay.core.log;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.google.gson.Gson;
@@ -31,7 +31,7 @@ public class ApiLog {
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
     public void apiPointCut() {
     }
-    @Pointcut("execution(* com.template.controller.exception..* (..))")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.ExceptionHandler)")
     public void exceptionPointCut() {
     }
 

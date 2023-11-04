@@ -1,7 +1,7 @@
-package com.template.controller.exception;
+package com.jay.controller.exception;
 
-import com.template.core.resp.R;
-import com.template.core.resp.Resp;
+import com.jay.core.resp.R;
+import com.jay.core.resp.Resp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

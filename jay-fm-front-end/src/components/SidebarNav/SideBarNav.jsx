@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 export function BarNavUI ({render,colorSet}) {
     const {backgroundColor} = colorSet.data
   return (
-      <div className='side-nav' style={{backgroundColor}}>
+      <div   style={{backgroundColor:backgroundColor,height: '100%'}}>
           {
               //插槽
               render()

@@ -1,4 +1,4 @@
-package com.template.core.redis.config;
+package com.jay.core.redis.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

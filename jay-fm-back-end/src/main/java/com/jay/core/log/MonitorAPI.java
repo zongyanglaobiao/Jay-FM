@@ -1,4 +1,4 @@
-package com.template.core.log;
+package com.jay.core.log;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;

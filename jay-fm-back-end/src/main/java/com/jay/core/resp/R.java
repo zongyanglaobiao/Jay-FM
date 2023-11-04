@@ -1,4 +1,4 @@
-package com.template.core.resp;
+package com.jay.core.resp;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;

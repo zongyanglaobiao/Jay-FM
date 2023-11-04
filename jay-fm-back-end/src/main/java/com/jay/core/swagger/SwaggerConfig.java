@@ -1,4 +1,4 @@
-package com.template.core.swagger;
+package com.jay.core.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

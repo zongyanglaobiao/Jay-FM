@@ -1,4 +1,4 @@
-package com.template.core.resp;
+package com.jay.core.resp;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

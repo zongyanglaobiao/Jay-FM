@@ -1,4 +1,4 @@
-package com.template.core.web;
+package com.jay.core.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
