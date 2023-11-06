@@ -1,7 +1,7 @@
 import {lazy} from "react";
 
 
-const MusicPlayer = lazy(()=>  import("../components/MusicPlayer/MusicPlayer.jsx"))
+const MusicPlayer = lazy(()=> import("../components/MusicPlayer/MusicPlayer"))
 export const routes = [
     {
         path: "/",

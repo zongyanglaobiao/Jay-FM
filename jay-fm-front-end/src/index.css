@@ -8,10 +8,11 @@
 }
 
 :root{
-  --default-background-color: rgba(242,255,245,0.51);
+  --default-background-color: rgba(242,255,245,1);
   --switch-background-color: rgb(45, 47, 49);
 }
 
+/*============侧边栏页面=================*/
 .side-nav {
   position: fixed;
   left: 0;
@@ -20,15 +21,6 @@
   width: 88px;
   height: 100%;
   opacity:1;
-  /*background-color: var(--default-background-color);*/
-}
-
-.home {
-}
-
-.home-main {
-  margin-left: 88px;
-  /*background-color: white;*/
 }
 
 .side-nav-icon-container{
@@ -98,8 +90,110 @@
   color: inherit; /* 继承父元素的文本颜色，或者你可以指定自定义颜色 */
 }
 
+/*============主页=================*/
+.home {
 
-/*============加载动画=================*/
+}
+
+.home-main {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  /*right: 0;*/
+  margin-left: 88px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(242,250,250,0.81);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*============播放器路由=================*/
+.music-player-outer-ring{
+  width: 230px;
+  height: 230px;
+  background-color: rgba(162,207,66,1);
+  border-radius: 115px 115px 115px 115px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-player-common {
+  width: 210px;
+  height: 210px;
+  border-radius: 105px 105px 105px 105px;
+  /*border: 2px solid rgba(82, 80, 80, 0.67);*/
+}
+
+.music-player-box {
+  display: flex;
+  width: 330px;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+  /*backdrop-filter: blur(10px); !* 添加磨砂效果，可以调整模糊程度 *!*/
+  background-color: rgba(255, 255, 255,0.5); /* 设置背景颜色，通常带有透明度 */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+}
+
+.music-player-play-button {
+  width: 40px;
+  height: 40px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.music-player-play-button:hover {
+  width: 50px;
+  height: 50px;
+}
+
+.music-player{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-player-lyrics{
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.music-player-play-start {
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.music-player-container{
+  display: flex;
+}
+
+.music-player-play-start:hover{
+  width: 40px;
+  height: 40px;
+}
+
+.music-player-nav {
+  position: fixed;
+  right: 20px;
+  height: 300px;
+  width: 50px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+  border-radius: 10px;
+  /*background-color: rgba(0,0,0,0.3);*/
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0,0,0,0.3);
+}
+
+/*============加载动画页面=================*/
 .container {
   position: absolute;
   top: 50%;
