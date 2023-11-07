@@ -8,11 +8,13 @@ export  function Home() {
     const router = useRoutes(routes);
     return (
         <div className='home'>
-            <nav className='side-nav'>
+            <nav className='side-nav '>
                     <SideBarNav render={()=><SideBarNavIcon/>}/>
             </nav>
             <main className='home-main'>
-                {router}
+                <div className='home-container'>
+                    {router}
+                </div>
             </main>
         </div>
     )

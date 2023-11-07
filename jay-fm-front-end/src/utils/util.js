@@ -28,3 +28,7 @@ export function toJson(obj) {
     return JSON.stringify(obj);
 }
 
+export function getRandomOf255() {
+    return Math.floor(Math.random() * 255);
+}
+
