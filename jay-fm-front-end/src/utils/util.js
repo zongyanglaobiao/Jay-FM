@@ -27,3 +27,4 @@ export function  isNullOrUndefined(obj) {
 export function toJson(obj) {
     return JSON.stringify(obj);
 }
+

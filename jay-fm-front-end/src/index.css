@@ -99,8 +99,8 @@
   position: fixed;
   top: 0;
   bottom: 0;
-  /*right: 0;*/
-  margin-left: 88px;
+  /*right: 88px;*/
+  left: 88px;
   width: 100%;
   height: 100%;
   background-color: rgba(242,250,250,0.81);
@@ -114,17 +114,19 @@
   width: 230px;
   height: 230px;
   background-color: rgba(162,207,66,1);
-  border-radius: 115px 115px 115px 115px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .music-player-common {
   width: 210px;
   height: 210px;
-  border-radius: 105px 105px 105px 105px;
+  border-radius: 50%;
   /*border: 2px solid rgba(82, 80, 80, 0.67);*/
+  box-sizing: border-box;
 }
 
 .music-player-box {
@@ -159,25 +161,29 @@
 }
 
 .music-player-lyrics{
+  position: fixed;
+  left: 200px;
+  height: 500px;
+  border: 1px solid red;
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.25);
+  color: #c1bcbc;
+}
+
+.music-player-song-info{
   width: 100%;
   margin-bottom: 20px;
   margin-top: 20px;
-}
-
-.music-player-play-start {
-  width: 30px;
-  height: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .music-player-container{
   display: flex;
-}
-
-.music-player-play-start:hover{
-  width: 40px;
-  height: 40px;
+  justify-content: center;
+  align-items: center;
+  /*弥补home-main未移动的88px*/
+  margin-right: 88px;
 }
 
 .music-player-nav {
@@ -188,11 +194,169 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.25);
   border-radius: 10px;
   /*background-color: rgba(0,0,0,0.3);*/
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0,0,0,0.3);
+  /*backdrop-filter: blur(6px);*/
+  /*background: rgba(255, 255, 255, 0.7);*/
+  /*border: 1px solid rgba(0,0,0,0.3);*/
 }
 
+.music-player-nav-container{
+  margin-bottom: 10px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-player-nav-container-common {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.music-player-nav-container-refresh{
+  width: 26px;
+  height: 26px;
+}
+
+.music-player-nav-container-refresh:hover{
+  width: 35px;
+  height: 35px;
+}
+
+.music-player-nav-container-star{
+  width: 30px;
+  height: 30px;
+}
+
+.music-player-nav-container-star:hover{
+  width: 40px;
+  height: 40px;
+}
+/*============主页弹窗=================*/
+.main {
+  position: fixed;
+  right: 80px;
+  background-color: white;
+  padding: 1em 1em 1.1em;
+  border-radius: 15px;
+  margin: 1em;
+}
+
+.loader {
+  display: flex;
+  flex-direction: row;
+  height: 4em;
+  padding-left: 1em;
+  padding-right: 1em;
+  transform: rotate(180deg);
+  justify-content: right;
+  border-radius: 10px;
+  transition: .4s ease-in-out;
+}
+
+.loader:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+
+.currentplaying {
+  display: flex;
+  margin: 1em;
+}
+
+.spotify {
+  width: 50px;
+  height: 50px;
+  margin-right: 0.6em;
+}
+
+.heading {
+  color: black;
+  font-size: 1.1em;
+  font-weight: bold;
+  align-self: center;
+}
+
+.loading {
+  display: flex;
+  margin-top: 1em;
+  margin-left: 0.3em;
+}
+
+.load {
+  width: 2px;
+  height: 33px;
+  background-color: limegreen;
+  animation: 1s move6 infinite;
+  border-radius: 5px;
+  margin: 0.1em;
+}
+
+.load:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.load:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.load:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.play {
+  position: relative;
+  left: 0.35em;
+  height: 1.6em;
+  width: 1.6em;
+  clip-path: polygon(50% 50%, 100% 50%, 75% 6.6%);
+  background-color: black;
+  transform: rotate(-90deg);
+  align-self: center;
+  margin-top: 0.7em;
+  justify-self: center;
+}
+
+.albumcover {
+  position: relative;
+  margin-right: 1em;
+  height: 40px;
+  width: 40px;
+  background-color: rgb(233, 232, 232);
+  align-self: center;
+  border-radius: 5px;
+}
+
+.song {
+  position: relative;
+  transform: rotate(180deg);
+  margin-right: 1em;
+  color: black;
+  align-self: center;
+}
+
+.artist {
+  font-size: 0.6em;
+}
+
+@keyframes move6 {
+  0% {
+    height: 0.2em;
+  }
+
+  25% {
+    height: 0.7em;
+  }
+
+  50% {
+    height: 1.5em;
+  }
+
+  100% {
+    height: 0.2em;
+  }
+}
 /*============加载动画页面=================*/
 .container {
   position: absolute;
