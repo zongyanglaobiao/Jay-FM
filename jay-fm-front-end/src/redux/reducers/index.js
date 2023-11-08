@@ -1,7 +1,7 @@
 // =======================================
 // =========  总reducers =================
 // =======================================
-import {BACKGROUND_SWITCHING} from "../../utils/constant";
+import {BACKGROUND_SWITCHING} from "../../constant/constant";
 
 const initColor = {
     data:{

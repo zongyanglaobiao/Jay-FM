@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import {memo, useEffect, useState} from "react";
+import {memo, useCallback, useEffect, useState} from "react";
 
 /**
  * 播放器
@@ -9,10 +9,10 @@ function MusicPlayerUI() {
     const [isPlay, setIsPlay] = useState(false)
     const [isShowLyrics, setIsShowLyrics] = useState(false)
 
-    //是否展示歌词
-    const setLyrics = () => {
+    //是否展示歌词,缓存setLyrics函数，[]不能设置为空。
+    const setLyrics = useCallback(()=>{
         setIsShowLyrics(!isShowLyrics)
-    }
+    },[isShowLyrics]);
 
     //是否播放
     const setPlay = () => {
@@ -88,9 +88,6 @@ const SongLyricsUI = memo(({isShowLyrics}) => {
  * @type {React.NamedExoticComponent<{readonly isShowPopUp?: *}>}
  */
 const PopUpUI = memo(({isShowPopUp})=>{
-    useEffect(()=>{
-        console.log('PopUpUI is render')})
-
     return (
         <>
             <div className="main" style={{display:isShowPopUp?'':'none'}}>
