@@ -1,5 +1,5 @@
-import {connect} from "react-redux";
-import {memo, useCallback, useEffect, useState} from "react";
+import {memo, useCallback, useState} from "react";
+import {createContainer, createReactReduxContainer} from "../../utils/reduxUtil";
 
 /**
  * 播放器
@@ -178,6 +178,6 @@ const MusicPlayerNavUI = memo(({isShowLyrics,setLyrics})=>{
     )
 })
 
-const MusicPlayer = connect(state => ({}),{})(MusicPlayerUI)
+const MusicPlayer = createReactReduxContainer({},{},MusicPlayerUI)
 
 export default MusicPlayer

@@ -1,1 +1,2 @@
 export const BACKGROUND_SWITCHING = "BACKGROUND_SWITCHING";
+export const ADD_CARD = "ADD_CARD";

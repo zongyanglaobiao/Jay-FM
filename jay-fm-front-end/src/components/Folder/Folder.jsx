@@ -1,10 +1,15 @@
-import {App} from "antd";
 import {connect} from "react-redux";
-import {memo, useState} from "react";
-import {getRandomColor, getRandomId, numberToEnglish} from "../../utils/util";
+import {memo, useCallback, useState} from "react";
+import {getRandomId} from "../../utils/util";
+import {Button} from "antd";
 
 function FolderUI() {
     const [isShowTip, setIsShowTip] = useState(true)
+
+	//创建缓存函数
+	const setTip = useCallback(() => {
+		setIsShowTip(!isShowTip);
+	}, [isShowTip]);
 
     //修改颜色
     return (
@@ -12,20 +17,26 @@ function FolderUI() {
             {
                 isShowTip ?
                 <div className='folder-container-tip'>
-                    <TipUI></TipUI>
+                    <TipUI/>
                 </div>
                 :
                 <div className='folder-container-song-list'>
-
+					<Button>
+						＋1
+					</Button>
                 </div>
             }
             <div className='folder-container-song-card-box'>
-                <SongCardUI/>
+                <SongCardUI setTip={setTip}/>
             </div>
         </div>
     )
 }
 
+/**
+ * 提示卡片的UI
+ * @type {React.NamedExoticComponent<object>}
+ */
 const TipUI = memo(()=>{
     return (
         <>
@@ -71,19 +82,23 @@ const TipUI = memo(()=>{
  * 专辑列表
  * @type {React.NamedExoticComponent<object>}
  */
-const SongCardUI = memo(()=>{
+const SongCardUI = memo(({setTip})=>{
+
+	//确认添加一个crad
+	const addCard = () => {
+
+	}
+
     return (
         <div className="cards">
-            {
+			<div key={`${getRandomId()}`} onClick={setTip} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
+				<svg   t="1699545937854" className="card-plus-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2314" width="200" height="200">
+					<path fill="#fff" d="  M902.343 570.936h-331.78v331.833c0 32.337-26.226 58.537-58.564 58.537-32.337 0-58.563-26.2-58.563-58.537V570.936H121.654c-32.364 0-58.564-26.2-58.564-58.538 0-32.325 26.203-58.537 58.564-58.537h331.78V122.028c0-32.325 26.226-58.537 58.563-58.537 32.338 0 58.564 26.213 58.564 58.537v331.834h331.78c32.364 0 58.565 26.211 58.565 58.535-0.001 32.337-26.2 58.536-58.565 58.536z"  p-id="2315"></path>
+				</svg>
+			</div>
+           {/* {
                 ((number)=>{
                     const divArr = []
-                    //初始化第一张唱片
-                    divArr.push(
-                        <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`}}>
-                            <p className="tip">Jay</p>
-                            <p className="second-text">周杰伦</p>
-                        </div>
-                    )
                     for (let i = 0; i < number; i++) {
                         divArr.push(
                             <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`}}>
@@ -94,7 +109,7 @@ const SongCardUI = memo(()=>{
                     }
                     return divArr
                 })(9)
-            }
+            }*/}
         </div>
     )
 })

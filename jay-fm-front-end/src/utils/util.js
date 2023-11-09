@@ -27,6 +27,18 @@ export function  isNullOrUndefined(obj) {
     return obj === null || obj === undefined;
 }
 
+/**
+ * 是否是一个对象类型 === {}
+ * @param obj
+ * @returns {boolean}
+ */
+export function isObject(obj){
+	if (isNullOrUndefined(obj)) {
+		return false;
+	}
+	return   typeof obj === 'object'
+}
+
 export function toJson(obj) {
     return JSON.stringify(obj);
 }
@@ -58,7 +70,16 @@ export function numberToEnglish(number,isCapitalized = true) {
     if (isCapitalized) {
         return  word.slice(0, 1).toUpperCase() + word.slice(1)
     }
-
     return word
 }
 
+
+
+/**
+ * 打印
+ * @param identifier 标识符，用于标识本次打印的内容
+ * @param args 参数
+ */
+export function log(identifier,...args) {
+	console.log(identifier,...args)
+}

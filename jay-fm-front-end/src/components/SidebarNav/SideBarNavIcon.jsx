@@ -2,10 +2,13 @@ import {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {switchBackgroundColor} from "../../redux/actions";
 import {NavLink} from "react-router-dom";
+import {log} from "../../utils/util";
 
-function  NavIconUI({switchBackgroundColor,colorSet}) {
+function  NavIconUI({switchBackgroundColor}) {
     const [curr, setCurr] = useState(false)
+
     useEffect(()=>{
+		log('NavIconUI','render')
         if (curr) {
             switchBackgroundColor({backgroundColor:'var(--switch-background-color)'})
         } else {
@@ -76,5 +79,5 @@ function  NavIconUI({switchBackgroundColor,colorSet}) {
     )
 }
 
-export const SideBarNavIcon = connect(state => ({}),{switchBackgroundColor})(NavIconUI)
+export const SideBarNavIcon = connect(state => ({}),dispatch => ({switchBackgroundColor:dataObj => dispatch(switchBackgroundColor(dataObj))}))(NavIconUI)
 
