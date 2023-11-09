@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "测试控制器")
 public class TestController {
     @Resource
-    TestService service;
+    private TestService service;
     @GetMapping("/test")
     public String test(){
         return service.test();

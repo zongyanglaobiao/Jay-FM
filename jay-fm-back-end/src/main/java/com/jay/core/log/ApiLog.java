@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class ApiLog {
     private static final Gson GSON = new Gson();
     @Resource
-    HttpServletRequest request;
+    private HttpServletRequest request;
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
     public void apiPointCut() {
     }

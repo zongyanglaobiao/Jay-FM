@@ -26,6 +26,7 @@
         <com.baomidou.version>3.5.3.1</com.baomidou.version>
         <pagehelper-spring-boot-starter.version>1.4.6</pagehelper-spring-boot-starter.version>
         <cn.hutool.version>5.8.20</cn.hutool.version>
+        <ip2region.version>2.7.0</ip2region.version>
     </properties>
     <dependencies>
         <!-- spring web        -->
@@ -97,6 +98,12 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+        </dependency>
+        <!--    解析IP    -->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
         </dependency>
     </dependencies>
 
