@@ -8,12 +8,14 @@ import org.lionsoul.ip2region.xdb.Searcher;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import static cn.hutool.core.text.StrPool.DOT;
 import static com.baomidou.mybatisplus.core.toolkit.StringPool.EMPTY;
 
 /**
- * IP工具类
+ * 为什么写成单例模式就是因为ip转换省份的数据文件需要动态输入
  * @author xxl
  * @since 2023/11/9
  */
@@ -22,39 +24,56 @@ public class IPUtils {
     /**
      * 过滤本地地址
      */
-    public static final String LOCAL_ADDRESS = "127.0.0.1";
     public static final String LOOP_BACK_ADDRESS = "0:0:0:0:0:0:0:1";
-    /**
-     * 离线查询IP地址的数据文件
-     */
-    private static final String IP_ADDRESS_FILE_PATH ;
 
     /**
      * 前从 xdb 文件中加载出来 VectorIndex 数据，然后全局缓存，
      * 每次创建 Searcher 对象的时候使用全局的 VectorIndex 缓存可以减少一次固定的 IO 操作，
      * 从而加速查询，减少 IO 压力。
      */
-    private static final byte[] V_INDEX;
-    private static final Searcher SEARCHER;
+    private final byte[] vIndex;
+    private final Searcher searcher;
 
-    static {
+    /**
+     * 单例实例
+     */
+    private static  volatile IPUtils instance;
+    private IPUtils(String filePath) {
         try {
-            String fileName = "/data/ip2region.xdb";
-            File existFile = FileUtil.file(FileUtil.getTmpDir() + FileUtil.FILE_SEPARATOR + fileName);
+            File existFile = FileUtil.file(FileUtil.getTmpDir() + FileUtil.FILE_SEPARATOR + filePath);
             if(!FileUtil.exist(existFile)) {
-                InputStream resourceAsStream = IPUtils.class.getResourceAsStream(fileName);
+                InputStream resourceAsStream = IPUtils.class.getResourceAsStream(filePath);
                 FileUtil.writeFromStream(resourceAsStream, existFile);
             }
 
-            IP_ADDRESS_FILE_PATH = existFile.getPath();
+            /**
+             * 离线查询IP地址的数据文件地址
+             */
+            String ipAddressFilePath = existFile.getPath();
 
             // 从 db 中预先加载 VectorIndex 缓存，并且把这个得到的数据作为全局变量，后续反复使用。
-            V_INDEX = Searcher.loadVectorIndexFromFile(IP_ADDRESS_FILE_PATH);
+            vIndex = Searcher.loadVectorIndexFromFile(ipAddressFilePath);
             // 使用全局的 vIndex 创建带 VectorIndex 缓存的查询对象。
-            SEARCHER = Searcher.newWithVectorIndex(IP_ADDRESS_FILE_PATH,V_INDEX);
+            searcher = Searcher.newWithVectorIndex(ipAddressFilePath,vIndex);
         } catch (Exception e) {
             throw new RuntimeException("IPUtils class load error", e);
         }
+    }
+
+    /**
+     * 单例模式
+     * @param filePath 数据库存储文件
+     * @return 工具实体类
+     */
+    public static IPUtils getInstance(String filePath) {
+        if (instance == null) {
+            synchronized (IPUtils.class) {
+                if (instance == null) {
+                    instance = new IPUtils(filePath);
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -62,10 +81,10 @@ public class IPUtils {
      * @param ip IP
      * @return IP地址
      */
-    public static String getCity(String ip)  {
+    public  String getCity(String ip)  {
         String search = null;
         try {
-            search = SEARCHER.search(ip);
+            search = searcher.search(ip);
         } catch (Exception e) {
             log.error("getCity fail",e);
         }
@@ -78,7 +97,7 @@ public class IPUtils {
      * @param request 请求
      * @return 字符串
      */
-    public static String getIp(HttpServletRequest request) {
+    public  String getIp(HttpServletRequest request) {
         String ip = null;
         try {
             //解析IP
@@ -93,11 +112,25 @@ public class IPUtils {
                 .chain(re -> StrUtil.isNotBlank(re) ? re : request.getHeader("HTTP_X_FORWARDED_FOR"))
                 .chain(re -> StrUtil.isNotBlank(re) ? re : request.getRemoteAddr())
                 //过滤本地地址
-                .chain(re -> StrUtil.isNotBlank(re) ? (LOOP_BACK_ADDRESS.equals(re) ? LOCAL_ADDRESS : re) : re)
+                .chain(re -> StrUtil.isNotBlank(re) ? (LOOP_BACK_ADDRESS.equals(re) ? getHostAddress()  : re) : re)
                 .getValue(true);
         } catch (Exception e) {
             log.error("getIp fail", e);
         }
         return ip;
+    }
+
+    /**
+     * 获取本地地址
+     * @return ip
+     */
+    public String getHostAddress() {
+        String localAddress = null;
+        try {
+            localAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            log.error("getHostAddress fail", e);
+        }
+        return localAddress;
     }
 }

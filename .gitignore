@@ -29,5 +29,13 @@ node_modules/
 .idea
 .idea/
 
+.target
+.target/
+
+**/target/
 
 
+
+
+/Jay-FM.iml
+/jay-fm-back-end.iml

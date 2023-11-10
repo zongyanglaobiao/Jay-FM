@@ -20,5 +20,6 @@ public class SpringWebConfigure implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration interceptor = registry.addInterceptor(ipAddressInterceptor);
         interceptor.addPathPatterns("/**");
+        //interceptor.excludePathPatterns("","");
     }
 }
