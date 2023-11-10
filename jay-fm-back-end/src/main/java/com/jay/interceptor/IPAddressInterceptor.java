@@ -1,6 +1,8 @@
 package com.jay.interceptor;
 
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jay.core.redis.RedisUtils;
 import com.jay.domain.ip.service.IPAddressService;
 import com.jay.repository.entities.IPAddressEntity;
@@ -22,14 +24,27 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class IPAddressInterceptor implements HandlerInterceptor {
     @Resource
     private IPAddressService service;
+
     @Resource
     private IPUtils ipUtils;
+
+    @Resource
+    private RedisUtils redisUtils;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String ip = ipUtils.getIp(request);
-        log.info("ip:{},address:{}",ip ,ipUtils.getCity(ip));
+        String city = ipUtils.getCity(ip);
 
-        service.getById(ip)
+        //因为请求可能过于频繁，所以先存储在redis中
+        if (!redisUtils.hasKey(ip)) {
+            log.info("ip = {},city = {}",ip,city);
+            redisUtils.opsForValue(ip,city);
+            IPAddressEntity entity = new IPAddressEntity();
+            entity.setIp(ip);
+            entity.setAddress(city);
+            service.save(entity);
+        }
 
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }

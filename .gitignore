@@ -34,7 +34,10 @@ node_modules/
 
 **/target/
 
+test/
+test
 
+**/test/
 
 
 /Jay-FM.iml
