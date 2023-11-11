@@ -7,10 +7,7 @@
   font-family: "Google Sans", sans-serif;
 }
 
-:root{
-  --default-background-color: rgba(242,255,245,1);
-  --switch-background-color: rgb(45, 47, 49);
-}
+
 
 
 /*============侧边栏页面=================*/
@@ -29,6 +26,14 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+.bar-nav-ui[data-theme='light'] {
+  background-color: rgba(242,255,245,1);
+}
+
+.bar-nav-ui[data-theme='dark'] {
+  background-color: rgb(45, 47, 49);
 }
 
 .side-nav-icon-box {
@@ -235,6 +240,24 @@
   width: 40px;
   height: 40px;
 }
+/*=========文件添加卡片页面=============*/
+.card-from-container {
+  width: 50em;
+  height: 35em;
+  box-shadow:0 0 10px rgba(0,0,0,0.25) ;
+  border-radius: 20px;
+  background-color: white;
+  overflow: auto;
+}
+
+.folder-container-card-from {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
 /*============文件列表页===============*/
 .folder-container {
   width: 100%;
@@ -253,7 +276,6 @@
 }
 
 .folder-container-song-card {
-
   display: flex;
   justify-content: center;
   align-items: center;

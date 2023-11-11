@@ -1,9 +1,9 @@
 import {combineReducers, legacy_createStore} from "redux";
-import {colorSwatchHandler} from "./reducers";
 import {composeWithDevTools} from "redux-devtools-extension";
+import {changThemeReducer} from "./reducers";
 
 const reducers = combineReducers({
-    colorSet:colorSwatchHandler
+    theme:changThemeReducer
 });
 
 //存储状态

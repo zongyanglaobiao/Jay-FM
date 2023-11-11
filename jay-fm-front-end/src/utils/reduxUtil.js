@@ -7,7 +7,7 @@ import {isNullOrUndefined, isObject, log} from "./util";
 
 
 /**
- * 创建redux-react容器
+ * 创建react-redux容器
  * @param mapStateToProps  把state转化为props
  * @param mapDispatchToProps  把dispatch转化为props
  * @param UIComponent  渲染组件
@@ -27,15 +27,10 @@ export function createReactReduxContainer(mapStateToProps,
 
 	return connect(state => {
 		//是否打印
-		if (isLogState) {
-			log(`current render  ${UIComponentName} component's state = `,state)
-		}
+		if (isLogState) log(`current render  ${UIComponentName} component's state = `,state)
 
 		//判断是否使用了简写方式{}
-		if (isObject(mapStateToProps)) {
-			return  mapStateToProps
-		}
-
+		if (isObject(mapStateToProps)) return mapStateToProps
 		//如果未使用简写方式就是用回调方式
 		const returnObj = mapStateToProps(state)
 		if (isObject(returnObj)) {
@@ -45,10 +40,7 @@ export function createReactReduxContainer(mapStateToProps,
 		}
 	},dispatch => {
 		//判断是否使用了简写方式
-		if (isObject(mapDispatchToProps)) {
-			return  mapDispatchToProps
-		}
-
+		if (isObject(mapDispatchToProps)) return  mapDispatchToProps
 		//如果未使用简写方式就是用回调方式
 		const returnObj = mapDispatchToProps(dispatch)
 		if (isObject(returnObj)) {
@@ -60,3 +52,19 @@ export function createReactReduxContainer(mapStateToProps,
 }
 
 
+/**
+ * 通用Reducer，发现如何知道redux最终选哪个reducer处理靠的就是Type，以后能不能写一个总reducer ？
+ * @param state 状态
+ * @param action 存储对象
+ * @param targetType 最终
+ * @param callback  如果Type匹配上你要返回什么对象
+ * @returns {*}
+ */
+export function commonReducer(state,action,targetType,callback) {
+	const {type,data} = action;
+	if (targetType === type) {
+		return callback(data)
+	}else {
+		return state
+	}
+}

@@ -1,30 +1,30 @@
 // =======================================
 // =========  总reducers =================
 // =======================================
-import {BACKGROUND_SWITCHING} from "../../constant/constant";
-
-const initColor = {
-	backgroundColor:'var(--default-background-color)'
-}
-
-const initCard = []
+import {BACKGROUND_COLOR_SWITCHING} from "../../constant/constant";
+import {commonReducer} from "../../utils/reduxUtil";
 
 /**
- * 背景颜色切换
- * @param prev
- * @param obj
- * @returns {{data: {backgroundColor: string}}|{data}}
+ * 所有reducer初始化必须用这个值,如果需要初始值就要在UI层处理
+ * @type {null}
  */
-export function colorSwatchHandler(prev = initColor,obj) {
-	console.log('@@@@@@',prev)
-    const {type,data} = obj;
-    if (type === BACKGROUND_SWITCHING) {
-        return {data}
-    }else {
-        return prev;
-    }
-}
+const  init = null
 
+/**
+ * 处理切换背景颜色
+ * @param state
+ * @param action
+ * @returns {*|null}
+ */
+export function changThemeReducer(state = init,action) {
+	return commonReducer(state,action,BACKGROUND_COLOR_SWITCHING,isDark => {
+		if (isDark) {
+			return {currentTheme:'dark',isDark}
+		}else {
+			return {currentTheme:'light',isDark}
+		}
+	})
+}
 
 /*export function addCard(prev = initCard,obj) {
 	const {type,data} = obj;
@@ -35,12 +35,4 @@ export function colorSwatchHandler(prev = initColor,obj) {
 	}
 }*/
 
-export function common(prev,obj,wantType,callback) {
-	const {type,data} = obj;
-	if (wantType === type) {
-		return callback(data)
-	}else {
-		console.log('common',prev)
-		return prev
-	}
-}
+

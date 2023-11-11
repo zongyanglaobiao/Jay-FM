@@ -1,5 +1,6 @@
 import {memo, useCallback, useState} from "react";
-import {createContainer, createReactReduxContainer} from "../../utils/reduxUtil";
+import {createReactReduxContainer} from "../../utils/reduxUtil";
+import {Image} from 'antd';
 
 /**
  * 播放器
@@ -137,14 +138,10 @@ const MusicPlayerNavUI = memo(({isShowLyrics,setLyrics})=>{
     const [isLike, setIsLike] = useState(false)
     const [isShowPopUp, setIsShow] = useState(false)
     //打开/关闭弹窗
-    const openOrClosePopUp = () => {
-        setIsShow(!isShowPopUp)
-    }
+    const openOrClosePopUp = () => setIsShow(!isShowPopUp)
 
     //是否给歌曲爱心
-    const setLike = () => {
-        setIsLike(!isLike)
-    }
+    const setLike = () => setIsLike(!isLike)
 
     return (
         <div className='music-player-nav-container'>
