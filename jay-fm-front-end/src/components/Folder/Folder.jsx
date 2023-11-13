@@ -1,27 +1,14 @@
 import {memo, useCallback, useState} from "react";
 import {getRandomId} from "../../utils/util";
-import { PlusOutlined } from '@ant-design/icons';
-import {
-	Button,
-	Cascader,
-	Checkbox,
-	DatePicker,
-	Form,
-	Input,
-	InputNumber,
-	Radio,
-	Select,
-	Slider,
-	Switch,
-	TreeSelect,
-	Upload,
-} from 'antd';
+import {Button, DatePicker, Form, Input, Radio, Slider, Switch, Tooltip,} from 'antd';
 import {createReactReduxContainer} from "../../utils/reduxUtil";
+
 function FolderUI() {
     const [isShowTip, setIsShowTip] = useState(false)
 
 	//创建缓存函数
 	const setTip = useCallback(() => {
+		console.log('setTip');
 		setIsShowTip(!isShowTip);
 	}, [isShowTip]);
 
@@ -55,102 +42,34 @@ const CardAddFrom = memo(()=>{
 		return e?.fileList;
 	};
 	return (
-		<div className='card-from-container'>
+		<div className='card-from-container' >
 			<Form
 				labelCol={{
 					span: 4,
 				}}
+				labelAlign='left'
 				wrapperCol={{
 					span: 14,
 				}}
 				layout="horizontal"
 				style={{
-					maxWidth: 600,
+					height:'60%',
+					width:'60%',
 				}}
 			>
-				<Form.Item label="Checkbox" name="disabled" valuePropName="checked">
-					<Checkbox>Checkbox</Checkbox>
-				</Form.Item>
-				<Form.Item label="Radio">
-					<Radio.Group>
-						<Radio value="apple"> Apple </Radio>
-						<Radio value="pear"> Pear </Radio>
-					</Radio.Group>
-				</Form.Item>
-				<Form.Item label="Input">
+				<Form.Item label="标题" required='true'>
 					<Input />
 				</Form.Item>
-				<Form.Item label="Select">
-					<Select>
-						<Select.Option value="demo">Demo</Select.Option>
-					</Select>
+				<Form.Item label="描述" required='true'>
+					<Input />
 				</Form.Item>
-				<Form.Item label="TreeSelect">
-					<TreeSelect
-						treeData={[
-							{
-								title: 'Light',
-								value: 'light',
-								children: [
-									{
-										title: 'Bamboo',
-										value: 'bamboo',
-									},
-								],
-							},
-						]}
-					/>
+				<Form.Item name="switch" label="颜色选择" >
+					<Tooltip title="不选默认随机颜色">
+						<Switch />
+					</Tooltip>
 				</Form.Item>
-				<Form.Item label="Cascader">
-					<Cascader
-						options={[
-							{
-								value: 'zhejiang',
-								label: 'Zhejiang',
-								children: [
-									{
-										value: 'hangzhou',
-										label: 'Hangzhou',
-									},
-								],
-							},
-						]}
-					/>
-				</Form.Item>
-				<Form.Item label="DatePicker">
-					<DatePicker />
-				</Form.Item>
-				<Form.Item label="RangePicker">
-					<RangePicker />
-				</Form.Item>
-				<Form.Item label="InputNumber">
-					<InputNumber />
-				</Form.Item>
-				<Form.Item label="TextArea">
-					<TextArea rows={4} />
-				</Form.Item>
-				<Form.Item label="Switch" valuePropName="checked">
-					<Switch />
-				</Form.Item>
-				<Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
-					<Upload action="/upload.do" listType="picture-card">
-						<div>
-							<PlusOutlined />
-							<div
-								style={{
-									marginTop: 8,
-								}}
-							>
-								Upload
-							</div>
-						</div>
-					</Upload>
-				</Form.Item>
-				<Form.Item label="Button">
-					<Button>Button</Button>
-				</Form.Item>
-				<Form.Item label="Slider">
-					<Slider />
+				<Form.Item >
+					<Button>添加</Button>
 				</Form.Item>
 			</Form>
 		</div>

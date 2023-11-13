@@ -7,7 +7,6 @@ import {createReactReduxContainer} from "../../utils/reduxUtil";
  * @constructor
  */
 export function BarNavUI ({render,theme}) {
-	console.log(theme)
 	return (
 		<div className='bar-nav-ui' data-theme={isNullOrUndefined(theme) ? 'light' : theme.currentTheme}  style={{height: '100%'}}>
 			{
