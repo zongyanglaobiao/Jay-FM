@@ -1,8 +1,9 @@
 // =======================================
 // =========  总reducers =================
 // =======================================
-import {BACKGROUND_COLOR_SWITCHING} from "../../constant/constant";
+import {ADD_CARD, BACKGROUND_COLOR_SWITCHING} from "../../constant/constant";
 import {commonReducer} from "../../utils/reduxUtil";
+import {isNullOrUndefined} from "../../utils/util";
 
 /**
  * 所有reducer初始化必须用这个值,如果需要初始值就要在UI层处理
@@ -26,13 +27,20 @@ export function changThemeReducer(state = init,action) {
 	})
 }
 
-/*export function addCard(prev = initCard,obj) {
-	const {type,data} = obj;
-	if (type === BACKGROUND_SWITCHING) {
-		return [...prev,data]
-	}else {
-		return prev;
-	}
-}*/
+/**
+ * 添加卡片
+ * @param state
+ * @param action
+ * @returns {*}
+ */
+export function addCardReducer(state = init,action) {
+	return 	commonReducer(state,action,ADD_CARD,cardInfo => {
+		if (isNullOrUndefined(state)) {
+		   return [cardInfo]
+		}else {
+			return	[...state,cardInfo]
+		}
+	})
+}
 
 

@@ -3,7 +3,7 @@
 /*======================================*/
 
 import {connect} from "react-redux";
-import {isNullOrUndefined, isObject, log} from "./util";
+import {isNullOrUndefined, isObject} from "./util";
 
 
 /**
@@ -25,9 +25,18 @@ export function createReactReduxContainer(mapStateToProps,
 	if (isNullOrUndefined(mapDispatchToProps))  throw new Error('mapStateToProps is required')
 	if (isNullOrUndefined(UIComponent))  throw new Error('UIComponent is required')
 
+	/**
+	 * 打印内部日志
+	 * @param flag
+	 * @param msg
+	 */
+	const reduxLog = (flag,msg) => {
+		console.log(`current render  component ${UIComponentName}'s ${flag} = `,msg)
+	}
+
 	return connect(state => {
 		//是否打印
-		if (isLogState) log(`current render  ${UIComponentName} component's state = `,state)
+		if (isLogState) reduxLog('state',state)
 
 		//判断是否使用了简写方式{}
 		if (isObject(mapStateToProps)) return mapStateToProps
@@ -40,10 +49,18 @@ export function createReactReduxContainer(mapStateToProps,
 		}
 	},dispatch => {
 		//判断是否使用了简写方式
-		if (isObject(mapDispatchToProps)) return  mapDispatchToProps
+		if (isObject(mapDispatchToProps)) {
+			if (isLogState) {
+				reduxLog('dispatch',dispatch)
+			}
+			return  mapDispatchToProps
+		}
 		//如果未使用简写方式就是用回调方式
 		const returnObj = mapDispatchToProps(dispatch)
 		if (isObject(returnObj)) {
+			if (isLogState) {
+				reduxLog('dispatch',dispatch)
+			}
 			return returnObj
 		}else {
 			throw  new Error('mapDispatchToProps  not return a object')
@@ -57,7 +74,7 @@ export function createReactReduxContainer(mapStateToProps,
  * @param state 状态
  * @param action 存储对象
  * @param targetType 最终
- * @param callback  如果Type匹配上你要返回什么对象
+ * @param callback  如果Type匹配上你要返回什么对象，这是个回调函数，会回调action中的data
  * @returns {*}
  */
 export function commonReducer(state,action,targetType,callback) {

@@ -2,7 +2,7 @@ import '../../index.css'
 export  default   function Loading() {
     return (
         <div>
-            <div className="container">
+            <div className="loading-container">
                 <span></span>
                 <span></span>
                 <span></span>

@@ -622,7 +622,7 @@
   }
 }
 /*============加载动画页面=================*/
-.container {
+.loading-container {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -634,7 +634,7 @@
   background-image: linear-gradient(#9b59b6, #84cdfa, #5ad1cd);
 }
 
-.container span {
+.loading-container span {
   position: absolute;
   border-radius: 50%;
   height: 100%;
@@ -643,23 +643,23 @@
   background-image: linear-gradient(#9b59b6, #84cdfa, #5ad1cd);
 }
 
-.container span:nth-of-type(1) {
+.loading-container span:nth-of-type(1) {
   filter: blur(5px);
 }
 
-.container span:nth-of-type(2) {
+.loading-container span:nth-of-type(2) {
   filter: blur(10px);
 }
 
-.container span:nth-of-type(3) {
+.loading-container span:nth-of-type(3) {
   filter: blur(25px);
 }
 
-.container span:nth-of-type(4) {
+.loading-container span:nth-of-type(4) {
   filter: blur(50px);
 }
 
-.container::after {
+.loading-container::after {
   content: "";
   position: absolute;
   top: 10px;

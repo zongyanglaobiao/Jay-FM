@@ -1,7 +1,7 @@
 import {NavLink} from "react-router-dom";
 import {createReactReduxContainer} from "../../utils/reduxUtil";
 import {isNullOrUndefined} from "../../utils/util";
-import {changeTheme} from "../../redux/actions";
+import {changeThemeAction} from "../../redux/actions";
 
 function  NavIconUI({changTheme,theme}) {
 	const initTheme = {
@@ -29,7 +29,7 @@ function  NavIconUI({changTheme,theme}) {
                         <svg t="1698910636976" className="side-bar-nav-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11890" width="200" height="200">
                             <path fill="#000000" d="M864 192h-384a128 128 0 0 0-128-128h-192a128 128 0 0 0-128 128v640a128 128 0 0 0 128 128h704a128 128 0 0 0 128-128V320a128 128 0 0 0-128-128z m64 640a64 64 0 0 1-64 64h-704a64 64 0 0 1-64-64V384h832v448z m-832-512V192a64 64 0 0 1 64-64h192a64 64 0 0 1 64 64v64h448a64 64 0 0 1 64 64h-832z"  p-id="11891"></path>
                         </svg>
-                        <span style={changeColor(isDark)}>文件夹</span>
+                        <span style={changeColor(isDark)}>歌曲管理</span>
                     </div>
                 </NavLink>
                 <NavLink to='/images' className='side-bar-nav-link'>
@@ -71,5 +71,5 @@ function  NavIconUI({changTheme,theme}) {
     )
 }
 
-export const SideBarNavIcon = createReactReduxContainer(state=>({theme:state.theme}),(dispatch)=>({changTheme:dataObj => dispatch(changeTheme(dataObj))}),NavIconUI)
+export const SideBarNavIcon = createReactReduxContainer(state=>({theme:state.theme}),(dispatch)=>({changTheme:dataObj => dispatch(changeThemeAction(dataObj))}),NavIconUI)
 

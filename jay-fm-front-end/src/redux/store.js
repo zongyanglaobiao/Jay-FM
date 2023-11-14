@@ -1,9 +1,10 @@
 import {combineReducers, legacy_createStore} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
-import {changThemeReducer} from "./reducers";
+import {addCardReducer, changThemeReducer} from "./reducers";
 
 const reducers = combineReducers({
-    theme:changThemeReducer
+    theme:changThemeReducer,
+	cardArr:addCardReducer
 });
 
 //存储状态
