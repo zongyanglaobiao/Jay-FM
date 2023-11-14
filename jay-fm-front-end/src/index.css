@@ -238,12 +238,13 @@
 }
 /*=========文件添加卡片页面=============*/
 .card-from-container {
+  position: relative;
   width: 50em;
   height: 35em;
-  box-shadow:0 0 10px rgba(0,0,0,0.25) ;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   background-color: white;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -257,27 +258,61 @@
   height: 100%;
 }
 
-/* 滚动条整体 */
-.card-from-container::-webkit-scrollbar {
-  /*侧边滚动条*/
-  width: 5px;
-  /*底部滚动条*/
-  height: 0px;
-  /*margin-left: 20px;*/
+.wave {
+  position: absolute;
+  width:  80em;
+  height: 90em;
+  opacity: 0.6;
+  bottom: 0;
+  /*margin-left: -50%;*/
+  /*margin-top: -70%;*/
+  background: linear-gradient(744deg,#af40ff,#5b42f3 60%,#00ddeb);
 }
 
-/* 滚动条滑块 */
-.card-from-container::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  /*-webkit-box-shadow: inset 0 0 5px rgb(0, 204, 253);*/
-  background: rgb(0, 204, 253);
+.wave:nth-child(2),
+.wave:nth-child(3){
+  top: 25rem;
 }
 
-/* 滚动条轨道 */
-.card-from-container::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background: #ededed;
+.wave:nth-child(1){
+  width:  300em;
+  height: 300em;
+}
+
+.playing .wave {
+  border-radius: 40%;
+  animation: wave 3000ms infinite linear;
+}
+
+.wave {
+  border-radius: 40%;
+  animation: wave 55s infinite linear;
+}
+
+.playing .wave:nth-child(2) {
+  animation-duration: 4000ms;
+}
+
+.wave:nth-child(2) {
+  animation-duration: 50s;
+}
+
+.playing .wave:nth-child(3) {
+  animation-duration: 5000ms;
+}
+
+.wave:nth-child(3) {
+  animation-duration: 45s;
+}
+
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /*============文件列表页===============*/
@@ -385,7 +420,6 @@
 }
 
 /*============文件列表页卡片布局===============*/
-
 .card-plus-icon{
   width: 50px;
   height: 50px;

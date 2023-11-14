@@ -1,6 +1,5 @@
 package com.jay;
 
-import cn.hutool.system.SystemUtil;
 import com.jay.utils.IPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -12,9 +11,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Indexed;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * @author: anyone
@@ -31,7 +27,7 @@ import java.net.UnknownHostException;
 @SpringBootApplication
 public class Application {
 
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args)  {
         try {
             SpringApplication.run(Application.class, args);
             log.info("项目启动成功(ง ˙o˙)ว");

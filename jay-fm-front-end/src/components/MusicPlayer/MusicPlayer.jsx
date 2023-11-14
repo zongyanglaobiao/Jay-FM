@@ -1,6 +1,5 @@
 import {memo, useCallback, useState} from "react";
 import {createReactReduxContainer} from "../../utils/reduxUtil";
-import {Image} from 'antd';
 
 /**
  * 播放器

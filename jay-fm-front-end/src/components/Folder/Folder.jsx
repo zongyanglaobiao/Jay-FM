@@ -1,6 +1,6 @@
 import {memo, useCallback, useState} from "react";
 import {getRandomId} from "../../utils/util";
-import {Button, DatePicker, Form, Input, Radio, Slider, Switch, Tooltip,} from 'antd';
+import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
 import {createReactReduxContainer} from "../../utils/reduxUtil";
 
 function FolderUI() {
@@ -22,7 +22,7 @@ function FolderUI() {
                 </div>
                 :
                 <div className='folder-container-card-from'>
-					<CardAddFrom/>
+					<CardAddForm/>
                 </div>
             }
             <div className='folder-container-song-card-box'>
@@ -32,17 +32,17 @@ function FolderUI() {
     )
 }
 
-const CardAddFrom = memo(()=>{
-	const { RangePicker } = DatePicker;
-	const { TextArea } = Input;
-	const normFile = (e) => {
-		if (Array.isArray(e)) {
-			return e;
-		}
-		return e?.fileList;
-	};
+const CardAddForm = memo(()=>{
+	const [colorPickerDisable, setColorPickerDisable] = useState(true)
+	//submit form
+	const onFinish = (values) => {
+
+	}
 	return (
-		<div className='card-from-container' >
+		<div className="card-from-container playing">
+			<div className="wave"></div>
+			<div className="wave"></div>
+			<div className="wave"></div>
 			<Form
 				labelCol={{
 					span: 4,
@@ -56,20 +56,29 @@ const CardAddFrom = memo(()=>{
 					height:'60%',
 					width:'60%',
 				}}
+				onFinish={onFinish}
 			>
-				<Form.Item label="标题" required='true'>
+				<Form.Item   name="title" label="标题" rules={[
+					{
+						required: true,
+						message: '标题不能为空',
+					},
+				]}>
 					<Input />
 				</Form.Item>
-				<Form.Item label="描述" required='true'>
+				 {/*Item can automatically use the submit function only  if there is had name*/}
+				<Form.Item label="描述" name="description">
 					<Input />
 				</Form.Item>
-				<Form.Item name="switch" label="颜色选择" >
-					<Tooltip title="不选默认随机颜色">
-						<Switch />
-					</Tooltip>
+				<Form.Item name="switch" label="颜色选择" tooltip='不选默认随机颜色' valuePropName='checked'>
+					{/*cancel colorPicker disable*/}
+					<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
+				</Form.Item>
+				<Form.Item name="color" label="自定义颜色" >
+					<ColorPicker className='ml-2' disabled={colorPickerDisable}  />
 				</Form.Item>
 				<Form.Item >
-					<Button>添加</Button>
+					<Button htmlType="submit"  >添加</Button>
 				</Form.Item>
 			</Form>
 		</div>
@@ -82,17 +91,17 @@ const CardAddFrom = memo(()=>{
  * @type {React.NamedExoticComponent<object>}
  */
 const TipUI = memo(()=>{
-    return (
-        <>
-            <div key={getRandomId()} className="tip-card">
-                <p className="tip-heading">
-                    功能介绍
-                </p>
-                <p>
-                    <strong>文件夹：</strong>创建音乐合集可以作为播放列表
-                    <br/>
-                    <strong>图片：</strong>分享风景
-                    <br/>
+	return (
+		<>
+			<div key={getRandomId()} className="tip-card">
+				<p className="tip-heading">
+					功能介绍
+				</p>
+				<p>
+					<strong>文件夹：</strong>创建音乐合集可以作为播放列表
+					<br/>
+					<strong>图片：</strong>分享风景
+					<br/>
                     <strong>用户历史：</strong>用于记录访问者
                     <br/>
                     <strong>主页：</strong>听歌
@@ -127,7 +136,6 @@ const TipUI = memo(()=>{
  * @type {React.NamedExoticComponent<object>}
  */
 const SongCardUI = memo(({setTip})=>{
-
 	//确认添加一个card
 	const addCard = () => {
 

@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/*居中*/
+.layout-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
