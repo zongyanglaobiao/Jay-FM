@@ -1,17 +1,14 @@
 import {NavLink} from "react-router-dom";
-import {createReactReduxContainer} from "../../utils/reduxUtil";
-import {isNullOrUndefined} from "../../utils/util";
-import {changeThemeAction} from "../../redux/actions";
+import {useDispatch, useSelector} from "react-redux";
+import {toggleColor} from "../../redux/feature";
 
-function  NavIconUI({changTheme,theme}) {
-	const initTheme = {
-		currentTheme:'light',
-		isDark:false
-	}
-	const  {currentTheme,isDark} = isNullOrUndefined(theme) ? initTheme : theme
+export default  function  NavIconUI({changTheme}) {
+	const {isDark} = useSelector(state => state.theme);
+	const dispatch = useDispatch();
+
 	//切换图标
     const switchIcon = () => {
-		changTheme(!isDark)
+		dispatch(toggleColor(!isDark));
 	}
     //返回字体颜色
     const changeColor = isDark => {
@@ -71,5 +68,4 @@ function  NavIconUI({changTheme,theme}) {
     )
 }
 
-export const SideBarNavIcon = createReactReduxContainer(state=>({theme:state.theme}),(dispatch)=>({changTheme:dataObj => dispatch(changeThemeAction(dataObj))}),NavIconUI)
 

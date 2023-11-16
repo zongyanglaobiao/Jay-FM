@@ -1,34 +1,12 @@
-import {memo, useState} from "react";
-import {getRandomColor, getRandomId, isNullOrUndefined} from "../../utils/util";
+import {memo, useEffect, useState} from "react";
+import {getRandomId} from "../../utils/util";
 import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
-import {createReactReduxContainer} from "../../utils/reduxUtil";
-import {addCardAction} from "../../redux/actions";
+import {useDispatch, useSelector} from "react-redux";
+import {addCard} from "../../redux/feature";
 
-function SongManagementUI({cardArr,addCard,dispatch}) {
-    const [isShowTip, setIsShowTip] = useState(false)
-
-    //修改颜色
-    return (
-        <div className='folder-container'>
-            {
-                isShowTip ?
-                <div className='folder-container-tip'>
-                    <TipUI/>
-                </div>
-                :
-                <div className='folder-container-card-from'>
-					<CardAddForm  addCard={addCard} dispatch={dispatch}/>
-                </div>
-            }
-            <div className='folder-container-song-card-box'>
-                <SongCardUI cardArr={cardArr} setTip={setIsShowTip}/>
-            </div>
-        </div>
-    )
-}
-
-const CardAddForm = memo(({addCard,dispatch})=>{
+const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
+	const dispatch = useDispatch();
 	//submit form
 	const onFinish = (fromData) => {
 		const {cardName,description,cardBgColor,cardSwitch} = fromData
@@ -38,11 +16,7 @@ const CardAddForm = memo(({addCard,dispatch})=>{
 			const {r,g,b} = cardBgColor.metaColor
 			rgbStr = `rgb(${r},${g},${b})`
 		}
-		addCard({
-			cardName,
-			description: description || '暂无描述',
-			cardBgColor: rgbStr || `rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`
-		})(dispatch)
+		dispatch(addCard())
 	}
 	return (
 		<div className="card-from-container playing">
@@ -141,7 +115,8 @@ const TipUI = memo(()=>{
  * 专辑列表
  * @type {React.NamedExoticComponent<object>}
  */
-const SongCardUI = memo(({setTip,cardArr})=>{
+const SongCardUI = memo(({setTip})=>{
+	const cardArray = useSelector(state => state.cardArray);
     return (
         <div className="cards">
 			<div key={`${getRandomId()}`} onClick={()=>{setTip(val => !val)}} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
@@ -150,13 +125,11 @@ const SongCardUI = memo(({setTip,cardArr})=>{
 				</svg>
 			</div>
            {
-			   isNullOrUndefined(cardArr) ?
-				   ''
-			   :
-			   cardArr.map((item)=>{
+			   cardArray &&
+			   cardArray.map((item)=>{
 				   return (
 					   <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:item.cardBgColor}}>
-						   <p className="tip">{item.cardName}</p>
+						   <p className="tip ">{item.cardName}</p>
 						   <p className="second-text">{item.description}</p>
 					   </div>
 				   )
@@ -166,6 +139,25 @@ const SongCardUI = memo(({setTip,cardArr})=>{
     )
 })
 
-const SongManagement = createReactReduxContainer(state => ({cardArr:state.cardArr}) ,dispatch => ({addCard:addCardAction,dispatch}),SongManagementUI)
+export default  function SongManagementUI() {
+	const [isShowTip, setIsShowTip] = useState(false)
 
-export default SongManagement;
+	//修改颜色
+	return (
+		<div className='folder-container'>
+			{
+				isShowTip ?
+					<div className='folder-container-tip'>
+						<TipUI/>
+					</div>
+					:
+					<div className='folder-container-card-from'>
+						<CardAddForm/>
+					</div>
+			}
+			<div className='folder-container-song-card-box'>
+				<SongCardUI setTip={setIsShowTip}/>
+			</div>
+		</div>
+	)
+}

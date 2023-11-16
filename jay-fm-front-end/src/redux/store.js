@@ -1,11 +1,14 @@
-import {combineReducers, legacy_createStore} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
-import {addCardReducer, changThemeReducer} from "./reducers";
+import {configureStore} from "@reduxjs/toolkit";
+import {addCardReducer, toggleBgColorReducer} from "./feature";
 
-const reducers = combineReducers({
-    theme:changThemeReducer,
-	cardArr:addCardReducer
-});
+
 
 //存储状态
-export const store = legacy_createStore(reducers,composeWithDevTools())
+export const store = configureStore({
+	reducer:{
+		theme:toggleBgColorReducer,
+		cardArray:addCardReducer
+	},
+	devTools:composeWithDevTools()
+});

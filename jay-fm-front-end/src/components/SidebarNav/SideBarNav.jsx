@@ -1,14 +1,14 @@
 import '../../index.css'
-import {isNullOrUndefined} from "../../utils/util";
-import {createReactReduxContainer} from "../../utils/reduxUtil";
+import {useSelector} from "react-redux";
 
 /**
  * 侧边导航栏组件
  * @constructor
  */
-export function BarNavUI ({render,theme}) {
+export default function SideBarNav ({render}) {
+   const {currentTheme} = useSelector(state => state.theme);
 	return (
-		<div className='bar-nav-ui' data-theme={isNullOrUndefined(theme) ? 'light' : theme.currentTheme}  style={{height: '100%'}}>
+		<div className='bar-nav-ui' data-theme={currentTheme}  style={{height: '100%'}}>
 			{
 				//插槽
 				render()
@@ -17,7 +17,6 @@ export function BarNavUI ({render,theme}) {
 	)
 }
 
-export const SideBarNav = createReactReduxContainer(state => ({theme:state.theme}), {}, BarNavUI);
 
 
 
