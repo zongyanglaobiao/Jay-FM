@@ -1,5 +1,5 @@
 import {memo, useEffect, useState} from "react";
-import {getRandomId} from "../../utils/util";
+import {getRandomColor, getRandomId} from "../../utils/util";
 import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCard} from "../../redux/feature";
@@ -16,7 +16,11 @@ const CardAddForm = memo(()=>{
 			const {r,g,b} = cardBgColor.metaColor
 			rgbStr = `rgb(${r},${g},${b})`
 		}
-		dispatch(addCard())
+		dispatch(addCard({
+			cardBgColor:rgbStr || `rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`,
+			cardName:cardName,
+			description:description,
+		}))
 	}
 	return (
 		<div className="card-from-container playing">

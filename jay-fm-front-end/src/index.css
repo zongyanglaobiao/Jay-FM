@@ -275,13 +275,13 @@
 }
 
 .wave:nth-child(1){
-  width:  300em;
-  height: 300em;
+  width:  600em;
+  height: 600em;
 }
 
 .playing .wave {
   border-radius: 40%;
-  animation: wave 3000ms infinite linear;
+  animation: wave 3s infinite linear;
 }
 
 .wave {

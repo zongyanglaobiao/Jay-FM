@@ -38,7 +38,7 @@ export const toggleBgColorReducer = toggleBgColorSlice.reducer
 const addCardSlice = generateSlice('addCardSlice',[],{
 	addCard:(state,action)=> {
 		//todo 发起请求
-		return []
+		return [...state,action.payload]
 	}
 });
 
