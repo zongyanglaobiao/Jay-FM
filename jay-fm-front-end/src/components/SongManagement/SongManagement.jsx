@@ -1,8 +1,9 @@
-import {memo, useEffect, useState} from "react";
+import {memo, useState} from "react";
 import {getRandomColor, getRandomId} from "../../utils/util";
 import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addCard} from "../../redux/feature";
+import {addCardThunk} from "../../redux/thunk";
+
 
 const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
@@ -16,7 +17,7 @@ const CardAddForm = memo(()=>{
 			const {r,g,b} = cardBgColor.metaColor
 			rgbStr = `rgb(${r},${g},${b})`
 		}
-		dispatch(addCard({
+		dispatch(addCardThunk({
 			cardBgColor:rgbStr || `rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`,
 			cardName:cardName,
 			description:description,
@@ -151,12 +152,12 @@ export default  function SongManagementUI() {
 		<div className='folder-container'>
 			{
 				isShowTip ?
-					<div className='folder-container-tip'>
-						<TipUI/>
-					</div>
-					:
 					<div className='folder-container-card-from'>
 						<CardAddForm/>
+					</div>
+					:
+					<div className='folder-container-tip'>
+						<TipUI/>
 					</div>
 			}
 			<div className='folder-container-song-card-box'>

@@ -384,6 +384,7 @@
   content: "";
   z-index: -1;
   position: absolute;
+  /*inset 是 top, right, bottom, 和 left 的简写形式，它可以同时设置这四个方向的值。*/
   inset: 0;
   background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100% );
   transform: translate3d(0, 0, 0) scale(0.95);

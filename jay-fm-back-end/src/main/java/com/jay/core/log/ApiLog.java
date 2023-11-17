@@ -1,7 +1,7 @@
 package com.jay.core.log;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.google.gson.Gson;
+import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,6 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class ApiLog {
-    private static final Gson GSON = new Gson();
     @Resource
     private HttpServletRequest request;
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
@@ -58,7 +57,7 @@ public class ApiLog {
         try {
             proceed = point.proceed();
         } finally {
-            log.info("[请求API：{{}}，请求参数：{{}},返回结果：{{}}]", request.getRequestURI(), point.getArgs(), GSON.toJson(proceed));
+            log.info("[请求API：{{}}，请求参数：{{}},返回结果：{{}}]", request.getRequestURI(), point.getArgs(), JSONUtil.toJsonStr(proceed));
         }
         return proceed;
     }
