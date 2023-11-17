@@ -5,7 +5,7 @@
 
 ## 访问地址
 
-> [Jay-FM官网](wwww.xxl.cab)
+> [Jay-FM官网](http://wwww.xxl.cab)
 
 # 前端
 
