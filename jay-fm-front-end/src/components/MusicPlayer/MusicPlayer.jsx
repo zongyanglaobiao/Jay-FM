@@ -1,4 +1,5 @@
-import {memo, useCallback, useState} from "react";
+import {memo, useCallback, useEffect, useRef, useState} from "react";
+import {parseFlacFIle} from "../../utils/songUtils";
 
 /**
  * 列表，使用组件缓存
@@ -119,6 +120,7 @@ const MusicPlayerNavUI = memo(({isShowLyrics,setLyrics})=>{
 export default  memo(()=>{
 	const [isPlay, setIsPlay] = useState(false)
 	const [isShowLyrics, setIsShowLyrics] = useState(false)
+	const audio = useRef();
 
 	//是否展示歌词,缓存setLyrics函数，[]不能设置为空。
 	const setLyrics = useCallback(()=>{
@@ -130,10 +132,24 @@ export default  memo(()=>{
 		setIsPlay(!isPlay)
 	}
 
+
+	useEffect(() => {
+		const {current} = audio
+		parseFlacFIle(current)
+		if (isPlay) {
+			current.play();
+		}else {
+			current.pause();
+		}
+	}, [isPlay]);
+
 	return (
 		<div className='music-player-container'>
 			<SongLyricsUI isShowLyrics={isShowLyrics}/>
 			<div className='music-player'>
+				<audio controls src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
+					当前浏览器不支持audio标签
+				</audio>
 				<div className='music-player-outer-ring '>
 					<div className='music-player-common'>
 						<img src={require('../../img/jay.jpg')} alt="jay" className='music-player-common'/>

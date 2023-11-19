@@ -18,7 +18,8 @@
 
 # 后端
 
-- `jay-fm-back-end`
+- 报名：`jay-fm-back-end`
+- 上传歌曲
 
 ## 技术选型
 

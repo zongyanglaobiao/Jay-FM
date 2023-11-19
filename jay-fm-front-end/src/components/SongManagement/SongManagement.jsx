@@ -4,6 +4,13 @@ import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk} from "../../redux/thunk";
 
+const CardInfo = memo(()=>{
+	return (
+		<div>
+			HELLO,REACT
+		</div>
+	)
+})
 
 const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
@@ -146,7 +153,6 @@ const SongCardUI = memo(({setTip})=>{
 
 export default  function SongManagementUI() {
 	const [isShowTip, setIsShowTip] = useState(false)
-
 	//修改颜色
 	return (
 		<div className='folder-container'>
