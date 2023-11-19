@@ -1,7 +1,7 @@
 package com.jay.controller.exception;
 
-import com.jay.core.resp.R;
 import com.jay.core.resp.RespEntity;
+import com.jay.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +19,9 @@ public class ExceptionController {
      */
     @ExceptionHandler(Exception.class)
     public RespEntity<?> exception(Exception exception) {
-        return R.fail();
+        if (exception instanceof CommonException com) {
+            return RespEntity.fail(com.getCode(), com.getMsg());
+        }
+        return RespEntity.fail();
     }
 }

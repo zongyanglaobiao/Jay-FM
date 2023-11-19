@@ -147,7 +147,7 @@ export default  memo(()=>{
 		<div className='music-player-container'>
 			<SongLyricsUI isShowLyrics={isShowLyrics}/>
 			<div className='music-player'>
-				<audio controls src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
+				<audio controls loop src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
 					当前浏览器不支持audio标签
 				</audio>
 				<div className='music-player-outer-ring '>
