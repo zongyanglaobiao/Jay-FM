@@ -13,12 +13,13 @@ create table if not exists song_information(
     id varchar(255) primary key comment 'ID',
     name varchar(255) comment '歌名',
     singer varchar(255) comment '歌手',
-    song_duration varchar(255) comment '歌曲时长',
     folder_id varchar(255) comment '所属文件夹',
     lyrics varchar(255) comment '歌词',
+    like_count varchar(255) comment '喜欢次数',
     translated_lyrics  varchar(255) comment '翻译歌词',
     size varchar(255) comment '歌曲大小',
     play_count varchar(255) comment '播放次数',
+    enable_download boolean default true comment '是否能被下载',
     create_time  datetime comment '创建时间',
     update_time  datetime comment '更新时间',
     create_user  varchar(255) comment '创建人',
@@ -47,7 +48,8 @@ create table if not exists folder_information(
 create table if not exists ip_address(
     id varchar(255) primary key comment 'ID',
     ip varchar(255) comment 'IP地址',
-    address varchar(255) comment '所属省份地址'
+    address varchar(255) comment '所属省份地址',
+    disable boolean default false comment '是否禁止访问'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '存储IP信息';
 
 /*==========================================*/
@@ -55,13 +57,13 @@ create table if not exists ip_address(
 /*==========================================*/
 
 create table if not exists play_list(
-    ID varchar(255) primary key comment 'ID',
-    SONG_ID varchar(255) comment '歌曲ID',
-    PLAYBACK_ORDER varchar(255)  comment '播放顺序',
-    NAME varchar(255) comment '播放列表名',
-    CREATE_TIME  datetime comment '创建时间',
-    UPDATE_TIME  datetime comment '更新时间',
-    CREATE_USER  varchar(255) comment '创建人',
-    UPDATE_USER  varchar(255) comment '更新人'
+    id varchar(255) primary key comment 'ID',
+    song_id varchar(255) comment '歌曲ID',
+    playback_order varchar(255)  comment '播放顺序',
+    name varchar(255) comment '播放列表名',
+    create_time  datetime comment '创建时间',
+    update_time  datetime comment '更新时间',
+    create_user  varchar(255) comment '创建人',
+    update_user  varchar(255) comment '更新人'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '播发列表'
 

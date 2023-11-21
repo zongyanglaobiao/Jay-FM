@@ -1,8 +1,7 @@
 package com.jay.interceptor;
 
 
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import cn.hutool.core.convert.Convert;
 import com.jay.core.redis.RedisUtils;
 import com.jay.domain.ip.service.IPAddressService;
 import com.jay.repository.entities.IPAddressEntity;
@@ -39,18 +38,20 @@ public class IPAddressInterceptor implements HandlerInterceptor {
         //因为请求可能过于频繁，所以先存储在redis中
         if (!redisUtils.hasKey(ip)) {
             log.info("ip = {},city = {}",ip,city);
-            redisUtils.opsForValue(ip,city);
             IPAddressEntity entity = new IPAddressEntity();
             entity.setIp(ip);
             entity.setAddress(city);
             service.save(entity);
+            redisUtils.opsForValue(ip,entity);
+            return HandlerInterceptor.super.preHandle(request, response, handler);
+        }
+
+        IPAddressEntity convert = Convert.convert(IPAddressEntity.class, redisUtils.get(ip));
+        if (convert.isDisable()) {
+            //被禁用IP
+            return false;
         }
 
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
-
-
-
-
-
 }

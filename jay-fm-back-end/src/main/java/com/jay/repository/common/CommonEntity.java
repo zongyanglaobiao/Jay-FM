@@ -14,7 +14,7 @@ import java.util.Date;
  * @since 2023/11/9
  */
 @Data
-public class UniversalEntity implements Serializable {
+public class CommonEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -3311980309727025131L;
 
