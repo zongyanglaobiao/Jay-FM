@@ -1,5 +1,6 @@
 package com.jay.core.redis;
 
+import cn.hutool.core.convert.Convert;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -203,12 +204,13 @@ public class RedisUtils {
      * @param key 键
      * @return  Object
      */
-    public Object get(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public <E> E get(String key,Class<E> cls) {
+        Object object = redisTemplate.opsForValue().get(key);
+        return Convert.convert(cls,object);
     }
 
     /**
-     * 通过键获取某个值，并且施加值
+     * 通过键获取某个值，并且施加时间
      *
      * @param key 键
      * @param time 时间
@@ -219,7 +221,7 @@ public class RedisUtils {
     }
 
     /**
-     * 通过键获取某个值，并且施加值
+     * 通过键获取某个值，并且施加时间
      *
      * @param key 键
      * @param time 时间

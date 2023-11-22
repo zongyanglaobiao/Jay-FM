@@ -38,7 +38,13 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
 
     private String playCount;
 
-    private Integer enableDownload;
+    private Boolean enableDownload;
+
+    private String uploader;
+
+    private String savePath;
+
+    private String downloadId;
 
     private Date createTime;
 

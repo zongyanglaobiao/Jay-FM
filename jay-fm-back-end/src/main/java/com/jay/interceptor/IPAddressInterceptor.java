@@ -46,7 +46,7 @@ public class IPAddressInterceptor implements HandlerInterceptor {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
-        IPAddressEntity convert = Convert.convert(IPAddressEntity.class, redisUtils.get(ip));
+        IPAddressEntity convert = redisUtils.get(ip, IPAddressEntity.class);
         if (convert.isDisable()) {
             //被禁用IP
             return false;

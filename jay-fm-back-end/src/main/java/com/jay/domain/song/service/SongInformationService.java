@@ -8,6 +8,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since: 2023/11/22
  * @description:
  */
-public interface SongInformationEntityService extends IService<SongInformationEntity> {
+public interface SongInformationService extends IService<SongInformationEntity> {
 
 }

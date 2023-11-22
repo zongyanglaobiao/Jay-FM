@@ -1,8 +1,8 @@
 package com.jay.domain.song.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jay.domain.song.service.SongInformationService;
 import com.jay.repository.entities.SongInformationEntity;
-import com.jay.domain.song.service.SongInformationEntityService;
 import com.jay.repository.mapper.SongInformationEntityMapper;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @description:
  */
 @Service
-public class SongInformationEntityServiceImpl extends ServiceImpl<SongInformationEntityMapper, SongInformationEntity> implements SongInformationEntityService{
+public class SongInformationServiceImpl extends ServiceImpl<SongInformationEntityMapper, SongInformationEntity> implements SongInformationService {
 
 }
 
