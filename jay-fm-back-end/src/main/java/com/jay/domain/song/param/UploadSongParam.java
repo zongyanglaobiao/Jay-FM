@@ -19,7 +19,7 @@ public class UploadSongParam implements Serializable {
 
     private String singer;
 
-    private String songName;
+    private String name;
 
     private String folderId;
 

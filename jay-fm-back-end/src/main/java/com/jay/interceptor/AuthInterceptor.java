@@ -19,7 +19,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String header = request.getHeader(AUTH);
-        if (StrUtil.isNotBlank(header) && KEY.equals(header)) {
+        if (StrUtil.isBlank(header)) {
             return true;
         }
         response.setCharacterEncoding("UTF-8");

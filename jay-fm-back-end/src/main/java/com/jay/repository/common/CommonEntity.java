@@ -18,19 +18,14 @@ public class CommonEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -3311980309727025131L;
 
-    /** 创建时间 */
+    private boolean enableModify;
+
+    private boolean enableDelete;
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
-
-    /** 创建人 */
-    @TableField(fill = FieldFill.INSERT)
-    private String createUser;
 
     /** 更新时间 */
     @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
-
-    /** 更新人 */
-    @TableField(fill = FieldFill.UPDATE)
-    private String updateUser;
 }

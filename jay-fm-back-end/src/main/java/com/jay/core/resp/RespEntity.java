@@ -48,9 +48,8 @@ public  class RespEntity<T> implements Serializable {
     }
 
     public static <T>  RespEntity<T> success(){
-        String reasonPhrase = OK.getReasonPhrase();
-        int value = OK.value();
-        return RespEntity.base(value,reasonPhrase,null);
+        HttpCode success = HttpCode.SUCCESS;
+        return RespEntity.base(success.getCode(),success.getReasonPhrase(),null);
     }
 
     public static <T> RespEntity<T> success(String message, T t) {
@@ -68,9 +67,8 @@ public  class RespEntity<T> implements Serializable {
     }
 
     public static <T> RespEntity<T> fail() {
-        String reasonPhrase = INTERNAL_SERVER_ERROR.getReasonPhrase();
-        int value = INTERNAL_SERVER_ERROR.value();
-        return RespEntity.base(value,reasonPhrase,null);
+        HttpCode serverError = HttpCode.INTERNAL_SERVER_ERROR;
+        return RespEntity.base(serverError.getCode(),serverError.getReasonPhrase(),null);
     }
 
     public static <T> RespEntity<T> fail(String message) {

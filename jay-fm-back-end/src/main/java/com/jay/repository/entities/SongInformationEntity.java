@@ -20,13 +20,14 @@ import java.util.Date;
 @Data
 @Schema(name = "歌曲信息实体类")
 public class SongInformationEntity extends CommonEntity implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private String id;
 
     private String name;
 
     private String singer;
-
-    private String folderId;
 
     private String lyrics;
 
@@ -45,15 +46,4 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
     private String savePath;
 
     private String downloadId;
-
-    private Date createTime;
-
-    private Date updateTime;
-
-    private String createUser;
-
-    private String updateUser;
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 }
