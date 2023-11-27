@@ -7,6 +7,7 @@ import com.jay.domain.song.param.UploadSongParam;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -17,9 +18,11 @@ import java.io.IOException;
  */
 public interface SongInformationService extends IService<SongInformationEntity> {
 
-    String uploadSong(UploadSongParam param);
+    String uploadSong(UploadSongParam param) throws IOException, CommonException;
 
-    void downloadSong(String downloadId) ;
+    String uploadSong(MultipartFile file) throws IOException, CommonException;
+
+    void downloadSong(String downloadId) throws CommonException;
 
     RespEntity<String> search(SearchParam param);
 }

@@ -147,9 +147,6 @@ export default  memo(()=>{
 		<div className='music-player-container'>
 			<SongLyricsUI isShowLyrics={isShowLyrics}/>
 			<div className='music-player'>
-				<audio controls loop src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
-					当前浏览器不支持audio标签
-				</audio>
 				<div className='music-player-outer-ring '>
 					<div className='music-player-common'>
 						<img src={require('../../img/jay.jpg')} alt="jay" className='music-player-common'/>
@@ -160,6 +157,9 @@ export default  memo(()=>{
 					<h5>周杰伦</h5>
 				</div>
 				<div className='music-player-box'>
+					<audio loop src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
+						当前浏览器不支持audio标签
+					</audio>
 					<svg    style={{transform: 'rotate(180deg)'}} t="1699195161909" className="music-player-play-button" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1748" width="200" height="200">
 						<path d="M744.727273 551.563636L325.818182 795.927273c-30.254545 18.618182-69.818182-4.654545-69.818182-39.563637v-488.727272c0-34.909091 39.563636-58.181818 69.818182-39.563637l418.909091 244.363637c30.254545 16.290909 30.254545 62.836364 0 79.127272z" p-id="1749"></path>
 					</svg>

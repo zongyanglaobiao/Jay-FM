@@ -40,4 +40,4 @@ auth-path:
         - /**/*.jpg
         - /**/*.ico
         - /**/v3/**
-song-save-path: D:\Program Files (x86)\idea\IDEAproject\github\Jay-FM\jay-fm-back-end\src\main\resources\file\
+song-save-path: D:\Program Files (x86)\idea\IDEAproject\github\Jay-FM\jay-fm-front-end\src\song\

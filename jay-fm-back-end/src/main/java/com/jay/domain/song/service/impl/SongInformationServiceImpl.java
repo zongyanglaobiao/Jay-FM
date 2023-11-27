@@ -1,7 +1,7 @@
 package com.jay.domain.song.service.impl;
 
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.URLUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.resp.RespEntity;
 import com.jay.core.web.utils.FileUtils;
@@ -12,13 +12,13 @@ import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import com.jay.repository.mapper.SongInformationMapper;
 import jakarta.annotation.Resource;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * @author: xxl
@@ -34,32 +34,31 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     @Resource
     private HttpServletResponse response;
     @Override
-    public String uploadSong(UploadSongParam param)  {
-        try {
-            MultipartFile songFile = param.getSongFile();
-            String originalFilename = songFile.getOriginalFilename();
-            //String type = FileTypeUtil.getType(originalFilename);
-            return   FileUtils.upload(songFile.getInputStream(),songSavePath.concat(originalFilename));
-        } catch (CommonException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    public String uploadSong(UploadSongParam param) throws IOException, CommonException {
+        MultipartFile file = param.getSongFile();
+        String originalFilename = file.getOriginalFilename();
+        String path = String.format("%s%s.%s", songSavePath,FileUtils.getFileName(originalFilename),FileUtils.getSuffix(originalFilename));
+        String downloadPath = FileUtils.upload(file.getInputStream(),path);
+        String uuid = UUID.randomUUID().toString();
+        SongInformationEntity convert = Convert.convert(SongInformationEntity.class, param);
+        convert.setDownloadId(uuid);
+        convert.setSavePath(downloadPath);
+        this.save(convert);
+        return uuid;
     }
 
     @Override
-    public void downloadSong(String downloadId) {
-        try {
-            byte[] download = FileUtils.download(downloadId);
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLUtil.encode("周杰伦 - 晴天.flac"));
-            response.addHeader("Content-Length", "" + download.length);
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
-            response.setContentType("application/octet-stream;charset=UTF-8");
-            IoUtil.write(response.getOutputStream(), true, download);
-        } catch (CommonException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public String uploadSong(MultipartFile file) throws IOException, CommonException {
+        return null;
+    }
+
+    @Override
+    public void downloadSong(String downloadId) throws CommonException {
+        SongInformationEntity entity = this.getById(downloadId);
+        if (ObjectUtil.isNull(entity)) {
+            throw new CommonException("文件不存在");
         }
+        FileUtils.webDownload(entity.getSavePath(),response,FileUtils.getFileName(entity.getSavePath()));
     }
 
     @Override

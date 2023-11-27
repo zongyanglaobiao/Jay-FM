@@ -3,12 +3,14 @@ package com.jay.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
 import com.jay.core.resp.RespEntity;
 import com.jay.domain.song.param.ModifySongParam;
 import com.jay.domain.song.param.SearchParam;
 import com.jay.domain.song.param.UploadSongParam;
 import com.jay.domain.song.service.SongInformationService;
+import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -16,6 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author xxl
@@ -31,16 +36,19 @@ public class SongController  {
 
     @PostMapping("/upload")
     @Operation(summary = "上传歌曲")
-    public RespEntity<String> uploadSong(@RequestPart("file") MultipartFile file){
-        UploadSongParam param = new UploadSongParam();
-        param.setSongFile(file);
-        param.setName("周杰伦");
+    public RespEntity<String> uploadSong(@RequestPart MultipartFile file) throws CommonException, IOException {
+        return RespEntity.success(service.uploadSong(file));
+    }
+
+    @GetMapping("/addCardInfo")
+    @Operation(summary = "上传歌曲")
+    public RespEntity<String> addCardInfo(@ModelAttribute UploadSongParam param) throws CommonException, IOException {
         return RespEntity.success(service.uploadSong(param));
     }
 
     @GetMapping("/download")
     @Operation(summary = "下载歌曲")
-    public void downloadSong(@RequestParam("id") String downloadId){
+    public void downloadSong(@RequestParam("id") String downloadId) throws CommonException {
         service.downloadSong(downloadId);
     }
 
@@ -66,6 +74,7 @@ public class SongController  {
     @PostMapping("/search")
     @Operation(summary = "搜索歌曲")
     public RespEntity<String> search(@RequestBody SearchParam param){
-        return service.search(param);
+        service.search(param);
+        return RespEntity.success();
     }
 }

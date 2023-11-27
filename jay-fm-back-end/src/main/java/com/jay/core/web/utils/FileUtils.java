@@ -1,7 +1,12 @@
 package com.jay.core.web.utils;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import com.jay.exception.CommonException;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
 
@@ -53,5 +58,55 @@ public class FileUtils {
             e.printStackTrace();
             throw new CommonException("FileUtils：文件读入失败");
         }
+    }
+
+    /**
+     * 网页下载
+     *
+     * @param filePath 文件路径
+     * @param response 响应
+     * @param fileName 文件名
+     * @throws CommonException 使用
+     */
+    public static void webDownload(String filePath, HttpServletResponse response,String fileName) throws CommonException {
+        try {
+            byte[] download = download(filePath);
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLUtil.encode(fileName));
+            response.addHeader("Content-Length", "" + download.length);
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            IoUtil.write(response.getOutputStream(), true, download);
+        } catch (CommonException | IOException e) {
+            e.printStackTrace();
+            throw new CommonException("web下载失败");
+        }
+    }
+
+    /**
+     * 获取文件文件后缀
+     *
+     * @param fileName 文件名
+     * @return 字符串
+     */
+    public static String getSuffix(String fileName){
+        if (StrUtil.isBlank(fileName)) {
+            return null;
+        }
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+
+    /**
+     * 获取文件名,默认文件最后一个/后的名字
+     *
+     * @param path 路径
+     * @return 字符串
+     */
+    public static String getFileName(String path){
+        if (StrUtil.isBlank(path)) {
+            return null;
+        }
+        return  path.substring(path.lastIndexOf("/") + 1);
     }
 }

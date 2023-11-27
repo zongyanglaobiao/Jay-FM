@@ -21,13 +21,15 @@ public class UploadSongParam implements Serializable {
 
     private String name;
 
-    private String folderId;
-
     private String lyrics;
 
     private String translatedLyrics;
 
     private boolean enableDownload;
+
+    private boolean enableModify;
+
+    private boolean enableDelete;
 
     private String uploader;
 

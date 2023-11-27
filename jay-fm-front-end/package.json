@@ -7,6 +7,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "antd": "^5.10.3",
     "axios": "^1.6.0",
+    "dotenv-cli": "^7.3.0",
     "nanoid": "^5.0.3",
     "pixiu-number-toolkit": "^1.2.2",
     "react": "^18.2.0",
@@ -18,10 +19,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "dotenv -e .local.single.env -e .env.dev react-scripts start",
+    "build": "dotenv -e .env.prod react-scripts build"
   },
   "eslintConfig": {
     "extends": [
