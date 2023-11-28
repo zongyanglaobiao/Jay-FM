@@ -18,6 +18,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        //todo 文件上传需要登录，在这里校验
         String header = request.getHeader(AUTH);
         if (StrUtil.isBlank(header)) {
             return true;

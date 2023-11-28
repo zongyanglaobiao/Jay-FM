@@ -1,7 +1,8 @@
-package com.jay.core.web.utils;
+package com.jay.core.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
@@ -28,6 +29,7 @@ public class FileUtils {
      */
     public static String upload(InputStream file, String savePath) throws CommonException {
         //路径不存就创建
+
         File touch = FileUtil.touch(new File(savePath));
         try (BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(touch))){
             file.transferTo(writer);
@@ -83,30 +85,30 @@ public class FileUtils {
         }
     }
 
-    /**
-     * 获取文件文件后缀
-     *
-     * @param fileName 文件名
-     * @return 字符串
-     */
-    public static String getSuffix(String fileName){
-        if (StrUtil.isBlank(fileName)) {
-            return null;
-        }
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
-    }
-
 
     /**
-     * 获取文件名,默认文件最后一个/后的名字
+     * 获取文件后缀
      *
      * @param path 路径
      * @return 字符串
      */
-    public static String getFileName(String path){
+    public static String getFileSuffix(String path){
         if (StrUtil.isBlank(path)) {
             return null;
         }
-        return  path.substring(path.lastIndexOf("/") + 1);
+        return path.substring(path.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * 获取文件名
+     *
+     * @param path 路径
+     * @return 字符串
+     */
+    public static String getFileName(String path) {
+        if (StrUtil.isBlank(path)) {
+            return null;
+        }
+        return path.substring(path.lastIndexOf("\\") + 1);
     }
 }

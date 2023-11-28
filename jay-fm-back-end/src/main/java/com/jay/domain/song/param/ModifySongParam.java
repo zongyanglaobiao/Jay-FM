@@ -1,6 +1,7 @@
 package com.jay.domain.song.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -16,6 +17,7 @@ public class ModifySongParam implements Serializable {
     @Serial
     private static final long serialVersionUID = 4182570097257036228L;
 
+    @NotBlank(message = "歌曲id不能为空")
     private String id;
 
     private String name;
@@ -26,11 +28,13 @@ public class ModifySongParam implements Serializable {
 
     private String translatedLyrics;
 
-    private boolean enableDownload;
+    private Boolean enableDownload;
 
-    private boolean enableModify;
+    private Boolean enableModify;
 
-    private boolean enableDelete;
+    private Boolean enableDelete;
 
     private String uploader;
+
+    private String email;
 }

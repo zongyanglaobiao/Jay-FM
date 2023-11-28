@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author: xxl
@@ -25,7 +24,7 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
 
     private String id;
 
-    private String name;
+    private String songName;
 
     private String singer;
 
@@ -46,4 +45,6 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
     private String savePath;
 
     private String downloadId;
+
+    private String email;
 }

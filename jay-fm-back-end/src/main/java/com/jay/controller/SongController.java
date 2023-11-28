@@ -1,10 +1,6 @@
 package com.jay.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
 import com.jay.core.resp.RespEntity;
 import com.jay.domain.song.param.ModifySongParam;
 import com.jay.domain.song.param.SearchParam;
@@ -13,68 +9,52 @@ import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author xxl
  * @since 2023/11/19
  */
 @RestController
-@RequestMapping("/song")
+@RequestMapping(value = "/song",produces = "application/json")
 @Tag(name = "歌曲管理控制器")
+@Validated
 public class SongController  {
 
     @Resource
     private SongInformationService service;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/addCardInfo")
     @Operation(summary = "上传歌曲")
-    public RespEntity<String> uploadSong(@RequestPart MultipartFile file) throws CommonException, IOException {
-        return RespEntity.success(service.uploadSong(file));
-    }
-
-    @GetMapping("/addCardInfo")
-    @Operation(summary = "上传歌曲")
-    public RespEntity<String> addCardInfo(@ModelAttribute UploadSongParam param) throws CommonException, IOException {
+    public RespEntity<String> addCardInfo(@ModelAttribute @Validated UploadSongParam param) throws Throwable {
         return RespEntity.success(service.uploadSong(param));
     }
 
     @GetMapping("/download")
     @Operation(summary = "下载歌曲")
-    public void downloadSong(@RequestParam("id") String downloadId) throws CommonException {
+    public void downloadSong(@RequestParam("id") String downloadId) throws Throwable {
         service.downloadSong(downloadId);
     }
 
     @PostMapping("/modify")
     @Operation(summary = "修改歌曲")
-    public RespEntity<String> modifySong(@RequestBody ModifySongParam param){
-        SongInformationEntity entity = service.getById(param.getId());
-        if (ObjectUtil.isNull(entity)) {
-            return RespEntity.fail("歌曲不存在");
-        }
-        BeanUtil.copyProperties(param, entity);
-        service.updateById(entity);
-        return RespEntity.success();
+    public RespEntity<String> modifySong(@RequestBody ModifySongParam param) throws Throwable {
+        return RespEntity.success(service.modifySong(param));
     }
 
-    @GetMapping("/modify")
+    @GetMapping("/delete")
     @Operation(summary = "删除歌曲")
-    public RespEntity<String> deleteSong(@RequestParam("id") String songId){
-        service.removeById(songId);
-        return RespEntity.success();
+    public RespEntity<String> deleteSong(@RequestParam("id") @NotBlank(message = "歌曲id不能为空" ) String songId){
+        return RespEntity.success(service.deleteSong(songId));
     }
 
     @PostMapping("/search")
     @Operation(summary = "搜索歌曲")
-    public RespEntity<String> search(@RequestBody SearchParam param){
-        service.search(param);
-        return RespEntity.success();
+    public RespEntity<Page<SongInformationEntity>> search(@RequestBody SearchParam param) throws CommonException {
+        return RespEntity.success("查询成功",service.search(param));
     }
 }

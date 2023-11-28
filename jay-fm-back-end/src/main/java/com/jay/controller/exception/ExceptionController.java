@@ -3,6 +3,8 @@ package com.jay.controller.exception;
 import com.jay.core.resp.RespEntity;
 import com.jay.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -21,6 +23,8 @@ public class ExceptionController {
     public RespEntity<?> exception(Exception exception) {
         if (exception instanceof CommonException com) {
             return RespEntity.fail(com.getCode(), com.getMsg());
+        } else if (exception instanceof BindException bindException) {
+            return RespEntity.fail(bindException.getFieldErrors().stream().map(FieldError::getDefaultMessage).distinct().toList().toString());
         }
         return RespEntity.fail();
     }

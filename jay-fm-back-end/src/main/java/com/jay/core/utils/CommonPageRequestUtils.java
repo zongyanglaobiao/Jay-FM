@@ -1,4 +1,4 @@
-package com.jay.core.web.utils;
+package com.jay.core.utils;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2023/11/23
  */
 @Slf4j
-public class CommonPageRequest {
+public class CommonPageRequestUtils {
     private static final String PAGE_SIZE_PARAM_NAME = "size";
 
     private static final String PAGE_PARAM_NAME = "current";

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @since 2023/11/9
  */
 @Component
-public class UniversalMetaConfigure implements MetaObjectHandler {
+public class CommonMetaConfigure implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {

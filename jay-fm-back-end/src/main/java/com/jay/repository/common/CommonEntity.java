@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -18,14 +19,14 @@ public class CommonEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -3311980309727025131L;
 
-    private boolean enableModify;
+    private Boolean enableModify;
 
-    private boolean enableDelete;
+    private Boolean enableDelete;
 
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /** 更新时间 */
     @TableField(fill = FieldFill.UPDATE)
-    private Date updateTime;
+    private LocalDateTime updateTime;
 }

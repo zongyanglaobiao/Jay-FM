@@ -9,15 +9,15 @@ export const  reqUtil = (url,data = {},config = {},type = GET) => {
 	}
 	const ul = URL.concat(url)
 	if (type === POST) {
-		return axios.post(URL.concat(ul),data,config);
+		return axios.post(ul,data,config);
 	}
-	return   axios.get(ul,{params:data},config);
+	return axios.get(ul,{params:data},config);
 }
 
-export const reqGetAsync =  (url,data = {},config = {}) => {
+export const reqGetAsync =  (url,data,config) => {
 	return reqUtil(url,data,config,GET).then((r) => r).catch(  (e)=>e)
 }
 
-export const reqPostAsync = (url,data = {},config = {}) => {
+export const reqPostAsync = (url,data,config) => {
 	return reqUtil(url,data,config,POST).then((r) => r).catch(  (e)=>e)
 }

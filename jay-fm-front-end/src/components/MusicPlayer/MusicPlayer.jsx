@@ -1,5 +1,5 @@
 import {memo, useCallback, useEffect, useRef, useState} from "react";
-import {parseFlacFIle} from "../../utils/songUtils";
+import {parseFlacFile} from "../../utils/songUtils";
 
 /**
  * 列表，使用组件缓存
@@ -135,7 +135,7 @@ export default  memo(()=>{
 
 	useEffect(() => {
 		const {current} = audio
-		parseFlacFIle(current)
+		parseFlacFile(current)
 		if (isPlay) {
 			current.play();
 		}else {

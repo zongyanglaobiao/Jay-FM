@@ -1,8 +1,12 @@
 package com.jay.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jay.domain.song.param.SearchParam;
 import com.jay.repository.entities.SongCardEntity;
 import com.jay.repository.entities.SongInformationEntity;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author xxl
@@ -11,7 +15,7 @@ import com.jay.repository.entities.SongInformationEntity;
 * @Entity com.jay.repository.entities.SongInformationEntity
 */
 public interface SongInformationMapper extends BaseMapper<SongInformationEntity> {
-
+    List<SongInformationEntity> search(@Param("param") SearchParam param);
 }
 
 
