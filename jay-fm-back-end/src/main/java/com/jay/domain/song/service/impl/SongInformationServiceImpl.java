@@ -5,6 +5,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileMagicNumber;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,8 +13,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.utils.AssertUtils;
 import com.jay.core.utils.CommonPageRequestUtils;
 import com.jay.core.utils.FileUtils;
+import com.jay.domain.common.ServicesUtil;
+import com.jay.domain.common.param.SearchParam;
 import com.jay.domain.song.param.ModifySongParam;
-import com.jay.domain.song.param.SearchParam;
 import com.jay.domain.song.param.UploadSongParam;
 import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
@@ -39,7 +41,7 @@ import static cn.hutool.core.io.FileMagicNumber.MP3;
 @Service
 public class SongInformationServiceImpl extends ServiceImpl<SongInformationMapper, SongInformationEntity> implements SongInformationService {
 
-    @Value("${song-save-path}")
+    @Value("${save-path}")
     private String songSavePath;
 
     @Resource
@@ -47,7 +49,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     @Override
     public String uploadSong(UploadSongParam param) throws Throwable {
         SongInformationEntity one = this.getOne(Wrappers.<SongInformationEntity>lambdaQuery().eq(SongInformationEntity::getSongName, param.getSongName()));
-        AssertUtils.notNull(one,"歌曲已存在");
+        AssertUtils.isNull(one,"歌曲已存在");
 
         //保存歌曲
         MultipartFile file = param.getSongFile();
@@ -70,9 +72,10 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
 
 
     @Override
-    public void downloadSong(String downloadId) throws Throwable {
+    public void downloadSong(String downloadId) throws CommonException {
         SongInformationEntity entity = this.getById(downloadId);
-        AssertUtils.isNull(entity,"文件不存在");
+        AssertUtils.notNull(entity,"歌曲不存在");
+
         if (!entity.getEnableDownload()) {
             throw new CommonException("文件不支持下载");
         }
@@ -83,37 +86,37 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     @Override
     public Page<SongInformationEntity> search(SearchParam param) throws CommonException {
         String keyword = param.getKeyword();
-        LambdaQueryWrapper<SongInformationEntity> wrapper = Wrappers.lambdaQuery();
 
         //关键字为空全返回
-        if (ObjectUtil.isNull(keyword)) {
-            return  this.page(CommonPageRequestUtils.defaultPage(),wrapper);
+        if (StrUtil.isBlank(keyword)) {
+            return  this.page(CommonPageRequestUtils.defaultPage(),new LambdaQueryWrapper<>());
         }
 
         //关键词搜索
-        wrapper.like(SongInformationEntity::getSongName, keyword).
-            or().
-            like(SongInformationEntity::getSinger, keyword).
-            or().
-            like(SongInformationEntity::getLyrics, keyword).
-            or().
-            like(SongInformationEntity::getTranslatedLyrics, keyword);
+        LambdaQueryWrapper<SongInformationEntity> wrapper = ServicesUtil.keyWordSearch(keyword,
+            SongInformationEntity::getSongName,
+            SongInformationEntity::getSinger,
+            SongInformationEntity::getLyrics,
+            SongInformationEntity::getTranslatedLyrics,
+            SongInformationEntity::getUploader,
+            SongInformationEntity::getEmail);
         return this.page(CommonPageRequestUtils.defaultPage(),wrapper);
     }
 
     @Override
     public String deleteSong(String songId) {
         SongInformationEntity entity = this.getById(songId);
-        if (!entity.getEnableDelete()) {
+        if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
             return "不能被删除";
         }
-        return "删除成功";
+        return String.valueOf(this.removeById(songId));
     }
 
     @Override
-    public String modifySong(ModifySongParam param) throws Throwable {
+    public String modifySong(ModifySongParam param) throws CommonException {
         SongInformationEntity entity = this.getById(param.getId());
-        AssertUtils.isNull(entity, "歌曲不存在");
+        AssertUtils.notNull(entity, "歌曲不存在");
+
         if (!entity.getEnableModify()) {
             return "不允许修改";
         }

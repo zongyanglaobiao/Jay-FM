@@ -1,8 +1,7 @@
 package com.jay.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jay.domain.song.param.SearchParam;
-import com.jay.repository.entities.SongCardEntity;
+import com.jay.domain.common.param.SearchParam;
 import com.jay.repository.entities.SongInformationEntity;
 import org.apache.ibatis.annotations.Param;
 

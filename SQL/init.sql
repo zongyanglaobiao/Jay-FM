@@ -27,14 +27,14 @@ create table if not exists song_information(
 
 create table if not exists card_information(
     id varchar(255) primary key comment 'ID',
-    name varchar(255) comment '文件名',
+    card_name varchar(255) comment '文件名',
     color varchar(255) comment '颜色',
     enable_modify boolean default true comment '是否能被修改',
     enable_delete boolean default true comment '是否能被删除',
     text_describe varchar(255) comment '描述',
     create_time  datetime comment '创建时间',
     update_time  datetime comment '更新时间',
-    creator varchar(255) comment 'create',
+    creator varchar(255) comment '创建者',
     email varchar(255) comment '邮箱'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '卡片列表分类存储歌曲信息';
 

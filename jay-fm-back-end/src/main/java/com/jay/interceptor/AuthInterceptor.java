@@ -14,13 +14,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
     private static final String AUTH = "auth";
-    private static final String KEY = "Vm10YWIyUXhXbkpOU0dSUVZsWmFWRlpyVmt0VlJsWnlXa1JDVDFac1NsaFdiWFJQWWtaSmQwNVdWbFZpUjFJeldWWlZlR05XUmxWaGVqQTk=";
+    private static final String KEY = "24c5a289-afe1-4e49-8163-2ca146a27c46";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //todo 文件上传需要登录，在这里校验
         String header = request.getHeader(AUTH);
-        if (StrUtil.isBlank(header)) {
+        if (StrUtil.isNotBlank(header) && KEY.equals(header)) {
             return true;
         }
         response.setCharacterEncoding("UTF-8");

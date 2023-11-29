@@ -1,6 +1,8 @@
 package com.jay.core.web.common;
 
 
+import com.jay.exception.CommonException;
+
 /**
  * 统一控制器
  * @author xxl
@@ -12,19 +14,19 @@ package com.jay.core.web.common;
  */
 public interface ICommonController<E,C,R,U,D> {
 
-    default E insert(C param){
+    default E insert(C param) throws Throwable {
         return null;
     }
 
-    default  E delete(D param) {
+    default  E delete(D id) {
         return null;
     }
 
-    default  E update(U param) {
+    default  E update(U param) throws Throwable {
         return null;
     }
 
-    default  E query(R param) {
+    default  E query(R param) throws CommonException {
         return null;
     }
 }

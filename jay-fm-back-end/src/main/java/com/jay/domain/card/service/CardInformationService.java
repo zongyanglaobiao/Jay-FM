@@ -1,6 +1,11 @@
 package com.jay.domain.card.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jay.domain.card.param.CardParam;
+import com.jay.domain.card.param.ModifyCardParam;
+import com.jay.domain.common.param.SearchParam;
+import com.jay.exception.CommonException;
 import com.jay.repository.entities.CardInformationEntity;
 
 /**
@@ -10,4 +15,11 @@ import com.jay.repository.entities.CardInformationEntity;
 */
 public interface CardInformationService extends IService<CardInformationEntity> {
 
+    String addCard(CardParam param) throws CommonException;
+
+    String deleteCard(String param);
+
+    String modifyCard(ModifyCardParam param) throws CommonException;
+
+    Page<CardInformationEntity> searchCard(SearchParam param) throws CommonException;
 }

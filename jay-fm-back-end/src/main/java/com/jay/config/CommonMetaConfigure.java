@@ -2,7 +2,6 @@ package com.jay.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +14,7 @@ public class CommonMetaConfigure implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-
+        //todo 入库增加
     }
 
     @Override
