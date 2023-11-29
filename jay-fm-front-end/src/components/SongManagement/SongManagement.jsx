@@ -1,5 +1,5 @@
 import {memo, useState} from "react";
-import {getRandomColor, getRandomId} from "../../utils/util";
+import {getRandomColor, getRandomId} from "../../utils/common/util";
 import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk} from "../../redux/thunk";

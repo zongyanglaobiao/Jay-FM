@@ -1,4 +1,4 @@
-import {generateSlice} from "../../utils/reduxUtil";
+import {generateSlice} from "../../utils/common/reduxUtil";
 import {addCardThunk} from "../thunk";
 /* ============================================ */
 /* =================总Slice文件================= */

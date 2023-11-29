@@ -20,6 +20,7 @@
   },
   "scripts": {
     "dev": "dotenv -e .local.single.env -e .env.dev react-scripts start",
+    "prod": "dotenv -e .local.single.env -e .env.prod react-scripts start",
     "build": "dotenv -e .env.prod react-scripts build"
   },
   "eslintConfig": {
