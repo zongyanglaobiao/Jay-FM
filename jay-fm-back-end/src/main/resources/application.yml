@@ -36,7 +36,7 @@ mybatis-plus:
       id-type: assign_id #全局主键使用雪花算法生成id
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #打印sql
-  mapper-locations: "classpath:**/mapping/*.xml"
+  mapper-locations: "classpath:mapping/*.xml"
 
 #=============================================================================
 #======================== swagger 配置  ======================================
