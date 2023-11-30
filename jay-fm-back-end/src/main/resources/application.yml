@@ -6,8 +6,7 @@ spring:
   main:
     lazy-initialization: false  #懒加载
   profiles:
-    active:
-      - dev
+    active: @spring.active@
   task:
     scheduling:
       pool:
@@ -23,6 +22,20 @@ spring:
       max-request-size: 35MB
       file-size-threshold: 0 #文件写入磁盘的阈值,设置为0，即上传就存储在服务器,如果是100则表示小于100会存储在内存
       max-file-size: 35MB   #单个文件上传的最大值
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      #用于连接本地数据库测试是否能正确运行
+      url: mpw:9Qfp+NeifxXpSX+ITv7MfpotR3g8L5fzQF00xnqyv7/kATd4iiFdgNIzfHCy9vzl6jDRKuWoLOaZ5zRledf5oLoRmWa5FeICyOdEGIZpNRBitIgMfGr0GXZj5uT8DkNqcu1vpe93/75TaQ+t2pIZVjXLq3gUg9GXW+LnmB25Rjg=
+      username: mpw:wEL7uPAuz4hbK+kwKBGeiQ==
+      password: mpw:OfGZyCjRemMXVySW/DkUWA==
+      hikari:
+          max-lifetime: 1800000  #连接的最大生命周期，表示一个连接在被关闭之前的最长使用时间。设置为30分钟（1800000毫秒）
+  data:
+      redis:
+          port: 6379
+          host: mpw:VlxmNwZH3XgRYqG/XKMXhg==
+          password: mpw:OfGZyCjRemMXVySW/DkUWA==
+          database: 0
 server:
   port: 8080
 
@@ -81,3 +94,5 @@ auth-path:
         - /**/v3/**
 
 save-path: @save.path@
+logging:
+    config: classpath:logback-spring.xml
