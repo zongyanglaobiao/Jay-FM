@@ -1,6 +1,6 @@
 import {memo, useState} from "react";
 import {getRandomColor, getRandomId} from "../../utils/common/util";
-import {Button, ColorPicker, Form, Input, Switch,} from 'antd';
+import {Button, ColorPicker, Flex, Form, Input, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk} from "../../redux/thunk";
 
@@ -17,18 +17,7 @@ const CardAddForm = memo(()=>{
 	const dispatch = useDispatch();
 	//submit form
 	const onFinish = (fromData) => {
-		const {cardName,description,cardBgColor,cardSwitch} = fromData
-		//判断是否选择了自定义颜色
-		let rgbStr = null
-		if (cardSwitch) {
-			const {r,g,b} = cardBgColor.metaColor
-			rgbStr = `rgb(${r},${g},${b})`
-		}
-		dispatch(addCardThunk({
-			cardBgColor:rgbStr || `rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()})`,
-			cardName:cardName,
-			description:description,
-		}))
+		console.log('$$$$$$$$$$$$',fromData)
 	}
 	return (
 		<div className="card-from-container playing">
@@ -45,8 +34,8 @@ const CardAddForm = memo(()=>{
 				}}
 				layout="horizontal"
 				style={{
-					height:'60%',
-					width:'60%',
+					height:'80%',
+					width:'80%',
 				}}
 				onFinish={onFinish}
 			>
@@ -58,19 +47,56 @@ const CardAddForm = memo(()=>{
 				]}>
 					<Input />
 				</Form.Item>
-				 {/*Item can automatically use the submit function only  if there is had name*/}
+				<Form.Item   name="creator" label="创建者" rules={[
+					{
+						required: true,
+						message: '流传你的名字',
+					},
+				]}>
+					<Input />
+				</Form.Item>
+				<Form.Item   name="email" label="邮箱" rules={[
+					{
+						required: true,
+						message: '邮箱不能为空',
+					},
+				]}>
+					<Input />
+				</Form.Item>
+				{/*Item can automatically use the submit function only  if there is had name*/}
 				<Form.Item label="描述" name="description">
 					<Input />
 				</Form.Item>
-				<Form.Item  label="颜色选择" name="cardSwitch" tooltip='不选默认随机颜色' valuePropName='checked'>
-					{/*cancel colorPicker disable*/}
-					<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
+				<Form.Item  label="能否删除/修改"  tooltip='默认任何人都可以删除/修改' >
+					<Space>
+						<Tooltip title="删除">
+							<Form.Item name='enableDelete' valuePropName='checked' initialValue={true}>
+								<Switch className='ml-2' defaultChecked  />
+							</Form.Item>
+						</Tooltip>
+						<Tooltip title="修改">
+							<Form.Item name='enableModify' valuePropName='checked' initialValue={true}>
+								<Switch className='ml-2' defaultChecked   />
+							</Form.Item>
+						</Tooltip>
+					</Space>
 				</Form.Item>
-				<Form.Item label="自定义颜色" name="cardBgColor"  >
-					<ColorPicker className='ml-2' disabled={colorPickerDisable}  />
+				<Form.Item  label="颜色选择" tooltip='不选默认随机颜色' >
+					<Space>
+						{/*cancel colorPicker disable*/}
+						<Form.Item>
+							<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
+						</Form.Item>
+						<Form.Item name='colorStr'>
+							<ColorPicker className='ml-2' disabled={colorPickerDisable}  />
+						</Form.Item>
+					</Space>
 				</Form.Item>
-				<Form.Item >
-					<Button htmlType="submit"  >添加</Button>
+				<Form.Item>
+					<Space>
+						<Button htmlType="submit"  type="primary"  className='bg-[#1677ff]' >添加</Button>
+						<Button  type="primary" danger={true} >删除</Button>
+					</Space>
 				</Form.Item>
 			</Form>
 		</div>
@@ -157,7 +183,7 @@ export default  function SongManagementUI() {
 	return (
 		<div className='folder-container'>
 			{
-				isShowTip ?
+				true ?
 					<div className='folder-container-card-from'>
 						<CardAddForm/>
 					</div>
