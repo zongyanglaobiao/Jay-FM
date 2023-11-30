@@ -1,7 +1,8 @@
 package com.jay.interceptor;
 
 
-import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jay.core.redis.RedisUtils;
 import com.jay.domain.ip.service.IPAddressService;
 import com.jay.repository.entities.IPAddressEntity;
@@ -35,8 +36,9 @@ public class IPAddressInterceptor implements HandlerInterceptor {
         String ip = ipUtils.getIp(request);
         String city = ipUtils.getCity(ip);
 
+        IPAddressEntity one = null;
         //因为请求可能过于频繁，所以先存储在redis中
-        if (!redisUtils.hasKey(ip)) {
+        if (!redisUtils.hasKey(ip) && ObjectUtil.isNull(one = service.getOne(Wrappers.<IPAddressEntity>lambdaQuery().eq(IPAddressEntity::getIp, ip)))) {
             log.info("ip = {},city = {}",ip,city);
             IPAddressEntity entity = new IPAddressEntity();
             entity.setIp(ip);
@@ -46,9 +48,19 @@ public class IPAddressInterceptor implements HandlerInterceptor {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
+        //走到这里标识redis存储过期
+        if (ObjectUtil.isNotNull(one)) {
+            redisUtils.opsForValue(ip,one);
+        }
+
         IPAddressEntity convert = redisUtils.get(ip, IPAddressEntity.class);
         if (convert.isDisable()) {
-            //被禁用IP
+            response.getWriter().write("""
+            <div style='width:  100%;height: 100%;display: flex;justify-content: center;align-items: center;'>
+            <h1>IP被禁止访问</h1>
+            </div>
+            """);
+            //IP被禁用
             return false;
         }
 

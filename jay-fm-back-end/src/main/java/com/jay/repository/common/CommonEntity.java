@@ -24,9 +24,9 @@ public class CommonEntity implements Serializable {
     private Boolean enableDelete;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /** 更新时间 */
     @TableField(fill = FieldFill.UPDATE)
-    private LocalDateTime updateTime;
+    private Date updateTime;
 }

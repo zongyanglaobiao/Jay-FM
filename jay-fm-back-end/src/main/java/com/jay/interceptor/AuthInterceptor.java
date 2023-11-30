@@ -23,8 +23,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (StrUtil.isNotBlank(header) && KEY.equals(header)) {
             return true;
         }
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
         response.getWriter().write("""
         <div style='width:  100%;height: 100%;display: flex;justify-content: center;align-items: center;'>
             <h1>拒绝访问</h1>

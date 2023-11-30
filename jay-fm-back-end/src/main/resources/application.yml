@@ -94,5 +94,3 @@ auth-path:
         - /**/v3/**
 
 save-path: @save.path@
-logging:
-    config: classpath:logback-spring.xml

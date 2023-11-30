@@ -51,5 +51,7 @@ create table if not exists ip_address(
     id varchar(255) primary key comment 'ID',
     ip varchar(255) comment 'IP地址',
     address varchar(255) comment '所属省份地址',
-    disable boolean default false comment '是否禁止访问'
+    disable boolean default false comment '是否禁止访问',
+    create_time  datetime comment '创建时间',
+    visits_count int comment '访问次数'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '存储IP信息';

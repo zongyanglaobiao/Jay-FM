@@ -1,5 +1,6 @@
 package com.jay.repository.entities;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -8,6 +9,8 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author xxl
@@ -20,16 +23,17 @@ public class IPAddressEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 4898447971915865335L;
 
-    @TableId
     private String id;
 
-    @TableField("ip")
     private String ip;
 
-    @TableField("address")
     private String address;
 
-    @TableField("disable")
     @Schema(description = "是否禁止访问")
     private boolean disable;
+
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    private Integer visitsCount;
 }

@@ -25,7 +25,7 @@ public class CardParam implements Serializable {
 
     private String textDescribe;
 
-    @NotBlank(message = "创建者")
+    @NotBlank(message = "创建者不能为空")
     private String creator;
 
     @Email(message = "邮箱格式不正确")
