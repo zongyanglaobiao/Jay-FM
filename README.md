@@ -20,11 +20,6 @@
 
 - 包名：`jay-fm-back-end`
 
-# 功能
-
-1. 上传歌曲
-
-
 ## 技术选型
 
 - SpringBoot
