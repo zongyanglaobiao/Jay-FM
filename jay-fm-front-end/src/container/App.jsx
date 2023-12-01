@@ -1,9 +1,9 @@
-import {Home} from "./home/Home";
+import {Home} from "./Pages/Home/Home";
 import {Provider} from "react-redux";
 import {store} from "../redux/store";
 import {HashRouter} from "react-router-dom";
 import React, {Suspense} from "react";
-import Loading from "./load/Loading";
+import Loading from "./Pages/Load/Loading";
 
 function App() {
   return (
@@ -17,5 +17,4 @@ function App() {
 
   );
 }
-
 export default App;

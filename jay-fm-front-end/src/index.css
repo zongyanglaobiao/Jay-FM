@@ -368,7 +368,6 @@
 .tip-card::before {
   content: '';
   position: absolute;
-  inset: 0;
   left: -5px;
   margin: auto;
   width: 200px;

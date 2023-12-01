@@ -1,5 +1,5 @@
 import {memo, useCallback, useEffect, useRef, useState} from "react";
-import {parseFlacFile} from "../../utils/songUtils";
+import {parseFlacFile} from "../../lib/songUtils";
 
 /**
  * 列表，使用组件缓存
@@ -149,7 +149,7 @@ export default  memo(()=>{
 			<div className='music-player'>
 				<div className='music-player-outer-ring '>
 					<div className='music-player-common'>
-						<img src={require('../../img/jay.jpg')} alt="jay" className='music-player-common'/>
+						<img src={require('../../assert/img/jay.jpg')} alt="jay" className='music-player-common'/>
 					</div>
 				</div>
 				<div className='music-player-song-info'>
@@ -157,7 +157,7 @@ export default  memo(()=>{
 					<h5>周杰伦</h5>
 				</div>
 				<div className='music-player-box'>
-					<audio loop src={require('../../song/周杰伦 - 晴天.flac')} ref={audio}>
+					<audio loop src={require('../../assert/song/周杰伦 - 晴天.flac')} ref={audio}>
 						当前浏览器不支持audio标签
 					</audio>
 					<svg    style={{transform: 'rotate(180deg)'}} t="1699195161909" className="music-player-play-button" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1748" width="200" height="200">

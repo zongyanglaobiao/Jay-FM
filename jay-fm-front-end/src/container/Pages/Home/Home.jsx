@@ -1,8 +1,8 @@
-import SideBarNav from "../../components/SidebarNav/SideBarNav";
-import '../../index.css'
-import SideBarNavIcon from "../../components/SidebarNav/SideBarNavIcon";
+import SideBarNav from "../../../components/SidebarNav/SideBarNav";
+import '../../../index.css'
+import SideBarNavIcon from "../../../components/SidebarNav/SideBarNavIcon";
 import {useRoutes} from "react-router-dom";
-import {routes} from "../../router";
+import {routes} from "../../../router";
 
 /**
  * 主页面，因为是SPA应用所以整个应用只有一个页面

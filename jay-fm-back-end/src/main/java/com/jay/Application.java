@@ -38,6 +38,7 @@ public class Application {
         }
     }
 
+
     @Bean
     public static IPUtils ipUtils() {
         return IPUtils.getInstance("/data/ip2region.xdb");

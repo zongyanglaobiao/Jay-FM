@@ -57,7 +57,7 @@ public class IPAddressInterceptor implements HandlerInterceptor {
         if (convert.isDisable()) {
             response.getWriter().write("""
             <div style='width:  100%;height: 100%;display: flex;justify-content: center;align-items: center;'>
-            <h1>IP被禁止访问</h1>
+            <h1>您的IP被禁止访问</h1>
             </div>
             """);
             //IP被禁用

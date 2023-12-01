@@ -1,23 +1,37 @@
 import {memo, useState} from "react";
-import {getRandomColor, getRandomId} from "../../utils/common/util";
-import {Button, ColorPicker, Flex, Form, Input, Space, Switch, Tooltip,} from 'antd';
+import {getRandomColor, getRandomId} from "../../lib/common/util";
+import {Button, ColorPicker, Form, Input, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk} from "../../redux/thunk";
 
-const CardInfo = memo(()=>{
-	return (
-		<div>
-			HELLO,REACT
-		</div>
-	)
-})
 
 const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 	const dispatch = useDispatch();
+
 	//submit form
 	const onFinish = (fromData) => {
-		console.log('$$$$$$$$$$$$',fromData)
+		const  {cardName,colorStr,creator,description,email,enableColorPicker,enableDelete,enableModify} = fromData
+
+		let str = null
+		//是否使用自定义颜色
+		if(enableColorPicker){
+			str = `${colorStr.metaColor.r},${colorStr.metaColor.g},${colorStr.metaColor.b}`
+		}else {
+			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
+		}
+
+		//添加卡片
+		dispatch(addCardThunk({
+			"cardName": cardName,
+			"color": str,
+			"textDescribe": description,
+			"creator": creator,
+			"email": email,
+			"enableModify": enableModify,
+			"enableDelete": enableDelete
+		}))
+
 	}
 	return (
 		<div className="card-from-container playing">
@@ -84,7 +98,7 @@ const CardAddForm = memo(()=>{
 				<Form.Item  label="颜色选择" tooltip='不选默认随机颜色' >
 					<Space>
 						{/*cancel colorPicker disable*/}
-						<Form.Item>
+						<Form.Item name='enableColorPicker' initialValue={false} valuePropName='checked'>
 							<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
 						</Form.Item>
 						<Form.Item name='colorStr'>
@@ -93,10 +107,7 @@ const CardAddForm = memo(()=>{
 					</Space>
 				</Form.Item>
 				<Form.Item>
-					<Space>
-						<Button htmlType="submit"  type="primary"  className='bg-[#1677ff]' >添加</Button>
-						<Button  type="primary" danger={true} >删除</Button>
-					</Space>
+					<Button htmlType="submit"  type="primary"  className='bg-[#1677ff]' >添加</Button>
 				</Form.Item>
 			</Form>
 		</div>
@@ -165,8 +176,10 @@ const SongCardUI = memo(({setTip})=>{
            {
 			   cardArray &&
 			   cardArray.map((item)=>{
+				   const split = item.color.split(',');
+
 				   return (
-					   <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:item.cardBgColor}}>
+					   <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
 						   <p className="tip ">{item.cardName}</p>
 						   <p className="second-text">{item.description}</p>
 					   </div>

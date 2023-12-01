@@ -1,4 +1,4 @@
-import {generateSlice} from "../../utils/common/reduxUtil";
+import {generateSlice} from "../../lib/common/reduxUtil";
 import {addCardThunk} from "../thunk";
 /* ============================================ */
 /* =================总Slice文件================= */
@@ -21,7 +21,7 @@ const toggleBgColorSlice = generateSlice('toggleBgColorSlice',createThemeObj(),{
 		if (payload) {
 			return createThemeObj(DARK,true)
 		}else {
-			return   createThemeObj()
+			return createThemeObj()
 		}
 	}
 })
@@ -35,17 +35,22 @@ const addCardSlice = generateSlice('addCardSlice'
 	,{}
 	,(builder)=>{
 	builder
-		.addCase(addCardThunk.fulfilled,(state,action)=>[...state,action.payload])
+		.addCase(addCardThunk.fulfilled,(state,action)=>{
+			console.log('thunk1',[...state])
+			console.log('thunk2',action.payload)
+			// return [...state,action.payload]
+			return []
+		})
 		.addCase(addCardThunk.rejected,()=>{
 		console.log('thunk rejected')
 	})
 });
 
+
 /**
  * 导出action
  */
 export const {toggleColor} = toggleBgColorSlice.actions
-
 /**
  * 导出reducer
  */

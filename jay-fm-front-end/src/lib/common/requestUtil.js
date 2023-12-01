@@ -28,9 +28,9 @@ export const  reqUtil = (url,data = {},config = {},type = GET) => {
 }
 
 export const reqGetAsync =  (url,data,config) => {
-	return reqUtil(url,data,config,GET).then((r) => r).catch(  (e)=>e)
+	return reqUtil(url,data,config,GET);
 }
 
 export const reqPostAsync = (url,data,config) => {
-	return reqUtil(url,data,config,POST).then((r) => r).catch(  (e)=>e)
+	return reqUtil(url,data,config,POST).then(r => r.data).catch(e => {throw  e});
 }
