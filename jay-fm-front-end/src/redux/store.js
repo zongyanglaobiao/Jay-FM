@@ -8,5 +8,10 @@ export const store = configureStore({
 		theme:toggleBgColorReducer,
 		cardArray:addCardReducer
 	},
-	devTools:composeWithDevTools()
+	devTools:composeWithDevTools(),
+	middleware : (getDefaultMiddleware) => {
+		return getDefaultMiddleware({
+			serializableCheck: false
+		})
+	}
 });

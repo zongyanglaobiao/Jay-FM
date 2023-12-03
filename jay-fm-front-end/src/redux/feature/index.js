@@ -1,5 +1,7 @@
 import {generateSlice} from "../../lib/common/reduxUtil";
-import {addCardThunk} from "../thunk";
+import {addCardThunk, Card_Request, getAllCardThunk} from "../thunk";
+import {CardInfo} from "../../constant/constant";
+import {useDispatch} from "react-redux";
 /* ============================================ */
 /* =================总Slice文件================= */
 /* ============================================ */
@@ -35,15 +37,12 @@ const addCardSlice = generateSlice('addCardSlice'
 	,{}
 	,(builder)=>{
 	builder
-		.addCase(addCardThunk.fulfilled,(state,action)=>{
-			console.log('thunk1',[...state])
-			console.log('thunk2',action.payload)
-			// return [...state,action.payload]
-			return []
+		.addCase(getAllCardThunk.fulfilled,(state,{payload})=>{
+			return payload.data.records.map(item=>{
+				const {cardName,color,textDescribe,creator,email,enableDelete,enableModify} = item
+				return new CardInfo(cardName,color,textDescribe,creator,email,enableDelete,enableModify);
+			})
 		})
-		.addCase(addCardThunk.rejected,()=>{
-		console.log('thunk rejected')
-	})
 });
 
 

@@ -1,9 +1,9 @@
-import {memo, useState} from "react";
+import {memo, useEffect, useState} from "react";
 import {getRandomColor, getRandomId} from "../../lib/common/util";
 import {Button, ColorPicker, Form, Input, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addCardThunk} from "../../redux/thunk";
-
+import {addCardThunk, getAllCardThunk} from "../../redux/thunk";
+import {CardInfo} from "../../constant/constant";
 
 const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
@@ -21,17 +21,9 @@ const CardAddForm = memo(()=>{
 			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
 		}
 
+		const card =  new CardInfo(cardName,str,description,creator,email,enableDelete,enableModify)
 		//添加卡片
-		dispatch(addCardThunk({
-			"cardName": cardName,
-			"color": str,
-			"textDescribe": description,
-			"creator": creator,
-			"email": email,
-			"enableModify": enableModify,
-			"enableDelete": enableDelete
-		}))
-
+		dispatch(addCardThunk(card,dispatch))
 	}
 	return (
 		<div className="card-from-container playing">
@@ -165,7 +157,18 @@ const TipUI = memo(()=>{
  * @type {React.NamedExoticComponent<object>}
  */
 const SongCardUI = memo(({setTip})=>{
+	const dispatch = useDispatch();
 	const cardArray = useSelector(state => state.cardArray);
+
+	useEffect(() => {
+		init()
+	}, []);
+
+	//初始化函数
+	function  init() {
+	  dispatch(getAllCardThunk())
+	}
+
     return (
         <div className="cards">
 			<div key={`${getRandomId()}`} onClick={()=>{setTip(val => !val)}} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
@@ -177,11 +180,10 @@ const SongCardUI = memo(({setTip})=>{
 			   cardArray &&
 			   cardArray.map((item)=>{
 				   const split = item.color.split(',');
-
 				   return (
 					   <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
-						   <p className="tip ">{item.cardName}</p>
-						   <p className="second-text">{item.description}</p>
+						   <p className="tip">{item.cardName}</p>
+						   <p className="second-text">{item.textDescribe}</p>
 					   </div>
 				   )
 			   })
