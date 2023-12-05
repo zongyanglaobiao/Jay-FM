@@ -6,8 +6,8 @@ const Folder = lazy(()=> import("../components/SongManagement/SongManagement"))
 const TestPage = lazy(()=> import("../container/Pages/Test/TestPage"))
 export const routes = [
     {
-        path: '/folder',
-        element: <Folder/>
+        path: '/manage',
+        element: <Folder/>,
     },
 	{
 		path: "/",

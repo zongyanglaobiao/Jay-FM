@@ -4,6 +4,7 @@ import {Button, ColorPicker, Form, Input, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk, getAllCardThunk} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
+import {Link, Outlet} from "react-router-dom";
 
 const CardAddForm = memo(()=>{
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
@@ -156,7 +157,7 @@ const TipUI = memo(()=>{
  * 专辑列表
  * @type {React.NamedExoticComponent<object>}
  */
-const SongCardUI = memo(({setTip})=>{
+const SongCardUI = memo(({setTip,setIsShowCardInfo})=>{
 	const dispatch = useDispatch();
 	const cardArray = useSelector(state => state.cardArray);
 
@@ -181,34 +182,48 @@ const SongCardUI = memo(({setTip})=>{
 			   cardArray.map((item)=>{
 				   const split = item.color.split(',');
 				   return (
-					   <div key={`${getRandomId()}`} className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
+					   <div key={`${getRandomId()}`} onClick={()=>{setIsShowCardInfo(val => !val)}}  className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
 						   <p className="tip">{item.cardName}</p>
 						   <p className="second-text">{item.textDescribe}</p>
 					   </div>
 				   )
 			   })
-			 }
-        </div>
-    )
+		   }
+		</div>
+	)
 })
+
+const  CardInfoUI = memo(()=>{
+	return (
+		<div>
+			CardInfo
+		</div>
+	)
+})
+
 
 export default  function SongManagementUI() {
 	const [isShowTip, setIsShowTip] = useState(false)
+	const [isShowCardInfo, setIsShowCardInfo] = useState(false)
 	//修改颜色
 	return (
 		<div className='folder-container'>
 			{
-				true ?
-					<div className='folder-container-card-from'>
-						<CardAddForm/>
-					</div>
+				//todo 三层子导航
+				isShowTip ?
+					isShowCardInfo ?
+						<CardInfoUI/>
 					:
+						<div className='folder-container-card-from'>
+							<CardAddForm/>
+						</div>
+				:
 					<div className='folder-container-tip'>
 						<TipUI/>
 					</div>
 			}
 			<div className='folder-container-song-card-box'>
-				<SongCardUI setTip={setIsShowTip}/>
+				<SongCardUI setTip={setIsShowTip} setIsShowCardInfo={setIsShowCardInfo}/>
 			</div>
 		</div>
 	)

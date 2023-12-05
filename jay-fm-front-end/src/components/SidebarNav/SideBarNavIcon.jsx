@@ -21,7 +21,7 @@ export default  function  NavIconUI({changTheme}) {
     return (
         <div className='side-nav-icon-container'>
             <div className='side-nav-icon-box'>
-                <NavLink to='/folder' className='side-bar-nav-link'>
+                <NavLink to='/manage' className='side-bar-nav-link'>
                     <div className='side-nav-icon-box-common'>
                         <svg t="1698910636976" className="side-bar-nav-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11890" width="200" height="200">
                             <path fill="#000000" d="M864 192h-384a128 128 0 0 0-128-128h-192a128 128 0 0 0-128 128v640a128 128 0 0 0 128 128h704a128 128 0 0 0 128-128V320a128 128 0 0 0-128-128z m64 640a64 64 0 0 1-64 64h-704a64 64 0 0 1-64-64V384h832v448z m-832-512V192a64 64 0 0 1 64-64h192a64 64 0 0 1 64 64v64h448a64 64 0 0 1 64 64h-832z"  p-id="11891"></path>
