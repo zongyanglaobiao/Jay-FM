@@ -157,7 +157,7 @@ const TipUI = memo(()=>{
  * 专辑列表
  * @type {React.NamedExoticComponent<object>}
  */
-const SongCardUI = memo(({setTip,setIsShowCardInfo})=>{
+const SongCardUI = memo(({setComponentType})=>{
 	const dispatch = useDispatch();
 	const cardArray = useSelector(state => state.cardArray);
 
@@ -172,7 +172,7 @@ const SongCardUI = memo(({setTip,setIsShowCardInfo})=>{
 
     return (
         <div className="cards">
-			<div key={`${getRandomId()}`} onClick={()=>{setTip(val => !val)}} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
+			<div key={`${getRandomId()}`} onClick={()=>{setComponentType(CARD_ADD_FORM)}} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
 				<svg   t="1699545937854" className="card-plus-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2314" width="200" height="200">
 					<path fill="#fff" d="  M902.343 570.936h-331.78v331.833c0 32.337-26.226 58.537-58.564 58.537-32.337 0-58.563-26.2-58.563-58.537V570.936H121.654c-32.364 0-58.564-26.2-58.564-58.538 0-32.325 26.203-58.537 58.564-58.537h331.78V122.028c0-32.325 26.226-58.537 58.563-58.537 32.338 0 58.564 26.213 58.564 58.537v331.834h331.78c32.364 0 58.565 26.211 58.565 58.535-0.001 32.337-26.2 58.536-58.565 58.536z"  p-id="2315"></path>
 				</svg>
@@ -182,7 +182,7 @@ const SongCardUI = memo(({setTip,setIsShowCardInfo})=>{
 			   cardArray.map((item)=>{
 				   const split = item.color.split(',');
 				   return (
-					   <div key={`${getRandomId()}`} onClick={()=>{setIsShowCardInfo(val => !val)}}  className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
+					   <div key={`${getRandomId()}`} onClick={()=>{setComponentType(CARD_INFO_UI)}}  className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
 						   <p className="tip">{item.cardName}</p>
 						   <p className="second-text">{item.textDescribe}</p>
 					   </div>
@@ -201,29 +201,46 @@ const  CardInfoUI = memo(()=>{
 	)
 })
 
+const CARD_INFO_UI = "CardInfoUI";
+const CARD_ADD_FORM = "CARD_ADD_FORM";
+const TIP_UI = "TIP_UI";
+
+function getComponent(type) {
+	switch (type) {
+	 	case CARD_INFO_UI:{
+			return <CardInfoUI/>
+		}
+		case CARD_ADD_FORM:{
+			return (
+				<div className='folder-container-card-from'>
+					<CardAddForm/>
+				</div>
+			)
+		}
+		case TIP_UI:{
+			return (
+				<div className='folder-container-tip'>
+					<TipUI/>
+				</div>
+			)
+		}
+		default :{
+			return  <></>
+		}
+	}
+}
 
 export default  function SongManagementUI() {
-	const [isShowTip, setIsShowTip] = useState(false)
-	const [isShowCardInfo, setIsShowCardInfo] = useState(false)
+	const [type, setComponentType] = useState(TIP_UI)
+	console.log('component',type)
 	//修改颜色
 	return (
 		<div className='folder-container'>
 			{
-				//todo 三层子导航
-				isShowTip ?
-					isShowCardInfo ?
-						<CardInfoUI/>
-					:
-						<div className='folder-container-card-from'>
-							<CardAddForm/>
-						</div>
-				:
-					<div className='folder-container-tip'>
-						<TipUI/>
-					</div>
+				getComponent(type)
 			}
 			<div className='folder-container-song-card-box'>
-				<SongCardUI setTip={setIsShowTip} setIsShowCardInfo={setIsShowCardInfo}/>
+				<SongCardUI setComponentType={setComponentType} />
 			</div>
 		</div>
 	)
