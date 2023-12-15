@@ -38,14 +38,14 @@ create table if not exists card_information(
     email varchar(255) comment '邮箱'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '卡片列表分类存储歌曲信息';
 
-create table if not exists song_card
+create table if not exists song_list
 (
     id      varchar(255) primary key comment 'ID',
     folder_id      varchar(255) comment '文件夹ID',
     song_id varchar(255) comment '歌曲ID'
 ) engine = innodb
   charset = utf8mb4
-  collate = utf8mb4_general_ci comment '中间表';
+  collate = utf8mb4_general_ci comment '歌曲列表';
 
 create table if not exists ip_address(
     id varchar(255) primary key comment 'ID',

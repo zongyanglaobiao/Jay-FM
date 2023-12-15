@@ -7,6 +7,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "antd": "^5.10.3",
     "axios": "^1.6.0",
+    "dnd-kit": "^0.0.0-2",
     "dotenv-cli": "^7.3.0",
     "nanoid": "^5.0.3",
     "pixiu-number-toolkit": "^1.2.2",

@@ -1,9 +1,9 @@
-package com.jay.domain.card.service;
+package com.jay.domain.card.info.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jay.domain.card.param.CardParam;
-import com.jay.domain.card.param.ModifyCardParam;
+import com.jay.domain.card.info.param.CardParam;
+import com.jay.domain.card.info.param.ModifyCardParam;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.CardInformationEntity;

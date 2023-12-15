@@ -27,3 +27,5 @@ export class CardInfo {
 		this.enableModify = enableModify
 	}
 }
+
+

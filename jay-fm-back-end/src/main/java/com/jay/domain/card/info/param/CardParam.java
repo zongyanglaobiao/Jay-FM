@@ -1,4 +1,4 @@
-package com.jay.domain.card.param;
+package com.jay.domain.card.info.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
