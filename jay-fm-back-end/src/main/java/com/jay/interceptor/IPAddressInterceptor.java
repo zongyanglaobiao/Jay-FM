@@ -10,6 +10,7 @@ import com.jay.utils.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,15 +22,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class IPAddressInterceptor implements HandlerInterceptor {
-    @Resource
-    private IPAddressService service;
 
-    @Resource
-    private IPUtils ipUtils;
+    private final IPAddressService service;
 
-    @Resource
-    private RedisUtils redisUtils;
+    private final IPUtils ipUtils;
+
+    private final RedisUtils redisUtils;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

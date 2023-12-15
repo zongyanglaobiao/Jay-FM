@@ -4,6 +4,7 @@ import com.jay.domain.ip.service.IPAddressService;
 import com.jay.repository.entities.IPAddressEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +24,11 @@ import java.util.concurrent.ConcurrentMap;
 @RestController
 @Slf4j
 @Tag(name = "测试控制器")
+@RequiredArgsConstructor
 public class TestController {
     public static final ConcurrentMap<String,SseEmitter> pool = new java.util.concurrent.ConcurrentHashMap<>();
 
-    @Resource
-    private IPAddressService  service;
+    private final IPAddressService  service;
     @GetMapping("/test")
     public List<IPAddressEntity> test(){
         return service.list();

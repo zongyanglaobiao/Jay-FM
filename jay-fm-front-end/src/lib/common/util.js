@@ -73,13 +73,10 @@ export function numberToEnglish(number,isCapitalized = true) {
     return word
 }
 
-
-
-/**
- * 打印
- * @param identifier 标识符，用于标识本次打印的内容
- * @param args 参数
- */
-export function log(identifier,...args) {
-	console.log(identifier,...args)
+export function checkObj(obj) {
+	if (isNullOrUndefined(obj)) {
+		//todo 返回什么
+		throw new Error('obj is null or undefined');
+	}
+	return obj;
 }

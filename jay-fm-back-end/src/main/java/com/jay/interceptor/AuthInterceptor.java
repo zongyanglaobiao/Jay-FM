@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
+
     private static final String AUTH = "auth";
     private static final String KEY = "24c5a289-afe1-4e49-8163-2ca146a27c46";
 
