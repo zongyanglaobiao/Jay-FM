@@ -1,18 +1,19 @@
 import {memo, useEffect, useRef, useState} from "react";
-import {checkObj, getRandomColor, getRandomId} from "../../lib/common/util";
+import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
 import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addCardThunk, getAllCardThunk} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
 
-
-/**
- * 增加列表组件
- * @type {React.NamedExoticComponent<object>}
- */
-const CardAddForm = memo(()=>{
+const ListForm = ({showButton,showColorSelect,item,getForm})=>{
+	useEffect(() => {
+		console.log('render list form',item)
+	});
+	const dispatch = useDispatch()
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
-	const dispatch = useDispatch();
+
+	//解构信息用于修改表单 modify form
+	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
 
 	//submit form
 	const onFinish = (fromData) => {
@@ -28,85 +29,109 @@ const CardAddForm = memo(()=>{
 
 		const card =  new CardInfo(cardName,str,description,creator,email,enableDelete,enableModify)
 		//添加卡片
-		dispatch(addCardThunk(card,dispatch))
+		dispatch(addCardThunk(card))
 	}
+
+	return (
+		<Form
+			preserve={false}
+			disabled={isNullOrUndefined(enableModify) ? false : enableModify}
+			  ref={getForm}
+			  labelCol={{
+				  span: 4,
+			  }}
+			  labelAlign='left'
+			  wrapperCol={{
+				  span: 14,
+			  }}
+			  layout="horizontal"
+			  style={{
+				  height:'80%',
+				  width:'80%',
+			  }}
+			  onFinish={onFinish}
+		>
+			<Form.Item initialValue={isNullOrUndefined(cardName) ? null : cardName}   name="cardName" label="列表名" rules={[
+				{
+					required: true,
+					message: '卡片名不能为空',
+				},
+			]}>
+				<Input />
+			</Form.Item>
+			<Form.Item initialValue={isNullOrUndefined(creator) ? null : creator}    name="creator" label="创建者" rules={[
+				{
+					required: true,
+					message: '流传你的名字',
+				},
+			]}>
+				<Input />
+			</Form.Item>
+			<Form.Item initialValue={isNullOrUndefined(email) ? null : email}  name="email" label="邮箱" rules={[
+				{
+					required: true,
+					message: '邮箱不能为空',
+				},
+			]}>
+				<Input   />
+			</Form.Item>
+			{/*Item can automatically use the submit function only  if there is had name*/}
+			<Form.Item initialValue={isNullOrUndefined(textDescribe) ? null : textDescribe} label="描述" name="description">
+				<Input  />
+			</Form.Item>
+			<Form.Item label="能否删除/修改"  tooltip='默认任何人都可以删除/修改' >
+				<Space>
+					<Tooltip title="删除">
+						<Form.Item name='enableDelete' valuePropName='checked' initialValue={isNullOrUndefined(enableDelete) ? true : enableDelete}>
+							<Switch className='ml-2' defaultChecked />
+						</Form.Item>
+					</Tooltip>
+					<Tooltip title="修改">
+						<Form.Item name='enableModify' valuePropName='checked' initialValue={isNullOrUndefined(enableModify) ? true : enableModify}>
+							<Switch className='ml-2' defaultChecked />
+						</Form.Item>
+					</Tooltip>
+				</Space>
+			</Form.Item>
+			<Form.Item  label="颜色选择"  tooltip='不选默认随机颜色' >
+				<Space>
+					{/*cancel colorPicker disable*/}
+					{
+						showColorSelect ?
+							<Form.Item name='enableColorPicker' initialValue={false} valuePropName='checked'>
+								<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
+							</Form.Item>
+							:
+							null
+					}
+					<Form.Item name='colorStr'>
+						<ColorPicker className='ml-2' disabled={isNullOrUndefined(color) ? colorPickerDisable : false}  />
+					</Form.Item>
+				</Space>
+			</Form.Item>
+			{
+				showButton ?
+					<Form.Item>
+						<Button htmlType="submit"  type="primary"  className='bg-[#1677ff]' >添加</Button>
+					</Form.Item>
+					:
+					null
+			}
+		</Form>
+	)
+}
+
+/**
+ * 增加列表组件
+ * @type {React.NamedExoticComponent<object>}
+ */
+const CardAddForm = memo(()=>{
 	return (
 		<div className="card-from-container playing">
 			<div className="wave"></div>
 			<div className="wave"></div>
 			<div className="wave"></div>
-			<Form
-				labelCol={{
-					span: 4,
-				}}
-				labelAlign='left'
-				wrapperCol={{
-					span: 14,
-				}}
-				layout="horizontal"
-				style={{
-					height:'80%',
-					width:'80%',
-				}}
-				onFinish={onFinish}
-			>
-				<Form.Item   name="cardName" label="卡片名字" rules={[
-					{
-						required: true,
-						message: '卡片名不能为空',
-					},
-				]}>
-					<Input />
-				</Form.Item>
-				<Form.Item   name="creator" label="创建者" rules={[
-					{
-						required: true,
-						message: '流传你的名字',
-					},
-				]}>
-					<Input />
-				</Form.Item>
-				<Form.Item   name="email" label="邮箱" rules={[
-					{
-						required: true,
-						message: '邮箱不能为空',
-					},
-				]}>
-					<Input />
-				</Form.Item>
-				{/*Item can automatically use the submit function only  if there is had name*/}
-				<Form.Item label="描述" name="description">
-					<Input />
-				</Form.Item>
-				<Form.Item  label="能否删除/修改"  tooltip='默认任何人都可以删除/修改' >
-					<Space>
-						<Tooltip title="删除">
-							<Form.Item name='enableDelete' valuePropName='checked' initialValue={true}>
-								<Switch className='ml-2' defaultChecked  />
-							</Form.Item>
-						</Tooltip>
-						<Tooltip title="修改">
-							<Form.Item name='enableModify' valuePropName='checked' initialValue={true}>
-								<Switch className='ml-2' defaultChecked   />
-							</Form.Item>
-						</Tooltip>
-					</Space>
-				</Form.Item>
-				<Form.Item  label="颜色选择" tooltip='不选默认随机颜色' >
-					<Space>
-						{/*cancel colorPicker disable*/}
-						<Form.Item name='enableColorPicker' initialValue={false} valuePropName='checked'>
-							<Switch className='ml-2'  onChange={(checked, event)=>setColorPickerDisable(!checked)}/>
-						</Form.Item>
-						<Form.Item name='colorStr'>
-							<ColorPicker className='ml-2' disabled={colorPickerDisable}  />
-						</Form.Item>
-					</Space>
-				</Form.Item>
-				<Form.Item>
-					<Button htmlType="submit"  type="primary"  className='bg-[#1677ff]' >添加</Button>
-				</Form.Item>
-			</Form>
+			<ListForm showButton={true} item={{}} showColorSelect={true}/>
 		</div>
 	)
 })
@@ -206,19 +231,21 @@ const SongCardUI = memo(({setComponentType})=>{
 		</div>
 	)
 })
+
 /**
  * 歌曲列表详细信息组件
  * @type {React.NamedExoticComponent<{readonly info?: *}>}
  */
 const CardInfoUI = memo(({item})=>{
-	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [modalText, setModalText] = useState('Content of the modal');
-	const showModal = () => {
-		setOpen(true);
-	};
+	//解构信息
+	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
+	let form = useRef();
+
 	const handleOk = () => {
+		console.log(form.getFieldsValue())
 		setModalText('The modal will be closed after two seconds');
 		setConfirmLoading(true);
 		setTimeout(() => {
@@ -226,6 +253,12 @@ const CardInfoUI = memo(({item})=>{
 			setConfirmLoading(false);
 		}, 2000);
 	};
+
+	const handleCancel = (e) => {
+		setOpen(false)
+		//阻止事件冒泡
+		e.stopPropagation()
+	}
 
 	let colors = null
 	try {
@@ -241,15 +274,20 @@ const CardInfoUI = memo(({item})=>{
 				 style={{
 					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`,
 				 }}
-				 onClick={()=> {setOpen(true)}}>
+				 onClick={()=> {
+					 setOpen(true)
+				 }}>
 				<Modal
-					title="Title"
+					title="列表编辑"
 					open={open}
-					onOk={handleOk}
 					confirmLoading={confirmLoading}
-					onCancel={()=>setOpen(false)}
+					onCancel={handleCancel}
+					onOk={handleOk}
+					destroyOnClose={true}
 				>
-					<p>{modalText}</p>
+					<div>
+						<ListForm showButton={false} item={item} getForm={(e)=>{form = e}} showColorSelect={false}/>
+					</div>
 				</Modal>
 				<div className='mt-2 mb-2'>
 					<p className='text-xl text-overflow'>{cardName}</p>
@@ -290,7 +328,6 @@ const TIP_UI = "TIP_UI";
  * @returns {JSX.Element}
  */
 function getComponent(type,obj = {}) {
-	console.log('type',type,obj)
 	switch (type) {
 		case CARD_DETAILS_UI:{
 			return (
