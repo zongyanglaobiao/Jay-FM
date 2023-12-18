@@ -73,6 +73,11 @@ export function numberToEnglish(number,isCapitalized = true) {
     return word
 }
 
+/**
+ * 检查对象是否为空，空则报错
+ * @param obj
+ * @returns {*}
+ */
 export function checkObj(obj) {
 	if (isNullOrUndefined(obj)) {
 		//todo 返回什么
@@ -80,3 +85,4 @@ export function checkObj(obj) {
 	}
 	return obj;
 }
+

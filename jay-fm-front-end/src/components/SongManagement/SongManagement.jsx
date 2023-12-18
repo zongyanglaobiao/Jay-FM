@@ -6,9 +6,6 @@ import {addCardThunk, getAllCardThunk} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
 
 const ListForm = ({showButton,showColorSelect,item,getForm})=>{
-	useEffect(() => {
-		console.log('render list form',item)
-	});
 	const dispatch = useDispatch()
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 
@@ -239,14 +236,12 @@ const SongCardUI = memo(({setComponentType})=>{
 const CardInfoUI = memo(({item})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [modalText, setModalText] = useState('Content of the modal');
 	//解构信息
 	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
 	let form = useRef();
 
 	const handleOk = () => {
 		console.log(form.getFieldsValue())
-		setModalText('The modal will be closed after two seconds');
 		setConfirmLoading(true);
 		setTimeout(() => {
 			setOpen(false);
