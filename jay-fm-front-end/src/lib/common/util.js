@@ -27,6 +27,15 @@ export function  isNullOrUndefined(obj) {
     return obj === null || obj === undefined;
 }
 
+export function  isNulls(...obj) {
+	for (const oj of obj) {
+		if (isNullOrUndefined(oj)){
+			return true
+		}
+	}
+	return  false
+}
+
 /**
  * 是否是一个对象类型 === {}
  * @param obj

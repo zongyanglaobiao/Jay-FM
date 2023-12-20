@@ -86,3 +86,8 @@ serviceAxios.interceptors.response.use(
 		return Promise.reject(message);
 	}
 );
+
+export function isSuccess(code) {
+	return code === 200
+}
+

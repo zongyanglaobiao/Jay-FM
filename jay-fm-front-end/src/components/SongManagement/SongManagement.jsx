@@ -1,11 +1,15 @@
-import {memo, useEffect, useRef, useState} from "react";
+import {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
 import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addCardThunk, getAllCardThunk} from "../../redux/thunk";
+import {addSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
+import {createAlertMsg, ERROR, httpStatus} from "../PopUp/PopUp";
+import {AlertContext} from "../../container/Pages/Home/Home";
+import {isSuccess} from "../../http/httpRequest";
 
-const ListForm = ({showButton,showColorSelect,item,getForm})=>{
+
+const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
 	const dispatch = useDispatch()
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 
@@ -13,40 +17,40 @@ const ListForm = ({showButton,showColorSelect,item,getForm})=>{
 	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
 
 	//submit form
-	const onFinish = (fromData) => {
-		const  {cardName,colorStr,creator,description,email,enableColorPicker,enableDelete,enableModify} = fromData
-
+	const onFinish = async (fromData) => {
+		const  {cardName,color,creator,textDescribe,email,enableColorPicker,enableDelete,enableModify} = fromData
 		let str = null
 		//是否使用自定义颜色
 		if(enableColorPicker){
-			str = `${colorStr.metaColor.r},${colorStr.metaColor.g},${colorStr.metaColor.b}`
+			str = `${color.metaColor.r},${color.metaColor.g},${color.metaColor.b}`
 		}else {
 			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
 		}
 
-		const card =  new CardInfo(cardName,str,description,creator,email,enableDelete,enableModify)
+		const card =  new CardInfo(cardName,str,textDescribe,creator,email,enableDelete,enableModify)
+		await addSongList(card)
 		//添加卡片
-		dispatch(addCardThunk(card))
+		dispatch(getAllCardThunk())
 	}
 
 	return (
 		<Form
 			preserve={false}
-			disabled={isNullOrUndefined(enableModify) ? false : enableModify}
-			  ref={getForm}
-			  labelCol={{
-				  span: 4,
-			  }}
-			  labelAlign='left'
-			  wrapperCol={{
-				  span: 14,
-			  }}
-			  layout="horizontal"
-			  style={{
-				  height:'80%',
-				  width:'80%',
-			  }}
-			  onFinish={onFinish}
+			disabled={isNullOrUndefined(enableModify) ? false : !enableModify}
+			ref={getForm}
+			labelCol={{
+				span: 4,
+			}}
+			labelAlign='left'
+			wrapperCol={{
+				span: 14,
+			}}
+			layout="horizontal"
+			style={{
+				height:'80%',
+				width:'80%',
+			}}
+			onFinish={onFinish}
 		>
 			<Form.Item initialValue={isNullOrUndefined(cardName) ? null : cardName}   name="cardName" label="列表名" rules={[
 				{
@@ -73,7 +77,7 @@ const ListForm = ({showButton,showColorSelect,item,getForm})=>{
 				<Input   />
 			</Form.Item>
 			{/*Item can automatically use the submit function only  if there is had name*/}
-			<Form.Item initialValue={isNullOrUndefined(textDescribe) ? null : textDescribe} label="描述" name="description">
+			<Form.Item initialValue={isNullOrUndefined(textDescribe) ? null : textDescribe} label="描述" name="textDescribe">
 				<Input  />
 			</Form.Item>
 			<Form.Item label="能否删除/修改"  tooltip='默认任何人都可以删除/修改' >
@@ -101,8 +105,8 @@ const ListForm = ({showButton,showColorSelect,item,getForm})=>{
 							:
 							null
 					}
-					<Form.Item name='colorStr'>
-						<ColorPicker className='ml-2' disabled={isNullOrUndefined(color) ? colorPickerDisable : false}  />
+					<Form.Item name='color'>
+						<ColorPicker className='ml-2' disabled={isNullOrUndefined(color) ? colorPickerDisable : !enableModify}  />
 					</Form.Item>
 				</Space>
 			</Form.Item>
@@ -116,7 +120,7 @@ const ListForm = ({showButton,showColorSelect,item,getForm})=>{
 			}
 		</Form>
 	)
-}
+})
 
 /**
  * 增加列表组件
@@ -236,17 +240,49 @@ const SongCardUI = memo(({setComponentType})=>{
 const CardInfoUI = memo(({item})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
+	const dispatch = useDispatch();
+	const setAlert = useContext(AlertContext)
 	//解构信息
-	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
+	const {cardName,color,textDescribe,id,enableModify} = item
 	let form = useRef();
 
-	const handleOk = () => {
-		console.log(form.getFieldsValue())
+	useEffect(() => {
+		console.log('111111')
+		console.log('update',open)
+	});
+
+	const handleOk = async () => {
+		//不允许修改
+		if (!enableModify) {
+			//todo setState失效
+			setOpen(false)
+			// setAlert(createAlertMsg(ERROR, '作者已设置不允许修改'))
+			return
+		}
+
+
+	/*	//查看颜色是否替换
+		let _color = color
+		if (!isNullOrUndefined(form.getFieldsValue().color)) {
+			const {r,g,b} = form.getFieldsValue().color.metaColor
+			_color = `${r},${g},${b}`
+		}
+
+		//加载动画
 		setConfirmLoading(true);
-		setTimeout(() => {
-			setOpen(false);
-			setConfirmLoading(false);
-		}, 2000);
+		const resp = await modifySongList({...form.getFieldsValue(),color:_color,id})
+		const {code} = resp
+
+		//请求成功则更新音乐列表
+		if (isSuccess(code)) {
+			dispatch(getAllCardThunk())
+		}
+		//关闭加载动画和弹窗
+		setOpen(false);
+		setConfirmLoading(false);
+
+		//弹窗提示
+		setAlert(httpStatus(resp))*/
 	};
 
 	const handleCancel = (e) => {

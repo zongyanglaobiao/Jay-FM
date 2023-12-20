@@ -1,4 +1,8 @@
+/**
+ * 音乐列表类
+ */
 export class CardInfo {
+	id
 	cardName
 	color
 	textDescribe
@@ -9,6 +13,7 @@ export class CardInfo {
 
 	/**
 	 * 构造函数
+	 * @param id
 	 * @param cardName
 	 * @param color
 	 * @param textDescribe
@@ -17,7 +22,8 @@ export class CardInfo {
 	 * @param enableDelete
 	 * @param enableModify
 	 */
-	constructor(cardName, color, textDescribe, creator, email, enableDelete, enableModify) {
+	constructor(id,cardName, color, textDescribe, creator, email, enableDelete, enableModify) {
+		this.id = id
 		this.cardName = cardName
 		this.color = color
 		this.textDescribe = textDescribe
@@ -27,5 +33,8 @@ export class CardInfo {
 		this.enableModify = enableModify
 	}
 }
+
+
+
 
 

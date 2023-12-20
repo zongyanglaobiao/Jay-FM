@@ -1,5 +1,5 @@
 import {generateSlice} from "../../lib/common/reduxUtil";
-import {getAllCardThunk} from "../thunk";
+import {getAllCardThunk, modifyCardThunk} from "../thunk";
 import {CardInfo} from "../../constant/constant";
 /* ============================================ */
 /* =================总Slice文件================= */
@@ -31,15 +31,16 @@ const toggleBgColorSlice = generateSlice('toggleBgColorSlice',createThemeObj(),{
  * 添加卡片
  * @type {Slice<*, {}, *>}
  */
-const addCardSlice = generateSlice('addCardSlice'
+const cardSlice = generateSlice('cardSlice'
 	,[]
 	,{}
 	,(builder)=>{
 	builder
+		//获取所有列表
 		.addCase(getAllCardThunk.fulfilled,(state,{payload})=>{
 			return payload.data.records.map(item=>{
-				const {cardName,color,textDescribe,creator,email,enableDelete,enableModify} = item
-				return new CardInfo(cardName,color,textDescribe,creator,email,enableDelete,enableModify);
+				const {cardName,color,textDescribe,creator,email,enableDelete,enableModify,id} = item
+				return new CardInfo(id,cardName,color,textDescribe,creator,email,enableDelete,enableModify);
 			})
 		})
 });
@@ -52,6 +53,6 @@ export const {toggleColor} = toggleBgColorSlice.actions
 /**
  * 导出reducer
  */
-export const addCardReducer = addCardSlice.reducer
+export const songListReducer = cardSlice.reducer
 export const toggleBgColorReducer = toggleBgColorSlice.reducer
 

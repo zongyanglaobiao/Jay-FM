@@ -6,20 +6,18 @@ import {serviceAxios} from "../../http/httpRequest";
 /* ======================================================= */
 
 /**
- * 发起请求添加卡片
+ * 发起请求添加音乐列表
  */
-export  const addCardThunk =  createAsyncThunk('addCard',async (param, {dispatch})=>{
-	// const resp = await reqPostAsync("/card/add", param, globalConfig)
-	await serviceAxios({
+export  const addSongList =   (param) => {
+	return  serviceAxios({
 		method: 'post',
 		url: '/card/add',
 		data: param
 	})
-	dispatch(getAllCardThunk())
-})
+}
 
 /**
- * 发起请求获取所有卡片
+ * 发起请求获取所有列表
  */
 export  const getAllCardThunk =  createAsyncThunk('getCard',async ()=>{
 	return await serviceAxios({
@@ -28,5 +26,13 @@ export  const getAllCardThunk =  createAsyncThunk('getCard',async ()=>{
 		data: {}
 	})
 })
+
+export  const modifySongList = (param) => {
+	return  serviceAxios({
+		method: 'post',
+		url: '/card/modify',
+		data: param
+	})
+}
 
 
