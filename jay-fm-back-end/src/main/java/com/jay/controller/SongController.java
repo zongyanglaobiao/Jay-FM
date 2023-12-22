@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author xxl
  * @since 2023/11/19
@@ -33,7 +35,14 @@ public class SongController  {
     @PostMapping(value = "/addCardInfo")
     @Operation(summary = "上传歌曲")
     @ApiOperationSupport(order = 1)
-    public RespEntity<String> addCardInfo(@ModelAttribute @Validated UploadSongParam param) throws Throwable {
+    public RespEntity<String> addCardInfo(@ModelAttribute @Validated UploadSongParam param)  {
+        return RespEntity.success(service.uploadSong(param));
+    }
+
+    @PostMapping(value = "/addCardInfo")
+    @Operation(summary = "上传歌曲")
+    @ApiOperationSupport(order = 1)
+    public RespEntity<List<String>> addCardInfo(@ModelAttribute @Validated List<UploadSongParam> param)  {
         return RespEntity.success(service.uploadSong(param));
     }
 

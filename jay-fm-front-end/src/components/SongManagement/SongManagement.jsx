@@ -4,8 +4,8 @@ import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from '
 import {useDispatch, useSelector} from "react-redux";
 import {addSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
-import {createAlertMsg, ERROR, httpStatus} from "../PopUp/PopUp";
 import {AlertContext} from "../../container/Pages/Home/Home";
+import {createAlertMsg, ERROR, httpStatus} from "../PopUp/PopUp";
 import {isSuccess} from "../../http/httpRequest";
 
 
@@ -241,6 +241,7 @@ const CardInfoUI = memo(({item})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false)
 	const setAlert = useContext(AlertContext)
 	//解构信息
 	const {cardName,color,textDescribe,id,enableModify} = item
@@ -251,17 +252,16 @@ const CardInfoUI = memo(({item})=>{
 		console.log('update',open)
 	});
 
+
+	//必须有耗时操作，否则无法触发state
 	const handleOk = async () => {
 		//不允许修改
 		if (!enableModify) {
-			//todo setState失效
-			setOpen(false)
-			// setAlert(createAlertMsg(ERROR, '作者已设置不允许修改'))
+			setAlert(createAlertMsg(ERROR, '作者已设置不允许修改'))
 			return
 		}
 
-
-	/*	//查看颜色是否替换
+		//查看颜色是否替换
 		let _color = color
 		if (!isNullOrUndefined(form.getFieldsValue().color)) {
 			const {r,g,b} = form.getFieldsValue().color.metaColor
@@ -282,8 +282,10 @@ const CardInfoUI = memo(({item})=>{
 		setConfirmLoading(false);
 
 		//弹窗提示
-		setAlert(httpStatus(resp))*/
+		setAlert(httpStatus(resp))
 	};
+
+
 
 	const handleCancel = (e) => {
 		setOpen(false)
@@ -299,9 +301,9 @@ const CardInfoUI = memo(({item})=>{
 	}
 
 	return (
-		<div className='w-[70rem] h-[40rem] rounded-2xl bg-white shadow-[0_0_10px_rgba(0,0,0,0.25)] flex flex-col'>
+		<div className='w-[70rem] h-[40rem] rounded-2xl bg-white shadow-[0_0_10px_rgba(0,0,0,0.25)] flex flex-col relative'>
 			{/*卡片头部样式部分*/}
-			<div className="w-full rounded-t-2xl text-center flex-col layout-center hover:shadow-[0_0_10px_rgba(0,0,0,0.25)]"
+			<div className="w-full rounded-t-2xl text-center flex-col layout-center hover:shadow-[0_0_10px_rgba(0,0,0,0.25)] "
 				 style={{
 					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`,
 				 }}
@@ -315,6 +317,15 @@ const CardInfoUI = memo(({item})=>{
 					onCancel={handleCancel}
 					onOk={handleOk}
 					destroyOnClose={true}
+					cancelText='取消'
+					okText='提交'
+					footer={(_, { OkBtn, CancelBtn })=>(
+						<>
+							<Button loading={loading} danger >删除音乐列表</Button>
+							<CancelBtn />
+							<OkBtn />
+						</>
+					)}
 				>
 					<div>
 						<ListForm showButton={false} item={item} getForm={(e)=>{form = e}} showColorSelect={false}/>
@@ -326,7 +337,7 @@ const CardInfoUI = memo(({item})=>{
 				</div>
 			</div>
 			{/*歌曲部分列表*/}
-			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll'>
+			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
 				{
 					(()=>{
 						const  arr =[]
@@ -343,6 +354,17 @@ const CardInfoUI = memo(({item})=>{
 						return arr
 					})()
 				}
+			</div>
+			{/*歌曲功能部分*/}
+			<div className='bg-amber-200 absolute bottom-0 w-full h-[4rem] rounded-b-2xl'
+				 style={{
+					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`
+			}}>
+				{/*
+					todo 排序
+					todo 上传文件
+					todo 删除
+				*/}
 			</div>
 		</div>
 	)
