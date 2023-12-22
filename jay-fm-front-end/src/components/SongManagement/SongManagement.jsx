@@ -7,10 +7,10 @@ import {CardInfo} from "../../constant/constant";
 import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
-import {createHashRouter, useNavigate, useNavigation} from "react-router-dom";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
+	const setAlert = useContext(AlertContext)
 	const dispatch = useDispatch()
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 
@@ -28,10 +28,14 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
 			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
 		}
 
-		const card =  new CardInfo(cardName,str,textDescribe,creator,email,enableDelete,enableModify)
-		await addSongList(card)
-		//添加卡片
-		dispatch(getAllCardThunk())
+		const card =  new CardInfo(null,cardName,str,textDescribe,creator,email,enableDelete,enableModify)
+		const resp = await addSongList(card)
+		setAlert(httpStatus(resp))
+
+		if (isSuccess(resp.code)) {
+			//刷新
+			//路由跳转带参数直接返回到列表页
+		}
 	}
 
 	return (
@@ -194,7 +198,7 @@ const SongCardUI = memo(({setComponentType})=>{
 
 	useEffect(() => {
 		init()
-	}, []);
+	});
 
 	//初始化函数
 	function  init() {
@@ -270,7 +274,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 		//请求成功则更新音乐列表
 		if (isSuccess(code)) {
-			dispatch(getAllCardThunk())
+			setComponentType(initValue)
 		}
 		//关闭加载动画和弹窗
 		setOpen(false);
@@ -375,7 +379,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			<div className='bg-amber-200 absolute bottom-0 w-full h-[4rem] rounded-b-2xl'
 				 style={{
 					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`
-			}}>
+				 }}>
 				{/*
 					todo 排序
 					todo 上传文件

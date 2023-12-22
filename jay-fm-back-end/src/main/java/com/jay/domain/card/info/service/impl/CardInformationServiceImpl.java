@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CardInformationServiceImpl extends ServiceImpl<CardInformationMapper, CardInformationEntity> implements CardInformationService {
 
+    //todo 只要是未达到目的的皆是500
+
     @Override
     public String addCard(CardParam param) throws CommonException {
         CardInformationEntity entity = this.getOne(Wrappers.<CardInformationEntity>lambdaQuery().eq(CardInformationEntity::getCardName, param.getCardName()));
