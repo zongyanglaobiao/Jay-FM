@@ -3,7 +3,7 @@ import '../../../index.css'
 import SideBarNavIcon from "../../../components/SidebarNav/SideBarNavIcon";
 import {useRoutes} from "react-router-dom";
 import {routes} from "../../../router";
-import PopUp from "../../../components/PopUp/PopUp";
+import PromptBox from "../../../components/PromptBox/PromptBox";
 import React, {createContext, useState} from "react";
 
 /**
@@ -24,7 +24,7 @@ export  function Home() {
             </nav>
             <main className='home-main'>
 				<AlertContext.Provider value={setAlert}>
-					<PopUp alertMsg={alertMsg}/>
+					<PromptBox alertMsg={alertMsg}/>
 					<div className='home-container'>
 						{router}
 					</div>

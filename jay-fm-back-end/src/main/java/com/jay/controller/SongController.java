@@ -39,10 +39,10 @@ public class SongController  {
         return RespEntity.success(service.uploadSong(param));
     }
 
-    @PostMapping(value = "/addCardInfo")
+    @PostMapping(value = "/addCardInfos")
     @Operation(summary = "上传歌曲")
     @ApiOperationSupport(order = 1)
-    public RespEntity<List<String>> addCardInfo(@ModelAttribute @Validated List<UploadSongParam> param)  {
+    public RespEntity<List<String>> addCardInfos(@ModelAttribute @Validated List<UploadSongParam> param)  {
         return RespEntity.success(service.uploadSong(param));
     }
 

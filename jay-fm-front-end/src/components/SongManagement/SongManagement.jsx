@@ -2,11 +2,12 @@ import {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
 import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
+import {addSongList, deleteSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
 import {AlertContext} from "../../container/Pages/Home/Home";
-import {createAlertMsg, ERROR, httpStatus} from "../PopUp/PopUp";
+import {createAlertMsg, ERROR, httpStatus} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
+import {createHashRouter, useNavigate, useNavigation} from "react-router-dom";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
@@ -221,7 +222,7 @@ const SongCardUI = memo(({setComponentType})=>{
 				   const split = item.color.split(',');
 				   return (
 					   <div key={`${getRandomId()}`} onClick={()=>{setComponentType(()=>{
-						   return {type:CARD_DETAILS_UI,obj:item}
+						   return {type:CARD_DETAILS_UI,obj:{item,setComponentType}}
 					   })}}  className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
 						   <p className="tip">{item.cardName}</p>
 						   <p className="second-text">{item.textDescribe}</p>
@@ -237,21 +238,15 @@ const SongCardUI = memo(({setComponentType})=>{
  * 歌曲列表详细信息组件
  * @type {React.NamedExoticComponent<{readonly info?: *}>}
  */
-const CardInfoUI = memo(({item})=>{
+const CardInfoUI = memo(({item,setComponentType})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false)
 	const setAlert = useContext(AlertContext)
 	//解构信息
-	const {cardName,color,textDescribe,id,enableModify} = item
+	const {cardName,color,textDescribe,id,enableModify,enableDelete} = item
 	let form = useRef();
-
-	useEffect(() => {
-		console.log('111111')
-		console.log('update',open)
-	});
-
 
 	//必须有耗时操作，否则无法触发state
 	const handleOk = async () => {
@@ -285,7 +280,28 @@ const CardInfoUI = memo(({item})=>{
 		setAlert(httpStatus(resp))
 	};
 
+	//删除音乐列表
+	const handleDelete = () => {
+		if (!enableDelete) {
+			setAlert(createAlertMsg(ERROR, '作者已设置不允许删除'))
+			return
+		}
 
+		//提示框
+		Modal.error({
+			title: '注意',
+			content: '你确定删除音乐列表吗?',
+			async onOk() {
+				setLoading(true)
+				const resp = await deleteSongList({id})
+				setAlert(httpStatus(resp))
+				setLoading(false)
+				setOpen(false)
+				//不管成功是否都会回到首页
+				setComponentType(initValue)
+			}
+		});
+	}
 
 	const handleCancel = (e) => {
 		setOpen(false)
@@ -321,7 +337,7 @@ const CardInfoUI = memo(({item})=>{
 					okText='提交'
 					footer={(_, { OkBtn, CancelBtn })=>(
 						<>
-							<Button loading={loading} danger >删除音乐列表</Button>
+							<Button loading={loading} danger onClick={handleDelete}>删除音乐列表</Button>
 							<CancelBtn />
 							<OkBtn />
 						</>
@@ -383,9 +399,10 @@ const TIP_UI = "TIP_UI";
 function getComponent(type,obj = {}) {
 	switch (type) {
 		case CARD_DETAILS_UI:{
+			const {item,setComponentType} = obj
 			return (
 				<div className='w-full h-full mr-40 layout-center'>
-					<CardInfoUI item={obj}/>
+					<CardInfoUI item={item} setComponentType={setComponentType}/>
 				</div>
 			)
 		}
@@ -414,8 +431,9 @@ function getComponent(type,obj = {}) {
  * @returns {JSX.Element}
  * @constructor
  */
+const initValue= {type:TIP_UI,obj:{}}
+
 export default  function SongManagementUI() {
-	const initValue= {type:TIP_UI,obj:{}}
 	const [data, setComponentType] = useState(initValue)
 	const {type,obj} = data
 
