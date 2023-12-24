@@ -23,12 +23,15 @@ import com.jay.repository.entities.SongInformationEntity;
 import com.jay.repository.mapper.SongInformationMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static cn.hutool.core.io.FileMagicNumber.MP3;
 
@@ -39,6 +42,7 @@ import static cn.hutool.core.io.FileMagicNumber.MP3;
  * @description:
  */
 @Service
+@Slf4j
 public class SongInformationServiceImpl extends ServiceImpl<SongInformationMapper, SongInformationEntity> implements SongInformationService {
 
     @Value("${save-path}")
@@ -47,27 +51,38 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     @Resource
     private HttpServletResponse response;
     @Override
-    public String uploadSong(UploadSongParam param) throws Throwable {
-        SongInformationEntity one = this.getOne(Wrappers.<SongInformationEntity>lambdaQuery().eq(SongInformationEntity::getSongName, param.getSongName()));
-        AssertUtils.isNull(one,"歌曲已存在");
+    public String uploadSong(UploadSongParam param)  {
+        String fileName = null;
+        try {
+            SongInformationEntity one = this.getOne(Wrappers.<SongInformationEntity>lambdaQuery().eq(SongInformationEntity::getSongName, param.getSongName()));
+            AssertUtils.isNull(one,"歌曲已存在");
 
-        //保存歌曲
-        MultipartFile file = param.getSongFile();
-        String originalFilename = file.getOriginalFilename();
+            //保存歌曲
+            MultipartFile file = param.getSongFile();
+            fileName = file.getOriginalFilename();
 
-        //检查歌曲格式
-        check(originalFilename,MP3);
+            //检查歌曲格式
+            check(fileName,MP3);
 
-        //保存歌曲
-        String path = String.format("%s%s", songSavePath,originalFilename);
-        String downloadPath = FileUtils.upload(file.getInputStream(),path);
-        String uuid = UUID.randomUUID().toString();
-        SongInformationEntity convert = Convert.convert(SongInformationEntity.class, param);
-        convert.setSize(String.valueOf(file.getSize()));
-        convert.setDownloadId(uuid);
-        convert.setSavePath(downloadPath);
-        this.save(convert);
-        return uuid;
+            //保存歌曲
+            String path = String.format("%s%s", songSavePath,fileName);
+            String downloadPath = FileUtils.upload(file.getInputStream(),path);
+            String uuid = UUID.randomUUID().toString();
+            SongInformationEntity convert = Convert.convert(SongInformationEntity.class, param);
+            convert.setSize(String.valueOf(file.getSize()));
+            convert.setDownloadId(uuid);
+            convert.setSavePath(downloadPath);
+            this.save(convert);
+            return uuid;
+        } catch (Throwable e) {
+            log.error("SongInformationServiceImpl.uploadSong抛出异常",e);
+            return String.format("上传失败,文件名 = %s",fileName);
+        }
+    }
+
+    @Override
+    public List<String> uploadSong(List<UploadSongParam> param)  {
+        return param.parallelStream().map(this::uploadSong).toList();
     }
 
 
@@ -104,10 +119,10 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
-    public String deleteSong(String songId) {
+    public String deleteSong(String songId) throws CommonException {
         SongInformationEntity entity = this.getById(songId);
         if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
-            return "不能被删除";
+            throw new  CommonException("不能被删除");
         }
         return String.valueOf(this.removeById(songId));
     }
@@ -118,7 +133,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
         AssertUtils.notNull(entity, "歌曲不存在");
 
         if (!entity.getEnableModify()) {
-            return "不允许修改";
+           throw new  CommonException("不能被修改");
         }
         BeanUtil.copyProperties(param, entity);
         this.updateById(entity);

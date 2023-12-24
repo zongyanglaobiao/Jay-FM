@@ -9,6 +9,7 @@ import com.jay.repository.entities.SongInformationEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author: xxl
@@ -17,13 +18,14 @@ import java.io.IOException;
  */
 public interface SongInformationService extends IService<SongInformationEntity> {
 
-    String uploadSong(UploadSongParam param) throws Throwable;
+    String uploadSong(UploadSongParam param) ;
+    List<String> uploadSong(List<UploadSongParam> param) ;
 
     void downloadSong(String downloadId) throws CommonException;
 
     Page<SongInformationEntity> search(SearchParam param) throws CommonException;
 
-    String deleteSong(String songId);
+    String deleteSong(String songId) throws CommonException;
 
     String modifySong(ModifySongParam param) throws CommonException;
 }

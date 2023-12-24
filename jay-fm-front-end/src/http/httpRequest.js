@@ -21,7 +21,7 @@ serviceAxios.interceptors.request.use(
 	(config) => {
 		config.headers = {'Content-Type': 'application/json',...config.headers, ...globalConfig.headers};
 		//Post是data
-		//get是param
+		//get是params
 		return config;
 	},
 	(error) => {

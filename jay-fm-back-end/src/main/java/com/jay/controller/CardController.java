@@ -15,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author xxl
@@ -41,11 +38,11 @@ public class CardController implements ICommonController<RespEntity<?>, CardPara
     }
 
     @Override
-    @PostMapping(value = "/delete")
+    @GetMapping(value = "/delete")
     @Operation(summary = "删除歌曲卡片")
     @ApiOperationSupport(order = 3)
-    public RespEntity<String> delete(String param) {
-        return RespEntity.success(cardService.deleteCard(param));
+    public RespEntity<String> delete(@RequestParam("id") String id) throws CommonException {
+        return RespEntity.success(cardService.deleteCard(id));
     }
 
     @Override

@@ -18,7 +18,7 @@ public interface ICommonController<E,C,R,U,D> {
         return null;
     }
 
-    default  E delete(D id) {
+    default  E delete(D id) throws CommonException {
         return null;
     }
 

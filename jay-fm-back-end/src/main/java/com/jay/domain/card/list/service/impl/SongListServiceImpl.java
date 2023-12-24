@@ -15,11 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class SongListServiceImpl extends ServiceImpl<SongListMapper, SongListEntity>
     implements SongListService {
-
-    @Override
-    public LambdaQueryWrapper<SongListEntity> getWrapper() {
-        return new LambdaQueryWrapper<>();
-    }
 }
 
 

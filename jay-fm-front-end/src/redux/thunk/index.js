@@ -27,6 +27,11 @@ export  const getAllCardThunk =  createAsyncThunk('getCard',async ()=>{
 	})
 })
 
+/**
+ * 修改卡片
+ * @param param
+ * @returns {*}
+ */
 export  const modifySongList = (param) => {
 	return  serviceAxios({
 		method: 'post',
@@ -35,4 +40,10 @@ export  const modifySongList = (param) => {
 	})
 }
 
-
+export const deleteSongList = (param) => {
+	return serviceAxios({
+		method: 'get',
+		url: '/card/delete',
+		params: param
+	})
+}
