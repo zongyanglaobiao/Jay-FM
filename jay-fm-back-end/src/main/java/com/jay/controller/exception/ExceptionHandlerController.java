@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 @Slf4j
-public class ExceptionController {
+public class ExceptionHandlerController {
     /**
      * 捕捉spring boot容器所有的未知异常
      */
@@ -24,7 +24,12 @@ public class ExceptionController {
         if (exception instanceof CommonException com) {
             return RespEntity.fail(com.getCode(), com.getMsg());
         } else if (exception instanceof BindException bindException) {
-            return RespEntity.fail(bindException.getFieldErrors().stream().map(FieldError::getDefaultMessage).distinct().toList().toString());
+            return RespEntity.fail(bindException.
+                getFieldErrors().
+                stream().
+                map(FieldError::getDefaultMessage).
+                distinct().
+                toList().toString());
         }
         return RespEntity.fail();
     }

@@ -3,7 +3,7 @@ import '../../../index.css'
 import SideBarNavIcon from "../../../components/SidebarNav/SideBarNavIcon";
 import {useRoutes} from "react-router-dom";
 import {routes} from "../../../router";
-import PopUp from "../../../components/PopUp/PopUp";
+import PopUp from "../../../components/PromptBox/PromptBox";
 import React, {createContext, useState} from "react";
 
 /**

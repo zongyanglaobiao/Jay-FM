@@ -2,11 +2,9 @@ import {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
 import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
+import {addSongList, getAllCardThunk} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
-import {createAlertMsg, ERROR, httpStatus} from "../PopUp/PopUp";
 import {AlertContext} from "../../container/Pages/Home/Home";
-import {isSuccess} from "../../http/httpRequest";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{

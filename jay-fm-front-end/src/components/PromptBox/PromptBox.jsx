@@ -9,7 +9,7 @@ import {useEffect} from "react";
 export const SUCCESS = "success"
 export const ERROR = "error"
 export const WARNING = "warning"
-export  default  function PopUp({alertMsg}) {
+export  default  function PromptBox({alertMsg}) {
 	const [alert,contextHolder] = useMessage()
 	useEffect(() => {
 		//参数不为null则会
