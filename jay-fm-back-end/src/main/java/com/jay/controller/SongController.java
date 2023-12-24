@@ -63,7 +63,7 @@ public class SongController  {
     @GetMapping("/delete")
     @Operation(summary = "删除歌曲")
     @ApiOperationSupport(order = 4)
-    public RespEntity<String> deleteSong(@RequestParam("id") @NotBlank(message = "歌曲id不能为空" ) String songId){
+    public RespEntity<String> deleteSong(@RequestParam("id") @NotBlank(message = "歌曲id不能为空" ) String songId) throws CommonException {
         return RespEntity.success(service.deleteSong(songId));
     }
 

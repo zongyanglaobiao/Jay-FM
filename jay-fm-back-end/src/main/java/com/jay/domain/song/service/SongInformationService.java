@@ -25,7 +25,7 @@ public interface SongInformationService extends IService<SongInformationEntity> 
 
     Page<SongInformationEntity> search(SearchParam param) throws CommonException;
 
-    String deleteSong(String songId);
+    String deleteSong(String songId) throws CommonException;
 
     String modifySong(ModifySongParam param) throws CommonException;
 }

@@ -39,10 +39,10 @@ public class CardInformationServiceImpl extends ServiceImpl<CardInformationMappe
     }
 
     @Override
-    public String deleteCard(String param) {
+    public String deleteCard(String param) throws CommonException {
         CardInformationEntity entity = this.getById(param);
         if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
-            return "不能被删除";
+            throw  new CommonException("不能被删除");
         }
         return String.valueOf(this.removeById(param));
     }
@@ -52,7 +52,7 @@ public class CardInformationServiceImpl extends ServiceImpl<CardInformationMappe
         CardInformationEntity entity = this.getById(param.getId());
         AssertUtils.notNull(entity,"卡片为空");
         if (!entity.getEnableModify()) {
-            return "不能被修改";
+            throw  new CommonException("不能被修改");
         }
         BeanUtil.copyProperties(param,entity);
         return String.valueOf(this.updateById(entity));

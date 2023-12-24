@@ -41,7 +41,7 @@ public class CardController implements ICommonController<RespEntity<?>, CardPara
     @GetMapping(value = "/delete")
     @Operation(summary = "删除歌曲卡片")
     @ApiOperationSupport(order = 3)
-    public RespEntity<String> delete(@RequestParam("id") String id) {
+    public RespEntity<String> delete(@RequestParam("id") String id) throws CommonException {
         return RespEntity.success(cardService.deleteCard(id));
     }
 

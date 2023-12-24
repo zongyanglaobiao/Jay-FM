@@ -17,7 +17,7 @@ public interface CardInformationService extends IService<CardInformationEntity> 
 
     String addCard(CardParam param) throws CommonException;
 
-    String deleteCard(String param);
+    String deleteCard(String param) throws CommonException;
 
     String modifyCard(ModifyCardParam param) throws CommonException;
 

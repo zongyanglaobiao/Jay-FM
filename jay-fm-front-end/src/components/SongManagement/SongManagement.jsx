@@ -192,16 +192,18 @@ const TipUI = memo(()=>{
  * 专辑列表组件
  * @type {React.NamedExoticComponent<object>}
  */
-const SongCardUI = memo(({setComponentType})=>{
+const SongCardUI = memo(({setComponentType,type})=>{
 	const dispatch = useDispatch();
 	const cardArray = useSelector(state => state.cardArray);
 
+	console.log('render 1111111111111111')
+
 	useEffect(() => {
-		init()
-	});
+		loadList()
+	},[type]);
 
 	//初始化函数
-	function  init() {
+	function  loadList() {
 	  dispatch(getAllCardThunk())
 	}
 
@@ -448,7 +450,7 @@ export default  function SongManagementUI() {
 				getComponent(type,obj)
 			}
 			<div className='folder-container-song-card-box'>
-				<SongCardUI setComponentType={setComponentType} />
+				<SongCardUI setComponentType={setComponentType} type={type}/>
 			</div>
 		</div>
 	)

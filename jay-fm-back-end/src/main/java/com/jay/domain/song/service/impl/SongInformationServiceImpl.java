@@ -119,10 +119,10 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
-    public String deleteSong(String songId) {
+    public String deleteSong(String songId) throws CommonException {
         SongInformationEntity entity = this.getById(songId);
         if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
-            return "不能被删除";
+            throw new  CommonException("不能被删除");
         }
         return String.valueOf(this.removeById(songId));
     }
@@ -133,7 +133,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
         AssertUtils.notNull(entity, "歌曲不存在");
 
         if (!entity.getEnableModify()) {
-            return "不允许修改";
+           throw new  CommonException("不能被修改");
         }
         BeanUtil.copyProperties(param, entity);
         this.updateById(entity);
