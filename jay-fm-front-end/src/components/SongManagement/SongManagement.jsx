@@ -1,6 +1,6 @@
-import {memo, useContext, useEffect, useRef, useState} from "react";
+import React, {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
-import {Button, ColorPicker, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
+import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tooltip,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {addSongList, deleteSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
 import {CardInfo} from "../../constant/constant";
@@ -9,9 +9,8 @@ import {createAlertMsg, ERROR, httpStatus} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 
 
-const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
+const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType})=>{
 	const setAlert = useContext(AlertContext)
-	const dispatch = useDispatch()
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 
 	//解构信息用于修改表单 modify form
@@ -34,7 +33,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
 
 		if (isSuccess(resp.code)) {
 			//刷新
-			//路由跳转带参数直接返回到列表页
+			setComponentType(initValue)
 		}
 	}
 
@@ -131,13 +130,13 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm})=>{
  * 增加列表组件
  * @type {React.NamedExoticComponent<object>}
  */
-const CardAddForm = memo(()=>{
+const CardAddForm = memo(({setComponentType})=>{
 	return (
 		<div className="card-from-container playing">
 			<div className="wave"></div>
 			<div className="wave"></div>
 			<div className="wave"></div>
-			<ListForm showButton={true} item={{}} showColorSelect={true}/>
+			<ListForm showButton={true} item={{}} showColorSelect={true} setComponentType={setComponentType}/>
 		</div>
 	)
 })
@@ -196,8 +195,6 @@ const SongCardUI = memo(({setComponentType,type})=>{
 	const dispatch = useDispatch();
 	const cardArray = useSelector(state => state.cardArray);
 
-	console.log('render 1111111111111111')
-
 	useEffect(() => {
 		loadList()
 	},[type]);
@@ -207,16 +204,22 @@ const SongCardUI = memo(({setComponentType,type})=>{
 	  dispatch(getAllCardThunk())
 	}
 
+	function selectMenu(targetType,obj) {
+		setComponentType(val =>{
+			const  {type} = val
+			if (type === targetType) {
+				return  {type:TIP_UI}
+			}
+			return  {type:targetType,obj:obj}
+		})
+	}
+
     return (
         <div className="cards">
 			{/*增加列表按钮*/}
-			<div key={`${getRandomId()}`} onClick={()=>{setComponentType(val =>{
-				const  {type} = val
-				if (type === CARD_ADD_FORM_UI) {
-					return  {type:TIP_UI}
-				}
-				return  {type:CARD_ADD_FORM_UI}
-			})}} className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
+			<div key={`${getRandomId()}`}
+				 onClick={()=>{selectMenu(CARD_ADD_FORM_UI,{setComponentType})}}
+				 className='card ' style={{backgroundColor:`rgb(4,197,255)`}}>
 				<svg   t="1699545937854" className="card-plus-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2314" width="200" height="200">
 					<path fill="#fff" d="  M902.343 570.936h-331.78v331.833c0 32.337-26.226 58.537-58.564 58.537-32.337 0-58.563-26.2-58.563-58.537V570.936H121.654c-32.364 0-58.564-26.2-58.564-58.538 0-32.325 26.203-58.537 58.564-58.537h331.78V122.028c0-32.325 26.226-58.537 58.563-58.537 32.338 0 58.564 26.213 58.564 58.537v331.834h331.78c32.364 0 58.565 26.211 58.565 58.535-0.001 32.337-26.2 58.536-58.565 58.536z"  p-id="2315"></path>
 				</svg>
@@ -227,9 +230,9 @@ const SongCardUI = memo(({setComponentType,type})=>{
 			   cardArray.map((item)=>{
 				   const split = item.color.split(',');
 				   return (
-					   <div key={`${getRandomId()}`} onClick={()=>{setComponentType(()=>{
-						   return {type:CARD_DETAILS_UI,obj:{item,setComponentType}}
-					   })}}  className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
+					   <div key={`${getRandomId()}`}
+							onClick={()=>{selectMenu(CARD_DETAILS_UI,{item,setComponentType})}}
+							className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
 						   <p className="tip">{item.cardName}</p>
 						   <p className="second-text">{item.textDescribe}</p>
 					   </div>
@@ -244,12 +247,27 @@ const SongCardUI = memo(({setComponentType,type})=>{
  * 歌曲列表详细信息组件
  * @type {React.NamedExoticComponent<{readonly info?: *}>}
  */
+
+//播放相关的设置
+const playSettings = [
+	{text:'顺序播放',color:'geekblue',next:1},
+	{text:'随机播放',color:'green',id:2},
+	{text:'循环播放',color:'cyan',id:3},
+	{text:'重复播放',color:'magenta',id:4}]
+
+
+
+const PLAY_SETTING = "PLAY_SETTING";
+
+//存储信息
+localStorage.setItem(PLAY_SETTING,JSON.stringify(playSettings[0]));
+
 const CardInfoUI = memo(({item,setComponentType})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false)
 	const setAlert = useContext(AlertContext)
+
 	//解构信息
 	const {cardName,color,textDescribe,id,enableModify,enableDelete} = item
 	let form = useRef();
@@ -309,17 +327,25 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 		});
 	}
 
+	//取消弹窗
 	const handleCancel = (e) => {
 		setOpen(false)
 		//阻止事件冒泡
 		e.stopPropagation()
 	}
 
+
+
+	const changeText = (e) => {
+		// e.currentTarget.innerText =
+        console.log(JSON.parse(localStorage.getItem(PLAY_SETTING)))
+	}
+
 	let colors = null
 	try {
 		colors = color.split(',')
 	} catch (e) {
-		colors = ['234','14','123']
+		colors = [getRandomColor(),getRandomColor(),getRandomColor()]
 	}
 
 	return (
@@ -358,7 +384,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 					<p className='text-overflow'>{textDescribe}</p>
 				</div>
 			</div>
-			{/*歌曲部分列表*/}
+			{/*歌曲列表部分*/}
 			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
 				{
 					(()=>{
@@ -383,10 +409,19 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`
 				 }}>
 				{/*
-					todo 排序
-					todo 上传文件
-					todo 删除
+					todo 上传文件(新建页面)
+					todo  按钮切换
 				*/}
+				<Flex gap='middle' vertical={false} className='w-full h-full' align='center' justify='center'>
+					<Button style={{
+						backgroundColor:'transparent'
+					}} onClick={changeText}>{JSON.parse(localStorage.getItem(PLAY_SETTING)).text}</Button>
+					<Button style={{
+                        backgroundColor:'transparent'
+                    }}>
+                        <svg t="1703433684592" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2392" width="20" height="20"><path d="M903.864364 956.704314 120.695385 956.704314c-14.145162 0-25.612331-11.466146-25.612331-25.611308L95.083054 759.529583c0-14.145162 11.467169-25.611308 25.612331-25.611308s25.611308 11.466146 25.611308 25.611308l0 145.952116 731.946364 0L878.253056 759.529583c0-14.145162 11.466146-25.611308 25.611308-25.611308s25.611308 11.466146 25.611308 25.611308l0 171.563424C929.476695 945.238169 918.010549 956.704314 903.864364 956.704314z" p-id="2393"></path><path d="M288.712029 334.744947c-6.703679 0-13.399171-2.615571-18.423605-7.817036-9.827833-10.17371-9.547447-26.387997 0.627287-36.21583l224.799906-217.151715c9.92607-9.587356 25.663496-9.587356 35.588543 0l224.801952 217.151715c10.17371 9.827833 10.455119 26.041096 0.626263 36.214806-9.827833 10.17371-26.041096 10.455119-36.214806 0.627287L513.508865 127.591957 306.502208 327.554174C301.532009 332.35655 295.116903 334.744947 288.712029 334.744947z" p-id="2394"></path><path d="M513.508865 785.14089c-14.145162 0-25.611308-11.466146-25.611308-25.611308L487.897557 91.981924c0-14.145162 11.466146-25.611308 25.611308-25.611308s25.611308 11.467169 25.611308 25.611308l0 667.547659C539.121196 773.674745 527.65505 785.14089 513.508865 785.14089z" p-id="2395"></path></svg>
+					</Button>
+				</Flex>
 			</div>
 		</div>
 	)
@@ -413,9 +448,10 @@ function getComponent(type,obj = {}) {
 			)
 		}
 		case CARD_ADD_FORM_UI:{
+			const {setComponentType} = obj
 			return (
 				<div className='folder-container-card-from'>
-					<CardAddForm/>
+					<CardAddForm setComponentType={setComponentType}/>
 				</div>
 			)
 		}
