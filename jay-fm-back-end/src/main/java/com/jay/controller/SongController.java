@@ -46,12 +46,12 @@ public class SongController  {
         return RespEntity.success(service.uploadSong(param));
     }
 
-    @GetMapping("/download")
+    /*@GetMapping("/download")
     @Operation(summary = "下载歌曲")
     @ApiOperationSupport(order = 2)
     public void downloadSong(@RequestParam("id") String downloadId) throws Throwable {
         service.downloadSong(downloadId);
-    }
+    }*/
 
     @PostMapping("/modify")
     @Operation(summary = "修改歌曲")

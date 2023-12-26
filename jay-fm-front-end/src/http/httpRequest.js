@@ -1,5 +1,4 @@
 import axios from "axios";
-import {isNullOrUndefined} from "../lib/common/util";
 
 const URL = process.env.REACT_APP_PATH.replace(';','').replaceAll('\'','');
 
