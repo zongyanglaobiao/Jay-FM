@@ -453,7 +453,6 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									e.stopPropagation()
 								}}
 								onOk={()=>{
-									//todo 上传
 									setLoading(true)
 									console.log('filesRef',filesRef.current)
 									console.log('emailRef',emailRef.current)

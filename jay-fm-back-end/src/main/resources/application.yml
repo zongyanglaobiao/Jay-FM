@@ -75,7 +75,7 @@ knife4j:   # knife4j的增强配置，不需要增强可以不配
     cors: true  #跨域请求
     production: false   #是否是生产环境，如果设置true,doc.html就不能访问
     basic:
-        enable: true
+        enable: @basic.enable@
         password: mpw:zp1SL9P56YSRX4kRau9R9A==
         username: mpw:PdBT4eeuJoG1NOtzH6onww==
 

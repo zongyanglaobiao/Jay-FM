@@ -15,6 +15,8 @@ export const serviceAxios = axios.create({
 	withCredentials: false, // 跨域请求是否需要携带 cookie
 });
 
+export default serviceAxios
+
 // 创建请求拦截
 serviceAxios.interceptors.request.use(
 	(config) => {

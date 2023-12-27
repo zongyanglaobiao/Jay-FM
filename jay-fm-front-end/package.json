@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@reduxjs/toolkit": "^1.9.7",
+    "@zeronejs/cli": "^2.15.0",
     "antd": "^5.10.3",
     "axios": "^1.6.0",
     "dnd-kit": "^0.0.0-2",

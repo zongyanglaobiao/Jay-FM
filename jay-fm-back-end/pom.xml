@@ -118,6 +118,7 @@
             <properties>
                 <spring.active>dev</spring.active>
                 <save.path>D:\Program Files (x86)\idea\IDEAproject\github\Jay-FM\jay-fm-front-end\src\song\</save.path>
+                <basic.enable>false</basic.enable>
             </properties>
         </profile>
         <profile>
@@ -125,6 +126,7 @@
             <properties>
                 <spring.active>prod</spring.active>
                 <save.path>/home/server/song-service/song-folder/</save.path>
+                <basic.enable>true</basic.enable>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
