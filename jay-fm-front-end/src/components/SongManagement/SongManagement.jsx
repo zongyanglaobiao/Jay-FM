@@ -1,13 +1,15 @@
 import React, {memo, useContext, useEffect, useRef, useState} from "react";
-import {getRandomColor, getRandomId, isNullOrUndefined} from "../../lib/common/util";
+import {getRandomColor, getRandomId, isArrayBlank, isEmail, isNullOrUndefined, isStrBlank} from "../../lib/common/util";
 import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {addSongList, deleteSongList, getAllCardThunk, modifySongList} from "../../redux/thunk";
-import {CardInfo} from "../../constant/constant";
+import {getAllCardThunk} from "../../redux/thunk";
+import {addSongList, CardInfo, deleteSongList, modifySongList} from "../../api/cardController";
 import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
+import {createUploadSongParam, uploadSong} from "../../api/songController";
+import {parseFileName} from "../../lib/songUtils";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType})=>{
@@ -420,20 +422,6 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 						const uploaderRef = useRef();
 						const emailRef = useRef();
 
-						const handleChange = (info) => {
-							let newFileList = [...info.fileList];
-
-							// 2. Read from response and show file link
-							newFileList = newFileList.map((file) => {
-								if (file.response) {
-									// Component will show file.url as link
-									file.url = file.response.url;
-								}
-								return file;
-							});
-							setFileList(newFileList);
-						};
-
 						return <Flex gap='middle' vertical={false} className='w-full h-full' align='center' justify='center'>
 							<Button style={{
 								backgroundColor:'transparent'
@@ -448,19 +436,48 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 								open={_open}
 								confirmLoading={loading}
 								onCancel={(e)=>{
+									setFileList([])
 									_setOpen(false)
 									//阻止事件冒泡
 									e.stopPropagation()
 								}}
-								onOk={()=>{
+								onOk={async ()=>{
+									const emailVal =  emailRef.current.input.value
+									const uploaderVal =  uploaderRef.current.input.value
+
+									const check =  isStrBlank(emailVal) || isStrBlank(uploaderVal) ||  isArrayBlank(fileList)
+									if (check) {
+										setAlert(createAlertMsg(ERROR, '邮箱、上传者和歌曲文件不能为空'))
+										return
+									}
+
+									if (!isEmail(emailVal)){
+										setAlert(createAlertMsg(ERROR,'邮箱格式不正确'))
+										return
+									}
+
+									//上传一个集合
+									const dataArr = [];
+
+									try {
+										for (let file of fileList) {
+											const {singer, songName} = parseFileName(file.name)
+											dataArr.push(createUploadSongParam(singer, songName, uploaderVal, emailVal, file))
+										}
+									} catch (e) {
+										setAlert(createAlertMsg(ERROR, e.message))
+										return
+									}
+
+									//上传歌曲
 									setLoading(true)
-									console.log('filesRef',filesRef.current)
-									console.log('emailRef',emailRef.current)
-									console.log('uploaderRef',uploaderRef.current)
-									setTimeout(()=>{
-										setLoading(true)
-										_setOpen(false)
-									},3000)
+									const resp = await uploadSong(dataArr)
+									console.log('resp',resp)
+									//todo 弹窗提醒
+
+									setLoading(false)
+									_setOpen(false)
+									setFileList([])
 								}}
 								destroyOnClose={true}
 								cancelText='取消上传'
@@ -476,11 +493,11 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									>
 										<Tag color='green'>所有上传文件规范：“歌曲名_歌手”！！支持多个文件上传</Tag>
 										<Input ref={uploaderRef} placeholder='上传者'/>
-										<Input ref={emailRef} placeholder='邮箱'/>
+										<Input ref={emailRef}  placeholder='邮箱'/>
 										<Upload
 											name="personfile"
 											fileList={fileList}
-											onChange={handleChange}
+											onChange={(info)=>{setFileList([...info.fileList])}}
 											//阻止默认上传事件
 											beforeUpload={(file, FileList)=>{return false}}
 											multiple={true}

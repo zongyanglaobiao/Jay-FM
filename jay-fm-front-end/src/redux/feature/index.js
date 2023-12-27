@@ -1,6 +1,6 @@
 import {generateSlice} from "../../lib/common/reduxUtil";
-import {getAllCardThunk, modifyCardThunk} from "../thunk";
-import {CardInfo} from "../../constant/constant";
+import {getAllCardThunk} from "../thunk";
+import {CardInfo} from "../../api/cardController";
 /* ============================================ */
 /* =================总Slice文件================= */
 /* ============================================ */

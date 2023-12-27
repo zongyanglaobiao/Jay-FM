@@ -1,21 +1,34 @@
 import {nanoid} from "nanoid";
 import {numberToWords} from "pixiu-number-toolkit";
 
+/**
+ * 判断一个对象的
+ * @param text
+ * @returns {boolean}
+ */
 export function isBlank(text) {
-    return text === undefined || text === null || text === '' || text.trim() === '';
+    return text === undefined || text === null;
 }
 
 /**
- * 这个数组中有一个为空就会返回true
- * @param dataArr 数组
+ * 判断字符串
+ * @param text
  * @returns {boolean}
  */
-export function isBlanks(...dataArr) {
-    for (const data of dataArr) {
-        if (isBlank(data)) {
-            return  true
-        }
-    }
+export function isStrBlank(text) {
+	return !(typeof text === 'string') ||  text === '' || text.trim() === '';
+}
+
+/**
+ * 数组是否为空
+ * @returns {boolean}
+ * @param arr
+ */
+export function isArrayBlank(arr) {
+	if (isBlank(arr) || arr.length === 0) {
+		return  true
+	}
+
     return false
 }
 
@@ -95,3 +108,15 @@ export function checkObj(obj) {
 	return obj;
 }
 
+/**
+ * 检查字符串是否复合email格式
+ * @param str
+ */
+export function isEmail(str) {
+	if (isBlank(str)) {
+		return false
+	}
+
+	// 使用正则表达式验证email格式
+	return /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/.test(str);
+}
