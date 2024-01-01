@@ -3,6 +3,7 @@ package com.jay.repository.entities;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serial;
@@ -30,6 +31,7 @@ public class SongListEntity implements Serializable {
     /**
      * 歌曲ID
      */
+    @JsonIgnore
     private String songId;
 
     @Serial

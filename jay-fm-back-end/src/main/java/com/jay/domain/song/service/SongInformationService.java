@@ -1,14 +1,12 @@
 package com.jay.domain.song.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jay.domain.song.param.ModifySongParam;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.jay.domain.common.param.SearchParam;
-import com.jay.domain.song.param.UploadSongParam;
+import com.jay.domain.song.param.AddSongInfoParam;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,8 +16,8 @@ import java.util.List;
  */
 public interface SongInformationService extends IService<SongInformationEntity> {
 
-    String uploadSong(UploadSongParam param) ;
-    List<String> uploadSong(List<UploadSongParam> param) ;
+    String uploadSong(AddSongInfoParam param) ;
+    List<String> uploadSong(List<AddSongInfoParam> param) ;
 
     void downloadSong(String downloadId) throws CommonException;
 
@@ -27,5 +25,5 @@ public interface SongInformationService extends IService<SongInformationEntity> 
 
     String deleteSong(String songId) throws CommonException;
 
-    String modifySong(ModifySongParam param) throws CommonException;
+    String modifySong(AddSongInfoParam param) throws CommonException;
 }

@@ -1,5 +1,4 @@
 import {nanoid} from "nanoid";
-import {numberToWords} from "pixiu-number-toolkit";
 
 /**
  * 判断一个对象的
@@ -79,20 +78,6 @@ export function getRandomColor() {
  */
 export function getRandomId() {
     return nanoid();
-}
-
-/**
- * 数字转英文
- * @param isCapitalized 是否首字母大写
- * @param number
- */
-export function numberToEnglish(number,isCapitalized = true) {
-    const word = numberToWords(number, "en");
-
-    if (isCapitalized) {
-        return  word.slice(0, 1).toUpperCase() + word.slice(1)
-    }
-    return word
 }
 
 /**

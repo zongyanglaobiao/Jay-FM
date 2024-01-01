@@ -13,10 +13,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @OpenAPIDefinition(
         info = @Info(
-                title = "接口文档",description = "接口文档",version = "version:1.0.0",
-                contact = @Contact(name = "XXL",email = "3578144921@qq.com")
+                title = "JAY-FM",description = "接口文档",version = "1.0.0",
+                contact = @Contact(name = "james aks",email = "aksisnotx@gmail.com")
         ),
-        servers = {@Server(url = "http://localhost:8080/",description = "本地环境")}
+        servers = {
+            @Server(url = "http://localhost:8080/",description = "本地环境"),
+            @Server(url = "http://xxl.cab/song",description = "本地环境")
+        }
 )
 @Configuration
 public class SwaggerConfig {

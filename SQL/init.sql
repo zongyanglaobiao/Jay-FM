@@ -25,7 +25,7 @@ create table if not exists song_information(
     update_time  datetime comment '更新时间'
 )engine = innodb  charset = utf8mb4 collate = utf8mb4_general_ci comment '歌曲信息表';
 
-create table if not exists card_information(
+create table if not exists list_information(
     id varchar(255) primary key comment 'ID',
     card_name varchar(255) comment '文件名',
     color varchar(255) comment '颜色',

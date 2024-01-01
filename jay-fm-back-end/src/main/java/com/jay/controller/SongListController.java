@@ -1,16 +1,12 @@
 package com.jay.controller;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
 import com.jay.core.web.common.ICommonController;
 import com.jay.domain.card.list.service.SongListService;
-import com.jay.repository.entities.SongListEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,10 +22,10 @@ public class SongListController implements ICommonController<RespEntity<?>,Strin
 
     private final SongListService service;
 
-    @Override
+    /*@Override
     @GetMapping(value = "/query")
     @ApiOperationSupport(order = 1)
-    public RespEntity<?> query(@RequestParam("folderId") String folderId) {
+    public RespEntity<?> query(@RequestParam String folderId) {
         return RespEntity.success(service.lambdaQuery().eq(SongListEntity::getFolderId,folderId).list());
-    }
+    }*/
 }

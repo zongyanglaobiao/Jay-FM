@@ -10,13 +10,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.utils.AssertUtils;
 import com.jay.core.utils.CommonPageRequestUtils;
-import com.jay.domain.card.info.param.CardParam;
-import com.jay.domain.card.info.param.ModifyCardParam;
 import com.jay.domain.card.info.service.CardInformationService;
 import com.jay.domain.common.ServicesUtil;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.exception.CommonException;
-import com.jay.repository.entities.CardInformationEntity;
+import com.jay.repository.entities.ListInformationEntity;
 import com.jay.repository.mapper.CardInformationMapper;
 import org.springframework.stereotype.Service;
 
@@ -26,21 +24,21 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-11-23 20:10:52
 */
 @Service
-public class CardInformationServiceImpl extends ServiceImpl<CardInformationMapper, CardInformationEntity> implements CardInformationService {
+public class CardInformationServiceImpl extends ServiceImpl<CardInformationMapper, ListInformationEntity> implements CardInformationService {
 
     //todo 只要是未达到目的的皆是500
 
     @Override
-    public String addCard(CardParam param) throws CommonException {
-        CardInformationEntity entity = this.getOne(Wrappers.<CardInformationEntity>lambdaQuery().eq(CardInformationEntity::getCardName, param.getCardName()));
+    public String addCard(ListInformationEntity param) throws CommonException {
+        ListInformationEntity entity = this.getOne(Wrappers.<ListInformationEntity>lambdaQuery().eq(ListInformationEntity::getCardName, param.getCardName()));
         AssertUtils.isNull(entity,"卡片已存在");
-        this.save(Convert.convert(CardInformationEntity.class, param));
+        this.save(Convert.convert(ListInformationEntity.class, param));
         return "成功";
     }
 
     @Override
     public String deleteCard(String param) throws CommonException {
-        CardInformationEntity entity = this.getById(param);
+        ListInformationEntity entity = this.getById(param);
         if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
             throw  new CommonException("不能被删除");
         }
@@ -48,8 +46,8 @@ public class CardInformationServiceImpl extends ServiceImpl<CardInformationMappe
     }
 
     @Override
-    public String modifyCard(ModifyCardParam param) throws CommonException {
-        CardInformationEntity entity = this.getById(param.getId());
+    public String modifyCard(ListInformationEntity param) throws CommonException {
+        ListInformationEntity entity = this.getById(param.getId());
         AssertUtils.notNull(entity,"卡片为空");
         if (!entity.getEnableModify()) {
             throw  new CommonException("不能被修改");
@@ -59,7 +57,7 @@ public class CardInformationServiceImpl extends ServiceImpl<CardInformationMappe
     }
 
     @Override
-    public Page<CardInformationEntity> searchCard(SearchParam param) throws CommonException {
+    public Page<ListInformationEntity> searchCard(SearchParam param) throws CommonException {
         String keyword = param.getKeyword();
 
         if (StrUtil.isBlank(keyword)) {
@@ -67,11 +65,11 @@ public class CardInformationServiceImpl extends ServiceImpl<CardInformationMappe
         }
 
         //关键字搜索
-        LambdaQueryWrapper<CardInformationEntity> newWrapper = ServicesUtil.keyWordSearch(keyword,
-            CardInformationEntity::getCardName,
-            CardInformationEntity::getTextDescribe,
-            CardInformationEntity::getEmail,
-            CardInformationEntity::getCreator);
+        LambdaQueryWrapper<ListInformationEntity> newWrapper = ServicesUtil.keyWordSearch(keyword,
+            ListInformationEntity::getCardName,
+            ListInformationEntity::getTextDescribe,
+            ListInformationEntity::getEmail,
+            ListInformationEntity::getCreator);
 
         return this.page(CommonPageRequestUtils.defaultPage(),newWrapper);
     }

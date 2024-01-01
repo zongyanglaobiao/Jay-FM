@@ -7,7 +7,6 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.utils.AssertUtils;
@@ -15,8 +14,7 @@ import com.jay.core.utils.CommonPageRequestUtils;
 import com.jay.core.utils.FileUtils;
 import com.jay.domain.common.ServicesUtil;
 import com.jay.domain.common.param.SearchParam;
-import com.jay.domain.song.param.ModifySongParam;
-import com.jay.domain.song.param.UploadSongParam;
+import com.jay.domain.song.param.AddSongInfoParam;
 import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
@@ -31,8 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+import static cn.hutool.core.io.FileMagicNumber.FLAC;
 import static cn.hutool.core.io.FileMagicNumber.MP3;
 
 /**
@@ -51,18 +49,20 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     @Resource
     private HttpServletResponse response;
     @Override
-    public String uploadSong(UploadSongParam param)  {
+    public String uploadSong(AddSongInfoParam param)  {
         String fileName = null;
         try {
-            SongInformationEntity one = this.getOne(Wrappers.<SongInformationEntity>lambdaQuery().eq(SongInformationEntity::getSongName, param.getSongName()));
+            SongInformationEntity one = this.lambdaQuery().
+                eq(SongInformationEntity::getSongName, param.getSongName()).
+                one();
             AssertUtils.isNull(one,"歌曲已存在");
 
             //保存歌曲
-            MultipartFile file = param.getSongFile();
+            MultipartFile file = param.getFile();
             fileName = file.getOriginalFilename();
 
             //检查歌曲格式
-            check(fileName,MP3);
+            check(fileName,MP3,FLAC);
 
             //保存歌曲
             String path = String.format("%s%s", songSavePath,fileName);
@@ -81,7 +81,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
-    public List<String> uploadSong(List<UploadSongParam> param)  {
+    public List<String> uploadSong(List<AddSongInfoParam> param)  {
         return param.parallelStream().map(this::uploadSong).toList();
     }
 
@@ -128,7 +128,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
-    public String modifySong(ModifySongParam param) throws CommonException {
+    public String modifySong(AddSongInfoParam param) throws CommonException {
         SongInformationEntity entity = this.getById(param.getId());
         AssertUtils.notNull(entity, "歌曲不存在");
 

@@ -491,7 +491,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 											display: 'flex',
 										}}
 									>
-										<Tag color='green'>所有上传文件规范：“歌曲名_歌手”！！支持多个文件上传</Tag>
+										<Tag color='green'>所有上传文件规范：[ 歌曲名_歌手 ]！！支持多个文件上传</Tag>
 										<Input ref={uploaderRef} placeholder='上传者'/>
 										<Input ref={emailRef}  placeholder='邮箱'/>
 										<Upload
