@@ -56,7 +56,7 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String uploader;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    @JsonView(Param.IGNORE.class)
     private String savePath;
 
     @JsonView(Param.IGNORE.class)

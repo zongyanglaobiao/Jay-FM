@@ -31,7 +31,6 @@ public class SongListEntity implements Serializable {
     /**
      * 歌曲ID
      */
-    @JsonIgnore
     private String songId;
 
     @Serial

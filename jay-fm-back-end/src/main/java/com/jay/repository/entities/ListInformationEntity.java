@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jay.domain.common.param.Param;
 import com.jay.repository.common.CommonEntity;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,7 +22,8 @@ public class ListInformationEntity extends CommonEntity implements Serializable 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonView({Param.IGNORE.class, Param.UPDATE.class})
+    @JsonView(Param.UPDATE.class)
+    @NotBlank(message = "歌单ID不能为空")
     private String id;
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
