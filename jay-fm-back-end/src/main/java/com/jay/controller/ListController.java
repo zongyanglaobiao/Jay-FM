@@ -51,7 +51,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @PostMapping(value = "/modify")
     @Operation(summary = "修改歌曲卡片")
     @ApiOperationSupport(order = 4)
-    public RespEntity<String> update(@RequestBody @Validated ListInformationEntity param) throws Throwable {
+    public RespEntity<String> update(@RequestBody @Validated @JsonView(Param.UPDATE.class) ListInformationEntity param) throws Throwable {
         return RespEntity.success(cardService.modifyCard(param));
     }
 
