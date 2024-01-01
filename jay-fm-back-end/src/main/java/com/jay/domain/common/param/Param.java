@@ -5,7 +5,7 @@ package com.jay.domain.common.param;
  * @since 2024/1/1
  */
 public interface Param {
-    final class INSERT{}
-    final class UPDATE{}
-    final class IGNORE{}
+     interface INSERT{}
+     interface UPDATE{}
+     interface IGNORE{}
 }

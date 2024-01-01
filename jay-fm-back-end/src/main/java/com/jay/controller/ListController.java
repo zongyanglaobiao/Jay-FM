@@ -13,6 +13,7 @@ import com.jay.repository.entities.ListInformationEntity;
 import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/card",produces = "application/json;charset=UTF-8")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "歌曲列表管理控制器")
 public class ListController implements ICommonController<RespEntity<?>, ListInformationEntity, SearchParam, ListInformationEntity,String> {
 
@@ -35,7 +37,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @PostMapping(value = "/add")
     @Operation(summary = "添加歌曲卡片")
     @ApiOperationSupport(order = 2)
-    public RespEntity<String> insert(@RequestBody @Validated @JsonView(Param.INSERT.class) ListInformationEntity param) throws Throwable {
+    public RespEntity<String> insert(@RequestBody  @JsonView(Param.INSERT.class) ListInformationEntity param) throws Throwable {
         return RespEntity.success(cardService.addCard(param));
     }
 
@@ -43,7 +45,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @GetMapping(value = "/delete")
     @Operation(summary = "删除歌曲卡片")
     @ApiOperationSupport(order = 3)
-    public RespEntity<String> delete(@RequestParam("id") String id) throws CommonException {
+    public RespEntity<String> delete(@RequestParam("id") @NotBlank(message = "歌单ID不能为空") String id) throws CommonException {
         return RespEntity.success(cardService.deleteCard(id));
     }
 
@@ -51,7 +53,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @PostMapping(value = "/modify")
     @Operation(summary = "修改歌曲卡片")
     @ApiOperationSupport(order = 4)
-    public RespEntity<String> update(@RequestBody @Validated @JsonView(Param.UPDATE.class) ListInformationEntity param) throws Throwable {
+    public RespEntity<String> update(@RequestBody @Validated(Param.UPDATE.class) @JsonView(Param.UPDATE.class) ListInformationEntity param) throws Throwable {
         return RespEntity.success(cardService.modifyCard(param));
     }
 
@@ -66,7 +68,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @GetMapping(value = "/songs/{folderId}")
     @Operation(summary = "查询歌曲卡片")
     @ApiOperationSupport(order = 6)
-    public RespEntity<List<SongInformationEntity>> query(@PathVariable("folderId") String folderId) throws CommonException {
+    public RespEntity<List<SongInformationEntity>> query(@PathVariable("folderId") String folderId)  {
         return RespEntity.success("查询成功",cardService.getSongs(folderId));
     }
 }

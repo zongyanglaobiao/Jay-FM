@@ -23,7 +23,7 @@ public class ListInformationEntity extends CommonEntity implements Serializable 
     private static final long serialVersionUID = 1L;
 
     @JsonView(Param.UPDATE.class)
-    @NotBlank(message = "歌单ID不能为空")
+    @NotBlank(message = "歌单ID不能为空",groups = Param.UPDATE.class)
     private String id;
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
