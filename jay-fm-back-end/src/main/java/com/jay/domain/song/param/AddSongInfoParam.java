@@ -22,4 +22,7 @@ public class AddSongInfoParam extends SongInformationEntity {
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private MultipartFile file;
+
+    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    private String folderId;
 }

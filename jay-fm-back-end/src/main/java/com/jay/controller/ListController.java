@@ -5,16 +5,20 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
 import com.jay.core.web.common.ICommonController;
-import com.jay.domain.common.param.Param;
 import com.jay.domain.card.info.service.CardInformationService;
+import com.jay.domain.card.info.service.param.vo.SongListVO;
+import com.jay.domain.common.param.Param;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.ListInformationEntity;
+import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author xxl
@@ -32,8 +36,7 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @PostMapping(value = "/add")
     @Operation(summary = "添加歌曲卡片")
     @ApiOperationSupport(order = 2)
-    @JsonView(Param.INSERT.class)
-    public RespEntity<String> insert(@RequestBody @Validated ListInformationEntity param) throws Throwable {
+    public RespEntity<String> insert(@RequestBody @Validated @JsonView(Param.INSERT.class) ListInformationEntity param) throws Throwable {
         return RespEntity.success(cardService.addCard(param));
     }
 
@@ -59,5 +62,12 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
     @ApiOperationSupport(order = 5)
     public RespEntity<Page<ListInformationEntity>> query(@RequestBody SearchParam param) throws CommonException {
         return RespEntity.success("查询成功",cardService.searchCard(param));
+    }
+
+    @GetMapping(value = "/songs/{folderId}")
+    @Operation(summary = "查询歌曲卡片")
+    @ApiOperationSupport(order = 6)
+    public RespEntity<List<SongInformationEntity>> query(@PathVariable("folderId") String folderId) throws CommonException {
+        return RespEntity.success("查询成功",cardService.getSongs(folderId));
     }
 }

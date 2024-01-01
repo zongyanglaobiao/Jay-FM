@@ -35,16 +35,14 @@ public class SongController  {
     @PostMapping(value = "/addCardInfo")
     @Operation(summary = "添加歌曲")
     @ApiOperationSupport(order = 1)
-    @JsonView({Param.INSERT.class})
-    public RespEntity<String> addCardInfo(@ModelAttribute @Validated AddSongInfoParam param)  {
+    public RespEntity<String> addCardInfo(@ModelAttribute @JsonView({Param.INSERT.class}) @Validated AddSongInfoParam param)  {
         return RespEntity.success(service.uploadSong(param));
     }
 
     @PostMapping(value = "/addCardInfos")
     @Operation(summary = "上传歌曲")
     @ApiOperationSupport(order = 1)
-    @JsonView({Param.INSERT.class})
-    public RespEntity<List<String>> addCardInfos(@ModelAttribute @Validated List<AddSongInfoParam> param)  {
+    public RespEntity<List<String>> addCardInfos(@ModelAttribute @JsonView({Param.INSERT.class}) @Validated List<AddSongInfoParam> param)  {
         return RespEntity.success(service.uploadSong(param));
     }
 
@@ -58,8 +56,7 @@ public class SongController  {
     @PostMapping("/modify")
     @Operation(summary = "修改歌曲")
     @ApiOperationSupport(order = 3)
-    @JsonView({Param.UPDATE.class})
-    public RespEntity<String> modifySong(@RequestBody @Validated AddSongInfoParam param) throws Throwable {
+    public RespEntity<String> modifySong(@RequestBody @Validated @JsonView({Param.UPDATE.class}) AddSongInfoParam param) throws Throwable {
         return RespEntity.success(service.modifySong(param));
     }
 

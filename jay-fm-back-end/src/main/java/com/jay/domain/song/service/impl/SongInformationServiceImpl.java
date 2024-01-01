@@ -7,23 +7,28 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.utils.AssertUtils;
 import com.jay.core.utils.CommonPageRequestUtils;
 import com.jay.core.utils.FileUtils;
+import com.jay.domain.card.list.service.SongListService;
 import com.jay.domain.common.ServicesUtil;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.domain.song.param.AddSongInfoParam;
 import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
+import com.jay.repository.entities.SongListEntity;
 import com.jay.repository.mapper.SongInformationMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -41,13 +46,16 @@ import static cn.hutool.core.io.FileMagicNumber.MP3;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SongInformationServiceImpl extends ServiceImpl<SongInformationMapper, SongInformationEntity> implements SongInformationService {
 
     @Value("${save-path}")
     private String songSavePath;
 
-    @Resource
-    private HttpServletResponse response;
+    private final HttpServletResponse response;
+
+    private final SongListService songListService;
+
     @Override
     public String uploadSong(AddSongInfoParam param)  {
         String fileName = null;
@@ -73,6 +81,13 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
             convert.setDownloadId(uuid);
             convert.setSavePath(downloadPath);
             this.save(convert);
+
+            //把存储歌曲到指定文件夹
+            SongListEntity entity = new SongListEntity();
+            entity.setFolderId(param.getFolderId());
+            entity.setSongId(convert.getId());
+            songListService.save(entity);
+
             return uuid;
         } catch (Throwable e) {
             log.error("SongInformationServiceImpl.uploadSong抛出异常",e);
@@ -119,11 +134,14 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public String deleteSong(String songId) throws CommonException {
         SongInformationEntity entity = this.getById(songId);
         if ( ObjectUtil.isNull(entity) || !entity.getEnableDelete()) {
             throw new  CommonException("不能被删除");
         }
+
+        songListService.remove(Wrappers.<SongListEntity>lambdaQuery().eq(SongListEntity::getSongId,songId));
         return String.valueOf(this.removeById(songId));
     }
 
