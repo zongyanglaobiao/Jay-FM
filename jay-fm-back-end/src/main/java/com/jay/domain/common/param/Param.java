@@ -8,4 +8,5 @@ public interface Param {
      interface INSERT{}
      interface UPDATE{}
      interface IGNORE{}
+     interface NOT_IGNORE{}
 }
