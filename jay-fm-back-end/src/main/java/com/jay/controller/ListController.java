@@ -29,11 +29,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "歌曲列表管理控制器")
-public class ListController implements ICommonController<RespEntity<?>, ListInformationEntity, SearchParam, ListInformationEntity,String> {
+public class ListController  {
 
     private final CardInformationService cardService;
 
-    @Override
     @PostMapping(value = "/add")
     @Operation(summary = "添加歌曲卡片")
     @ApiOperationSupport(order = 2)
@@ -41,7 +40,6 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
         return RespEntity.success(cardService.addCard(param));
     }
 
-    @Override
     @GetMapping(value = "/delete")
     @Operation(summary = "删除歌曲卡片")
     @ApiOperationSupport(order = 3)
@@ -49,7 +47,6 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
         return RespEntity.success(cardService.deleteCard(id));
     }
 
-    @Override
     @PostMapping(value = "/modify")
     @Operation(summary = "修改歌曲卡片")
     @ApiOperationSupport(order = 4)
@@ -57,7 +54,6 @@ public class ListController implements ICommonController<RespEntity<?>, ListInfo
         return RespEntity.success(cardService.modifyCard(param));
     }
 
-    @Override
     @PostMapping(value = "/search")
     @Operation(summary = "查询歌曲卡片")
     @ApiOperationSupport(order = 5)

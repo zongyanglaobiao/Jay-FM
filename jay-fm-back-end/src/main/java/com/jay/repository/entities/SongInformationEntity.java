@@ -25,43 +25,29 @@ public class SongInformationEntity extends CommonEntity implements Serializable 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonView(Param.UPDATE.class)
-    @NotBlank(message = "歌曲ID不能为空",groups = Param.UPDATE.class)
     private String id;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String songName;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String singer;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String lyrics;
 
-    @JsonView(Param.IGNORE.class)
     private String likeCount;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String translatedLyrics;
 
-    @JsonView(Param.IGNORE.class)
     private String size;
 
-    @JsonView(Param.IGNORE.class)
     private String playCount;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private Boolean enableDownload;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String uploader;
 
-    @JsonView(Param.IGNORE.class)
     private String savePath;
 
-    @JsonView(Param.IGNORE.class)
     private String downloadId;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String email;
 }

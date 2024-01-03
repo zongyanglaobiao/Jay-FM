@@ -17,12 +17,12 @@ import com.jay.domain.card.list.service.SongListService;
 import com.jay.domain.common.ServicesUtil;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.domain.song.param.AddSongInfoParam;
+import com.jay.domain.song.param.ModifySongInfoParam;
 import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import com.jay.repository.entities.SongListEntity;
 import com.jay.repository.mapper.SongInformationMapper;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static cn.hutool.core.io.FileMagicNumber.FLAC;
 import static cn.hutool.core.io.FileMagicNumber.MP3;
@@ -56,17 +55,11 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
 
     private final SongListService songListService;
 
-    @Override
-    public String uploadSong(AddSongInfoParam param)  {
+    public boolean uploadSong(AddSongInfoParam param) throws CommonException {
         String fileName = null;
         try {
-            SongInformationEntity one = this.lambdaQuery().
-                eq(SongInformationEntity::getSongName, param.getSongName()).
-                one();
-            AssertUtils.isNull(one,"歌曲已存在");
-
             //保存歌曲
-            MultipartFile file = param.getFile();
+            MultipartFile file = param.getSongFile();
             fileName = file.getOriginalFilename();
 
             //检查歌曲格式
@@ -80,7 +73,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
             convert.setSize(String.valueOf(file.getSize()));
             convert.setDownloadId(uuid);
             convert.setSavePath(downloadPath);
-            this.save(convert);
+            boolean save = this.save(convert);
 
             //把存储歌曲到指定文件夹
             SongListEntity entity = new SongListEntity();
@@ -88,16 +81,11 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
             entity.setSongId(convert.getId());
             songListService.save(entity);
 
-            return uuid;
-        } catch (Throwable e) {
+            return save;
+        } catch (Exception e) {
             log.error("SongInformationServiceImpl.uploadSong抛出异常",e);
-            return String.format("上传失败,文件名 = %s",fileName);
+            throw new CommonException(String.format("上传失败,文件名 = %s",fileName));
         }
-    }
-
-    @Override
-    public List<String> uploadSong(List<AddSongInfoParam> param)  {
-        return param.parallelStream().map(this::uploadSong).toList();
     }
 
 
@@ -146,21 +134,31 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
     }
 
     @Override
-    public String modifySong(AddSongInfoParam param) throws CommonException {
-        SongInformationEntity entity = this.getById(param.getId());
-        AssertUtils.notNull(entity, "歌曲不存在");
-
-        if (!entity.getEnableModify()) {
-           throw new  CommonException("不能被修改");
-        }
-        BeanUtil.copyProperties(param, entity);
-        this.updateById(entity);
-        return "修改成功";
+    public String add(List<AddSongInfoParam> param) {
+        return String.valueOf(param.parallelStream().allMatch(t -> {
+            try {
+                return  this.uploadSong(t);
+            } catch (CommonException e) {
+                throw new RuntimeException(e.getMsg());
+            }
+        }));
     }
 
-    private void check(String songName, FileMagicNumber ...type) throws Throwable {
+
+    @Override
+    public String modify(ModifySongInfoParam param) throws CommonException {
+        SongInformationEntity entity = this.getById(param.getId());
+        AssertUtils.notNull(entity,"歌曲不存在");
+
+        SongInformationEntity convert = Convert.convert(SongInformationEntity.class, param);
+        BeanUtil.copyProperties(convert,entity);
+        //更新
+        return String.valueOf(this.updateById(entity));
+    }
+
+    private void check(String songName, FileMagicNumber ...type) throws CommonException {
         for (FileMagicNumber number : type) {
-            Assert.equals(number.getExtension(),FileUtils.getFileSuffix(songName), (Supplier<Throwable>) () -> new CommonException("不支持的文件格式"));
+            Assert.equals(number.getExtension(),FileUtils.getFileSuffix(songName), () -> new CommonException("不支持的文件格式"));
         }
     }
 }

@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllCardThunk} from "../../redux/thunk";
 import {addSongList, CardInfo, deleteSongList, modifySongList} from "../../api/cardController";
 import {AlertContext} from "../../container/Pages/Home/Home";
-import {createAlertMsg, ERROR, httpStatus} from "../PromptBox/PromptBox";
+import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
 import {createUploadSongParam, uploadSong} from "../../api/songController";
@@ -462,7 +462,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									try {
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
-											dataArr.push(createUploadSongParam(singer, songName, uploaderVal, emailVal, file))
+											dataArr.push(createUploadSongParam(singer, songName, uploaderVal, emailVal, file,id))
 										}
 									} catch (e) {
 										setAlert(createAlertMsg(ERROR, e.message))
@@ -471,13 +471,21 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 									//上传歌曲
 									setLoading(true)
-									const resp = await uploadSong(dataArr)
-									console.log('resp',resp)
-									//todo 弹窗提醒
+									const resp = await uploadSong(dataArr[0])
+									console.log('resp',resp,dataArr[0])
+									if (!isSuccess(resp.code)) {
+										setAlert(httpStatus(resp))
+										setLoading(false)
+										return
+									}
 
+									//todo  歌曲列表刷新歌曲
+									setAlert(createAlertMsg(SUCCESS, '上传成功'))
 									setLoading(false)
 									_setOpen(false)
 									setFileList([])
+
+
 								}}
 								destroyOnClose={true}
 								cancelText='取消上传'

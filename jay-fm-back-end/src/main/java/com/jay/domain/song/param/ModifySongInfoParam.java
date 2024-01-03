@@ -14,14 +14,13 @@ import java.io.Serializable;
  * @since 2024/1/1
  */
 @Data
-public class AddSongInfoParam implements Serializable {
+public class ModifySongInfoParam implements Serializable {
 
+    @NotBlank(message = "歌曲ID不能为空")
+    private String id;
 
-
-    @NotBlank(message = "歌曲名不能为空")
     private String songName;
 
-    @NotBlank(message = "歌手名不能为空")
     private String singer;
 
     private Boolean enableDownload;
@@ -30,22 +29,14 @@ public class AddSongInfoParam implements Serializable {
 
     private String translatedLyrics;
 
-    @NotBlank(message = "上传人不能为空")
     private String uploader;
 
     private Boolean enableModify;
 
     private Boolean enableDelete;
 
-    @Email(message = "邮箱格式不正确")
     private String email;
 
     @Serial
     private static final long serialVersionUID = 8046810707174848794L;
-
-    @NotNull(message = "歌曲文件不能为空")
-    private MultipartFile songFile;
-
-    @NotBlank(message = "歌单ID不能为空")
-    private String folderId;
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import {isNullOrUndefined} from "../lib/common/util";
 
 const URL = process.env.REACT_APP_PATH.replace(';','').replaceAll('\'','');
 
@@ -19,7 +20,12 @@ export const serviceAxios = axios.create({
 // 创建请求拦截
 serviceAxios.interceptors.request.use(
 	(config) => {
-		config.headers = {'Content-Type': 'application/json',...config.headers, ...globalConfig.headers};
+		config.headers['auth'] = globalConfig.headers.auth
+		console.log('1',config.headers)
+		if (isNullOrUndefined(config.headers['Content-Type'])) {
+			config.headers['Content-Type'] = 'application/json';
+		}
+		console.log('2',config.headers)
 		//Post是data
 		//get是params
 		return config;

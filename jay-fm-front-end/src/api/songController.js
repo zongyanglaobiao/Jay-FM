@@ -1,7 +1,7 @@
 import {serviceAxios} from "../http/httpRequest";
 
 
-export const createUploadSongParam = (singer,songName,uploader,email,songFile) => ({
+export const createUploadSongParam = (singer,songName,uploader,email,songFile,folderId) => ({
 	"singer": singer,
 	"songName": songName,
 	"lyrics": null,
@@ -11,7 +11,8 @@ export const createUploadSongParam = (singer,songName,uploader,email,songFile) =
 	"enableDelete": true,
 	"uploader": uploader,
 	"email": email,
-	"songFile": songFile
+	"songFile": songFile,
+	"folderId":folderId
 })
 
 /**
@@ -20,8 +21,11 @@ export const createUploadSongParam = (singer,songName,uploader,email,songFile) =
  */
 export  const uploadSong =  (param) => {
 	return serviceAxios({
-		url: "/song/addCardInfo",
+		url: "/song/add",
 		method: "post",
-		data: param
+		data: param,
+		headers:{
+			"Content-Type": "multipart/form-data"
+		}
 	})
 }

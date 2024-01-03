@@ -79,3 +79,17 @@ export  const getAllCard =  ()=>{
 		data: {}
 	})
 }
+
+/**
+ * 根据歌单查询歌曲列表
+ * @param {string} folderId
+ * @returns
+ */
+export function getSongs(folderId) {
+	return serviceAxios({
+		method: 'get',
+		url: `/card/songs/${folderId}`,
+		params: {}
+	})
+}
+

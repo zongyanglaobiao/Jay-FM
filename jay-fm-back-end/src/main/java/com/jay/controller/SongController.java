@@ -1,22 +1,23 @@
 package com.jay.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
-import com.jay.domain.common.param.Param;
 import com.jay.domain.common.param.SearchParam;
 import com.jay.domain.song.param.AddSongInfoParam;
+import com.jay.domain.song.param.ModifySongInfoParam;
 import com.jay.domain.song.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,18 +33,11 @@ public class SongController  {
 
     private final SongInformationService service;
 
-    @PostMapping(value = "/addCardInfo")
-    @Operation(summary = "单个上传歌曲")
+    @PostMapping(value = "/add",produces = "multipart/form-data")
+    @Operation(summary = "增加")
     @ApiOperationSupport(order = 1)
-    public RespEntity<String> addCardInfo(@RequestBody @Validated(Param.INSERT.class)  @JsonView(Param.INSERT.class) AddSongInfoParam param)  {
-        return RespEntity.success(service.uploadSong(param));
-    }
-
-    @PostMapping(value = "/addCardInfos")
-    @Operation(summary = "多个上传歌曲")
-    @ApiOperationSupport(order = 1)
-    public RespEntity<List<String>> addCardInfos(@RequestBody @Validated(Param.INSERT.class) @JsonView(Param.INSERT.class)  List<AddSongInfoParam> param)  {
-        return RespEntity.success(service.uploadSong(param));
+    public RespEntity<String> addCardInfos(@ModelAttribute @Valid AddSongInfoParam param)  {
+        return RespEntity.success(service.add(Collections.singletonList(param)));
     }
 
     /*@GetMapping("/download")
@@ -53,11 +47,11 @@ public class SongController  {
         service.downloadSong(downloadId);
     }*/
 
-    @PostMapping("/modify")
-    @Operation(summary = "修改歌曲")
-    @ApiOperationSupport(order = 3)
-    public RespEntity<String> modifySong(@RequestBody @Validated(Param.UPDATE.class) @JsonView(Param.UPDATE.class) AddSongInfoParam param) throws Throwable {
-        return RespEntity.success(service.modifySong(param));
+    @PostMapping(value = "/modify")
+    @Operation(summary = "修改")
+    @ApiOperationSupport(order = 2)
+    public RespEntity<List<String>> modify(@RequestBody @Valid ModifySongInfoParam param) throws CommonException {
+        return RespEntity.success(service.modify(param));
     }
 
     @GetMapping("/delete")
