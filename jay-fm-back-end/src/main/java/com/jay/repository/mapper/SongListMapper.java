@@ -1,7 +1,6 @@
 package com.jay.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jay.repository.entities.SongListEntity;
 
 /**
 * @author xxl

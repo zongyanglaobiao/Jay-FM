@@ -20,10 +20,10 @@ public class CommonEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -3311980309727025131L;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    @JsonView({Param.NOT_IGNORE.class,Param.INSERT.class,Param.UPDATE.class})
     private Boolean enableModify;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    @JsonView({Param.NOT_IGNORE.class,Param.INSERT.class,Param.UPDATE.class})
     private Boolean enableDelete;
 
     /** 创建时间 */

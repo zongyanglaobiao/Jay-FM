@@ -30,8 +30,6 @@ public class ExceptionHandlerController {
                 map(FieldError::getDefaultMessage).
                 distinct().
                 toList().toString());
-        }else if (exception instanceof RuntimeException) {
-            return RespEntity.fail(exception.getMessage());
         }
         return RespEntity.fail();
     }

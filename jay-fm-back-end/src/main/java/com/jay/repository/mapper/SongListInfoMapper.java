@@ -1,7 +1,7 @@
 package com.jay.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jay.repository.entities.ListInformationEntity;
+import com.jay.repository.entities.SongListInfoEntity;
 
 /**
 * @author xxl
@@ -9,7 +9,7 @@ import com.jay.repository.entities.ListInformationEntity;
 * @createDate 2023-11-23 20:10:52
 * @Entity com.jay.repository.entities.FolderInformationEntity
 */
-public interface CardInformationMapper extends BaseMapper<ListInformationEntity> {
+public interface SongListInfoMapper extends BaseMapper<SongListInfoEntity> {
 
 }
 

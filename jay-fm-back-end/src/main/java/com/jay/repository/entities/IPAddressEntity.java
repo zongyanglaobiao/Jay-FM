@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.jay.repository.common.CommonEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -19,7 +20,8 @@ import java.util.Date;
 @Data
 @TableName("ip_address")
 @Schema(name = "IP模型对象")
-public class IPAddressEntity implements Serializable {
+public class IPAddressEntity extends CommonEntity implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 4898447971915865335L;
 
@@ -31,9 +33,6 @@ public class IPAddressEntity implements Serializable {
 
     @Schema(description = "是否禁止访问")
     private boolean disable;
-
-    @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
 
     private Integer visitsCount;
 }

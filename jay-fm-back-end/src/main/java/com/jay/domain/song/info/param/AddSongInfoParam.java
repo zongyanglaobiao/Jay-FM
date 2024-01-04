@@ -1,4 +1,4 @@
-package com.jay.domain.song.param;
+package com.jay.domain.song.info.param;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

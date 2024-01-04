@@ -4,21 +4,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
-import com.jay.core.web.common.ICommonController;
-import com.jay.domain.card.info.service.CardInformationService;
+import com.jay.core.utils.AssertUtils;
 import com.jay.domain.common.param.Param;
 import com.jay.domain.common.param.SearchParam;
+import com.jay.domain.song.list.service.SongListInfoService;
 import com.jay.exception.CommonException;
-import com.jay.repository.entities.ListInformationEntity;
 import com.jay.repository.entities.SongInformationEntity;
+import com.jay.repository.entities.SongListInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author xxl
@@ -29,42 +29,51 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "歌曲列表管理控制器")
-public class ListController  {
+public class SongListInfoController  {
 
-    private final CardInformationService cardService;
+    private final SongListInfoService service;
 
-    @PostMapping(value = "/add")
-    @Operation(summary = "添加歌曲卡片")
+
+    @PostMapping(value = "/save")
+    @Operation(summary = "保存/修改")
     @ApiOperationSupport(order = 2)
-    public RespEntity<String> insert(@RequestBody  @JsonView(Param.INSERT.class) ListInformationEntity param) throws Throwable {
-        return RespEntity.success(cardService.addCard(param));
+    public RespEntity<String> save(@RequestBody @JsonView(Param.NOT_IGNORE.class) List<SongListInfoEntity> param){
+        return RespEntity.success(String.valueOf(service.
+            saveOrUpdateBatchAround(param, SongListInfoEntity::getId,(t,e)-> {
+                SongListInfoEntity one = service.lambdaQuery().
+                    eq(SongListInfoEntity::getName, e.getName()).one();
+                if (!Objects.isNull(one)) {
+                    throw  new CommonException("歌单已存在");
+                }
+            },null)));
     }
 
     @GetMapping(value = "/delete")
     @Operation(summary = "删除歌曲卡片")
     @ApiOperationSupport(order = 3)
-    public RespEntity<String> delete(@RequestParam("id") @NotBlank(message = "歌单ID不能为空") String id) throws CommonException {
-        return RespEntity.success(cardService.deleteCard(id));
-    }
-
-    @PostMapping(value = "/modify")
-    @Operation(summary = "修改歌曲卡片")
-    @ApiOperationSupport(order = 4)
-    public RespEntity<String> update(@RequestBody @Validated(Param.UPDATE.class) @JsonView(Param.UPDATE.class) ListInformationEntity param) throws Throwable {
-        return RespEntity.success(cardService.modifyCard(param));
+    public RespEntity<String> delete(@RequestParam("id") List<String> id) {
+        //todo 可能事务性不一致
+        return RespEntity.success(String.valueOf(service.removeBatchByIds(id,t -> {
+            SongListInfoEntity one = service.lambdaQuery().eq(SongListInfoEntity::getId, id).one();
+            AssertUtils.notNull(one,"歌单不存在");
+            if (!one.getEnableDelete()) {
+                throw  new CommonException("不能被删除,歌单名："+one.getName());
+            }
+            return true;
+        })));
     }
 
     @PostMapping(value = "/search")
     @Operation(summary = "查询歌曲卡片")
     @ApiOperationSupport(order = 5)
-    public RespEntity<Page<ListInformationEntity>> query(@RequestBody SearchParam param) throws CommonException {
-        return RespEntity.success("查询成功",cardService.searchCard(param));
+    public RespEntity<Page<SongListInfoEntity>> query(@RequestBody SearchParam param) throws CommonException {
+        return RespEntity.success("查询成功",service.searchCard(param));
     }
 
-    @GetMapping(value = "/songs/{folderId}")
-    @Operation(summary = "查询歌曲卡片")
+    @GetMapping(value = "/list/{listId}")
+    @Operation(summary = "查询歌单中歌曲")
     @ApiOperationSupport(order = 6)
-    public RespEntity<List<SongInformationEntity>> query(@PathVariable("folderId") String folderId)  {
+    public RespEntity<List<SongInformationEntity>> query(@PathVariable("listId") String folderId)  {
         return RespEntity.success("查询成功",cardService.getSongs(folderId));
     }
 }

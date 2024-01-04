@@ -2,7 +2,6 @@ package com.jay.domain.card.list.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jay.repository.entities.SongListEntity;
 
 /**
 * @author xxl

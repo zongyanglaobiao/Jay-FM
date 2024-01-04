@@ -1,4 +1,4 @@
-package com.jay.domain.song.service.impl;
+package com.jay.domain.song.info.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
@@ -16,12 +16,16 @@ import com.jay.core.utils.FileUtils;
 import com.jay.domain.card.list.service.SongListService;
 import com.jay.domain.common.ServicesUtil;
 import com.jay.domain.common.param.SearchParam;
-import com.jay.domain.song.param.AddSongInfoParam;
-import com.jay.domain.song.param.ModifySongInfoParam;
-import com.jay.domain.song.service.SongInformationService;
+import com.jay.domain.file.service.FileInfoService;
+import com.jay.domain.song.info.param.ModifySongInfoParam;
+import com.jay.domain.song.info.param.AddSongInfoParam;
+import com.jay.domain.song.info.service.SongInfoService;
+import com.jay.domain.song.info.service.SongInformationService;
 import com.jay.exception.CommonException;
+import com.jay.repository.entities.FileInfoEntity;
+import com.jay.repository.entities.SongInfoEntity;
 import com.jay.repository.entities.SongInformationEntity;
-import com.jay.repository.entities.SongListEntity;
+import com.jay.repository.mapper.SongInfoMapper;
 import com.jay.repository.mapper.SongInformationMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,14 +51,14 @@ import static cn.hutool.core.io.FileMagicNumber.MP3;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SongInformationServiceImpl extends ServiceImpl<SongInformationMapper, SongInformationEntity> implements SongInformationService {
+public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEntity> implements SongInfoService {
 
     @Value("${save-path}")
     private String songSavePath;
 
     private final HttpServletResponse response;
 
-    private final SongListService songListService;
+    private final FileInfoService fileInfoService;
 
     public boolean uploadSong(AddSongInfoParam param) throws CommonException {
         String fileName = null;
@@ -69,7 +74,7 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
             String path = String.format("%s%s", songSavePath,fileName);
             String downloadPath = FileUtils.upload(file.getInputStream(),path);
             String uuid = UUID.randomUUID().toString();
-            SongInformationEntity convert = Convert.convert(SongInformationEntity.class, param);
+            SongIn convert = Convert.convert(SongInformationEntity.class, param);
             convert.setSize(String.valueOf(file.getSize()));
             convert.setDownloadId(uuid);
             convert.setSavePath(downloadPath);
@@ -160,6 +165,52 @@ public class SongInformationServiceImpl extends ServiceImpl<SongInformationMappe
         for (FileMagicNumber number : type) {
             Assert.equals(number.getExtension(),FileUtils.getFileSuffix(songName), () -> new CommonException("不支持的文件格式"));
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public String save(SongInfoEntity param, MultipartFile file) {
+        String fileName = null;
+        String downloadPath = null;
+        String uuid = null;
+        try {
+            //保存歌曲文件
+            fileName = file.getOriginalFilename();
+
+            //检查歌曲格式
+            check(fileName,MP3,FLAC);
+
+            String path = String.format("%s%s", songSavePath,fileName);
+            downloadPath = FileUtils.upload(file.getInputStream(),path);
+            uuid = UUID.randomUUID().toString();
+
+            //保存文件信息到数据库
+            FileInfoEntity entity = new FileInfoEntity();
+            entity.setSize(file.getSize());
+            entity.setSavePath(downloadPath);
+            fileInfoService.save(entity);
+        } catch (IOException e) {
+            log.error("SongInformationServiceImpl.save抛出异常",e);
+            throw new CommonException("文件保存失败，文件名" + fileName);
+        }
+
+        param.setDownloadId(uuid);
+        this.save(param);
+        return null;
+    }
+
+    @Override
+    public String modify(SongInfoEntity param) {
+        SongInfoEntity byId = this.getById(param.getId());
+        AssertUtils.notNull(byId,"歌曲不存在");
+
+        if (!byId.getEnableModify()) {
+            throw new CommonException("已设置不能修改");
+        }
+
+        BeanUtil.copyProperties(param,byId);
+        this.updateById(byId);
+        return null;
     }
 }
 
