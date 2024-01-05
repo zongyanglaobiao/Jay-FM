@@ -44,7 +44,7 @@ public class SongInfoController  {
     @GetMapping("/download")
     @Operation(summary = "下载歌曲")
     @ApiOperationSupport(order = 2)
-    public void downloadSong(@RequestParam("id") String downloadId) throws Throwable {
+    public void downloadSong(@RequestParam("id") String downloadId)  {
         service.downloadSong(downloadId);
     }
 

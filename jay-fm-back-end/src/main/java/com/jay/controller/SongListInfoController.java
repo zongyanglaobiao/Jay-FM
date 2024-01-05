@@ -50,13 +50,13 @@ public class SongListInfoController  {
             },null)));
     }
 
-    @GetMapping(value = "/delete")
-    @Operation(summary = "删除歌曲卡片")
+    @PostMapping(value = "/delete")
+    @Operation(summary = "删除歌单")
     @ApiOperationSupport(order = 3)
-    public RespEntity<String> delete(@RequestParam("id") List<String> id) {
+    public RespEntity<String> delete(@RequestBody List<String> ids) {
         //todo 可能事务性不一致
-        return RespEntity.success(String.valueOf(service.removeBatchByIds(id,t -> {
-            SongListInfoEntity one = service.lambdaQuery().eq(SongListInfoEntity::getId, id).one();
+        return RespEntity.success(String.valueOf(service.removeByIdsBatchBefore(ids,t->{
+            SongListInfoEntity one = service.getById(t);
             AssertUtils.notNull(one,"歌单不存在");
             if (!one.getEnableDelete()) {
                 throw  new CommonException("已设置不能被删除,歌单名："+one.getName());
@@ -66,7 +66,7 @@ public class SongListInfoController  {
     }
 
     @PostMapping(value = "/search")
-    @Operation(summary = "查询歌曲卡片")
+    @Operation(summary = "查询歌单")
     @ApiOperationSupport(order = 5)
     public RespEntity<Page<SongListInfoEntity>> query(@RequestBody SearchParam param) throws CommonException {
         return RespEntity.success("查询成功",service.searchCard(param));

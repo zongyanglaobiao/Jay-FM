@@ -24,8 +24,8 @@ spring:
       max-file-size: 50MB   #单个文件上传的最大值
   datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      #用于连接本地数据库测试是否能正确运行 todo 换成jay_fm_database
-      url: mpw:9Qfp+NeifxXpSX+ITv7MfpotR3g8L5fzQF00xnqyv7/kATd4iiFdgNIzfHCy9vzl6jDRKuWoLOaZ5zRledf5oLoRmWa5FeICyOdEGIZpNRBitIgMfGr0GXZj5uT8DkNqcu1vpe93/75TaQ+t2pIZVjXLq3gUg9GXW+LnmB25Rjg=
+      #用于连接本地数据库测试是否能正确运行
+      url: mpw:9Qfp+NeifxXpSX+ITv7MfpotR3g8L5fzQF00xnqyv7/wdLLwLoVPisbUMlHnbW16TR09N/Nyzl9pebnV6UOma8TswK7LL3nC8ifSwa2vxnrD7DXVVPn8mKXpw2kKk92m0Nt5lBdu6ab2Mjxq/iEQGxs7PZP1Qga2Ne9XUtgkizc=
       username: mpw:wEL7uPAuz4hbK+kwKBGeiQ==
       password: mpw:OfGZyCjRemMXVySW/DkUWA==
       hikari:

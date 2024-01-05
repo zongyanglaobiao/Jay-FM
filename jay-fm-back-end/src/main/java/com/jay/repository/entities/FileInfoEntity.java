@@ -33,7 +33,7 @@ public class FileInfoEntity extends CommonEntity implements Serializable {
     /**
      * 是否删除
      */
-    private boolean enableDelete;
+    private boolean hasUsed;
 
     /**
      * 歌曲大小
