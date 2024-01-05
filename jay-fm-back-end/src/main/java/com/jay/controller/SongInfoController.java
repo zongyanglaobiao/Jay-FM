@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
 import com.jay.domain.common.param.Param;
+import com.jay.domain.file.service.FileInfoService;
 import com.jay.domain.song.info.service.SongInfoService;
 import com.jay.exception.CommonException;
+import com.jay.repository.entities.FileInfoEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +35,8 @@ public class SongInfoController  {
 
     private final SongInfoService service;
 
+    private final FileInfoService fileInfoService;
+
     @PostMapping(value = "/save",produces = "multipart/form-data")
     @Operation(summary = "新增")
     @ApiOperationSupport(order = 1)
@@ -59,11 +63,16 @@ public class SongInfoController  {
     @Operation(summary = "删除歌曲")
     @ApiOperationSupport(order = 4)
     public RespEntity<String> deleteSong(@RequestParam @NotBlank(message = "歌曲ID不能为空" ) String songId) throws CommonException {
-        //todo 事务性会成功？
-        return RespEntity.success(String.valueOf(service.removeBatchByIds(List.of(songId), t -> {
-            if (Objects.isNull(service.getById(songId))) {
+        return RespEntity.success(String.valueOf(service.removeBatchByIdsBefore(List.of(songId), t -> {
+            SongInfoEntity entity = service.getById(songId);
+            if (Objects.isNull(entity)) {
                 throw new CommonException("歌曲不存在");
             }
+
+            //设置歌曲文件不可用
+            FileInfoEntity byId = fileInfoService.getById(entity.getDownloadId());
+            byId.setHasUsed(false);
+            fileInfoService.saveOrUpdate(byId,FileInfoEntity::getId);
             return true;
         })));
     }

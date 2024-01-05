@@ -199,8 +199,8 @@ public interface ICommonService<E> extends IService<E> {
      * @return boolean
      */
     @Transactional(rollbackFor = RuntimeException.class)
-    default  boolean removeByIdsBatchBefore(List<? extends Serializable> ids,Function<Serializable,Boolean> before) {
-       return   ids.stream().anyMatch(t -> {
+    default  boolean removeBatchByIdsBefore(List<? extends Serializable> ids,Function<Serializable,Boolean> before) {
+        return   ids.stream().anyMatch(t -> {
             if (Objects.isNull(before)) {
                 throw new RuntimeException("CommonService.removeByIdAround: before is null");
             }

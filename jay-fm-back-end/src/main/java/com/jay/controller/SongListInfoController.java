@@ -54,8 +54,7 @@ public class SongListInfoController  {
     @Operation(summary = "删除歌单")
     @ApiOperationSupport(order = 3)
     public RespEntity<String> delete(@RequestBody List<String> ids) {
-        //todo 可能事务性不一致
-        return RespEntity.success(String.valueOf(service.removeByIdsBatchBefore(ids,t->{
+        return RespEntity.success(String.valueOf(service.removeBatchByIdsBefore(ids,t->{
             SongListInfoEntity one = service.getById(t);
             AssertUtils.notNull(one,"歌单不存在");
             if (!one.getEnableDelete()) {
