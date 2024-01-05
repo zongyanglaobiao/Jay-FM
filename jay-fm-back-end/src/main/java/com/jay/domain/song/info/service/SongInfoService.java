@@ -14,4 +14,6 @@ public interface SongInfoService extends ICommonService<SongInfoEntity> {
     String save(SongInfoEntity param, MultipartFile file);
 
     String modify(SongInfoEntity param);
+
+    void downloadSong(String id);
 }

@@ -1,30 +1,22 @@
 package com.jay.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
 import com.jay.domain.common.param.Param;
-import com.jay.domain.common.param.SearchParam;
-import com.jay.domain.song.info.param.AddSongInfoParam;
-import com.jay.domain.song.info.param.ModifySongInfoParam;
 import com.jay.domain.song.info.service.SongInfoService;
-import com.jay.domain.song.info.service.SongInformationService;
 import com.jay.exception.CommonException;
 import com.jay.repository.entities.SongInfoEntity;
-import com.jay.repository.entities.SongInformationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,19 +34,19 @@ public class SongInfoController  {
     private final SongInfoService service;
 
     @PostMapping(value = "/save",produces = "multipart/form-data")
-    @Operation(summary = "更新/新增")
+    @Operation(summary = "新增")
     @ApiOperationSupport(order = 1)
     public RespEntity<String> save(@RequestBody @JsonView(Param.INSERT.class) @Validated(Param.INSERT.class) SongInfoEntity param,
                                    @RequestPart("file") @NotNull(message = "歌曲文件不能为空") MultipartFile file){
         return RespEntity.success(service.save(param,file));
     }
 
-    /*@GetMapping("/download")
+    @GetMapping("/download")
     @Operation(summary = "下载歌曲")
     @ApiOperationSupport(order = 2)
     public void downloadSong(@RequestParam("id") String downloadId) throws Throwable {
         service.downloadSong(downloadId);
-    }*/
+    }
 
     @PostMapping(value = "/modify")
     @Operation(summary = "修改")
@@ -67,18 +59,12 @@ public class SongInfoController  {
     @Operation(summary = "删除歌曲")
     @ApiOperationSupport(order = 4)
     public RespEntity<String> deleteSong(@RequestParam @NotBlank(message = "歌曲ID不能为空" ) String songId) throws CommonException {
+        //todo 事务性会成功？
         return RespEntity.success(String.valueOf(service.removeBatchByIds(List.of(songId), t -> {
             if (Objects.isNull(service.getById(songId))) {
                 throw new CommonException("歌曲不存在");
             }
             return true;
         })));
-    }
-
-    @PostMapping("/search")
-    @Operation(summary = "搜索歌曲")
-    @ApiOperationSupport(order = 5)
-    public RespEntity<Page<SongInformationEntity>> search(@RequestBody SearchParam param) throws CommonException {
-        return RespEntity.success("查询成功",service.search(param));
     }
 }

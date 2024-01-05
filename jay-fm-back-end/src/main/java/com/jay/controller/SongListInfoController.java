@@ -7,9 +7,10 @@ import com.jay.core.resp.RespEntity;
 import com.jay.core.utils.AssertUtils;
 import com.jay.domain.common.param.Param;
 import com.jay.domain.common.param.SearchParam;
+import com.jay.domain.song.info.service.SongInfoService;
 import com.jay.domain.song.list.service.SongListInfoService;
 import com.jay.exception.CommonException;
-import com.jay.repository.entities.SongInformationEntity;
+import com.jay.repository.entities.SongInfoEntity;
 import com.jay.repository.entities.SongListInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,11 +29,12 @@ import java.util.Objects;
 @RequestMapping(value = "/card",produces = "application/json;charset=UTF-8")
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "歌曲列表管理控制器")
+@Tag(name = "歌单管理控制器")
 public class SongListInfoController  {
 
     private final SongListInfoService service;
 
+    private final SongInfoService songInfoService;
 
     @PostMapping(value = "/save")
     @Operation(summary = "保存/修改")
@@ -57,7 +59,7 @@ public class SongListInfoController  {
             SongListInfoEntity one = service.lambdaQuery().eq(SongListInfoEntity::getId, id).one();
             AssertUtils.notNull(one,"歌单不存在");
             if (!one.getEnableDelete()) {
-                throw  new CommonException("不能被删除,歌单名："+one.getName());
+                throw  new CommonException("已设置不能被删除,歌单名："+one.getName());
             }
             return true;
         })));
@@ -73,7 +75,7 @@ public class SongListInfoController  {
     @GetMapping(value = "/list/{listId}")
     @Operation(summary = "查询歌单中歌曲")
     @ApiOperationSupport(order = 6)
-    public RespEntity<List<SongInformationEntity>> query(@PathVariable("listId") String folderId)  {
-        return RespEntity.success("查询成功",cardService.getSongs(folderId));
+    public RespEntity<List<SongInfoEntity>> query(@PathVariable("listId") String listId)  {
+        return RespEntity.success("查询成功",songInfoService.lambdaQuery().eq(SongInfoEntity::getListId,listId).list());
     }
 }
