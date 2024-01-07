@@ -3,12 +3,12 @@ import {getRandomColor, getRandomId, isArrayBlank, isEmail, isNullOrUndefined, i
 import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCardThunk} from "../../redux/thunk";
-import {addSongList, CardInfo, deleteSongList, modifySongList} from "../../api/cardController";
+import {deleteSongList, saveOrModifySongList, songListInfoParam} from "../../api/song-list-controller";
 import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
-import {createUploadSongParam, uploadSong} from "../../api/songController";
+import {saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
 
 
@@ -21,7 +21,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 
 	//submit form
 	const onFinish = async (fromData) => {
-		const  {cardName,color,creator,textDescribe,email,enableColorPicker,enableDelete,enableModify} = fromData
+		const  {name,color,creator,textDescribe,email,enableColorPicker,enableDelete,enableModify} = fromData
 		let str = null
 		//是否使用自定义颜色
 		if(enableColorPicker){
@@ -30,8 +30,8 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
 		}
 
-		const card =  new CardInfo(null,cardName,str,textDescribe,creator,email,enableDelete,enableModify)
-		const resp = await addSongList(card)
+		const card =  songListInfoParam(null,name,str,textDescribe,creator,email,enableDelete,enableModify)
+		const resp = await saveOrModifySongList([card])
 		setAlert(httpStatus(resp))
 
 		if (isSuccess(resp.code)) {
@@ -234,9 +234,9 @@ const SongCardUI = memo(({setComponentType,type})=>{
 				   const split = item.color.split(',');
 				   return (
 					   <div key={`${getRandomId()}`}
-							onClick={()=>{selectMenu(CARD_DETAILS_UI,{item,setComponentType})}}
+							onClick={()=>{setComponentType({type:CARD_DETAILS_UI,obj:{item,setComponentType}})}}
 							className='card ' style={{backgroundColor:`rgb(${split[0]},${split[1]},${split[2]})`}}>
-						   <p className="tip">{item.cardName}</p>
+						   <p className="tip">{item.name}</p>
 						   <p className="second-text">{item.textDescribe}</p>
 					   </div>
 				   )
@@ -272,7 +272,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	const setAlert = useContext(AlertContext)
 
 	//解构信息
-	const {cardName,color,textDescribe,id,enableModify,enableDelete} = item
+	const {name,color,textDescribe,id,enableModify,enableDelete} = item
 	let form = useRef();
 
 	//必须有耗时操作，否则无法触发state
@@ -292,7 +292,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 		//加载动画
 		setConfirmLoading(true);
-		const resp = await modifySongList({...form.getFieldsValue(),color:_color,id})
+		const resp = await saveOrModifySongList([{...form.getFieldsValue(),color:_color,id}])
 		const {code} = resp
 
 		//请求成功则更新音乐列表
@@ -381,7 +381,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 					</div>
 				</Modal>
 				<div className='mt-2 mb-2'>
-					<p className='text-xl text-overflow'>{cardName}</p>
+					<p className='text-xl text-overflow'>{name}</p>
 					<p className='text-overflow'>{textDescribe}</p>
 				</div>
 			</div>
@@ -431,6 +431,9 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									>
 								<svg t="1703433684592" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2392" width="20" height="20"><path d="M903.864364 956.704314 120.695385 956.704314c-14.145162 0-25.612331-11.466146-25.612331-25.611308L95.083054 759.529583c0-14.145162 11.467169-25.611308 25.612331-25.611308s25.611308 11.466146 25.611308 25.611308l0 145.952116 731.946364 0L878.253056 759.529583c0-14.145162 11.466146-25.611308 25.611308-25.611308s25.611308 11.466146 25.611308 25.611308l0 171.563424C929.476695 945.238169 918.010549 956.704314 903.864364 956.704314z" p-id="2393"></path><path d="M288.712029 334.744947c-6.703679 0-13.399171-2.615571-18.423605-7.817036-9.827833-10.17371-9.547447-26.387997 0.627287-36.21583l224.799906-217.151715c9.92607-9.587356 25.663496-9.587356 35.588543 0l224.801952 217.151715c10.17371 9.827833 10.455119 26.041096 0.626263 36.214806-9.827833 10.17371-26.041096 10.455119-36.214806 0.627287L513.508865 127.591957 306.502208 327.554174C301.532009 332.35655 295.116903 334.744947 288.712029 334.744947z" p-id="2394"></path><path d="M513.508865 785.14089c-14.145162 0-25.611308-11.466146-25.611308-25.611308L487.897557 91.981924c0-14.145162 11.466146-25.611308 25.611308-25.611308s25.611308 11.467169 25.611308 25.611308l0 667.547659C539.121196 773.674745 527.65505 785.14089 513.508865 785.14089z" p-id="2395"></path></svg>
 							</Button>
+							<Button style={{backgroundColor:'transparent'}} onClick={()=>{setComponentType(initValue)}}>
+								回到首页
+							</Button>
 							<Modal
 								title="上传歌曲"
 								open={_open}
@@ -462,7 +465,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									try {
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
-											dataArr.push(createUploadSongParam(singer, songName, uploaderVal, emailVal, file,id))
+											dataArr.push(songInfoParam(null,singer, songName, uploaderVal, emailVal, file,id))
 										}
 									} catch (e) {
 										setAlert(createAlertMsg(ERROR, e.message))
@@ -471,7 +474,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 									//上传歌曲
 									setLoading(true)
-									const resp = await uploadSong(dataArr[0])
+									const resp = await saveSong(dataArr[0])
 									console.log('resp',resp,dataArr[0])
 									if (!isSuccess(resp.code)) {
 										setAlert(httpStatus(resp))

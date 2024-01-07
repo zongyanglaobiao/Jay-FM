@@ -41,13 +41,13 @@ public class SongInfoEntity extends CommonEntity implements Serializable {
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String lyrics;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    @JsonView(Param.IGNORE.class)
     private Integer likeCount;
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String translatedLyrics;
 
-    @JsonView({Param.INSERT.class,Param.UPDATE.class})
+    @JsonView(Param.IGNORE.class)
     private Integer playCount;
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})

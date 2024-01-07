@@ -26,7 +26,7 @@ import java.util.Objects;
  * @since 2023/11/23
  */
 @RestController
-@RequestMapping(value = "/card",produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/song/list",produces = "application/json;charset=UTF-8")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "歌单管理控制器")
