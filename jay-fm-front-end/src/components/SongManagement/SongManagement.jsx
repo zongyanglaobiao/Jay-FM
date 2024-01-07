@@ -459,27 +459,27 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 										return
 									}
 
-									//上传一个集合
-									const dataArr = [];
+									//上传歌曲
+									setLoading(true)
 
 									try {
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
-											dataArr.push(songInfoParam(null,singer, songName, uploaderVal, emailVal, file,id))
+											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id);
+											// param.file = file
+											console.log('file',file)
+											const resp = await  saveSong(file,param)
+											console.log('resp',resp)
+											if (!isSuccess(resp.code)) {
+												setAlert(httpStatus(resp))
+												return
+											}
 										}
 									} catch (e) {
 										setAlert(createAlertMsg(ERROR, e.message))
 										return
-									}
-
-									//上传歌曲
-									setLoading(true)
-									const resp = await saveSong(dataArr[0])
-									console.log('resp',resp,dataArr[0])
-									if (!isSuccess(resp.code)) {
-										setAlert(httpStatus(resp))
+									}finally {
 										setLoading(false)
-										return
 									}
 
 									//todo  歌曲列表刷新歌曲
@@ -487,8 +487,6 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									setLoading(false)
 									_setOpen(false)
 									setFileList([])
-
-
 								}}
 								destroyOnClose={true}
 								cancelText='取消上传'

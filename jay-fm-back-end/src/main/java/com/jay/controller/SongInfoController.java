@@ -11,6 +11,7 @@ import com.jay.repository.entities.FileInfoEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,12 +38,14 @@ public class SongInfoController  {
 
     private final FileInfoService fileInfoService;
 
+    private final HttpServletRequest request;
+
     @PostMapping(value = "/save",produces = "multipart/form-data")
     @Operation(summary = "新增")
     @ApiOperationSupport(order = 1)
-    public RespEntity<String> save(@RequestBody @JsonView(Param.INSERT.class) @Validated(Param.INSERT.class) SongInfoEntity param,
-                                   @RequestPart("file") @NotNull(message = "歌曲文件不能为空") MultipartFile file){
-        return RespEntity.success(service.save(param,file));
+    public RespEntity<String> save(@RequestPart @JsonView(Param.INSERT.class) @Validated(Param.INSERT.class) SongInfoEntity param ,
+                                   @RequestParam("file") @NotNull(message = "歌曲文件不能为空") MultipartFile file){
+        return RespEntity.success("成功");
     }
 
     @GetMapping("/download")

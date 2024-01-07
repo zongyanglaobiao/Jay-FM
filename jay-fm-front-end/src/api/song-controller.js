@@ -1,7 +1,7 @@
 import {serviceAxios} from "../http/httpRequest";
 
 
-export function songInfoParam(id,singer,songName,uploader,email,songFile,listId){
+export function songInfoParam(id,singer,songName,uploader,email,listId){
 	return {
 		"id": id,
 		"singer": singer,
@@ -13,7 +13,6 @@ export function songInfoParam(id,singer,songName,uploader,email,songFile,listId)
 		"enableDelete": true,
 		"uploader": uploader,
 		"email": email,
-		"songFile": songFile,
 		"listId":listId
 	}
 }
@@ -73,6 +72,7 @@ export function modifySong(params) {
 
 /**
  * 新增
+ * @param file
  * @param {object} params 歌曲信息实体类_INSERT
  * @param {boolean} params.enableModify
  * @param {boolean} params.enableDelete
@@ -87,14 +87,22 @@ export function modifySong(params) {
  * @param {string} params.downloadId
  * @param {string} params.email
  * @param {string} params.listId
- * @param {string} file
  * @returns
  */
 export function saveSong(file, params) {
+	console.log('参数1',file)
+	const formData = new FormData();
+	formData.append('param',new Blob([JSON.stringify(params)],{type:'application/json'}));
+	formData.append('file', file);
+	console.log('参数2',formData.get("file"))
+	// params.file = file
 	return serviceAxios({
 		url: `/song/save`,
 		method: "post",
-		data: params,
-		params:file
+		headers:{
+			//todo 调试接口
+			'Content-Type': 'multipart/form-data'
+		},
+		data: formData,
 	})
 }
