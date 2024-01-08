@@ -93,14 +93,14 @@ export function saveSong(file, params) {
 	console.log('参数1',file)
 	const formData = new FormData();
 	formData.append('param',new Blob([JSON.stringify(params)],{type:'application/json'}));
-	formData.append('file', file);
+	formData.append('file',new Blob([JSON.stringify(file)],{type:'multipart/form-data'}),file.name);
+	// formData.append('file', file);
 	console.log('参数2',formData.get("file"))
 	// params.file = file
 	return serviceAxios({
 		url: `/song/save`,
 		method: "post",
 		headers:{
-			//todo 调试接口
 			'Content-Type': 'multipart/form-data'
 		},
 		data: formData,

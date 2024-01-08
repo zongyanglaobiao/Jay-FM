@@ -15,4 +15,16 @@ public class AssertUtils {
     public static void isNull(Object obj,String msg) throws CommonException {
         Assert.isNull(obj, () -> new CommonException(msg));
     }
+
+    /**
+     * true就放行
+     * @param condition
+     * @param msg
+     * @throws CommonException
+     */
+    public static void isTure(boolean condition,String msg) throws CommonException {
+        if (!condition) {
+            throw new CommonException(msg);
+        }
+    }
 }

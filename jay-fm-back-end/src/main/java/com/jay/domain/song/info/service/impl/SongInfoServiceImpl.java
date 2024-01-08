@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static cn.hutool.core.io.FileMagicNumber.FLAC;
 import static cn.hutool.core.io.FileMagicNumber.MP3;
@@ -57,10 +58,9 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
         FileUtils.webDownload(one.getSavePath(),response,FileUtils.getFileName(songSavePath));
     }
 
-    private void check(String songName, FileMagicNumber ...type) throws CommonException {
-        for (FileMagicNumber number : type) {
-            Assert.equals(number.getExtension(),FileUtils.getFileSuffix(songName), () -> new CommonException("不支持的文件格式"));
-        }
+    private void check(String songName, FileMagicNumber ...type)  {
+        boolean match = Arrays.stream(type).anyMatch(t -> t.getExtension().equalsIgnoreCase(FileUtils.getFileSuffix(songName)));
+        AssertUtils.isTure(match,"不支持的文件格式 = {}"+FileUtils.getFileSuffix(songName));
     }
 
     @Override
@@ -91,8 +91,7 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
         }
 
         param.setDownloadId(uuid);
-        this.save(param);
-        return null;
+        return String.valueOf(this.save(param));
     }
 
     @Override
