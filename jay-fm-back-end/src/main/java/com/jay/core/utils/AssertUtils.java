@@ -22,9 +22,7 @@ public class AssertUtils {
      * @param msg
      * @throws CommonException
      */
-    public static void isTure(boolean condition,String msg) throws CommonException {
-        if (!condition) {
-            throw new CommonException(msg);
-        }
+    public static void assertTrue(boolean condition,String msg) throws CommonException {
+        Assert.isTrue(condition, () -> new CommonException(msg));
     }
 }

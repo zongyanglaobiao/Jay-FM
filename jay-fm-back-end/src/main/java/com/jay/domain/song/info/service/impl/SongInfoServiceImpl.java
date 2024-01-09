@@ -60,7 +60,7 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
 
     private void check(String songName, FileMagicNumber ...type)  {
         boolean match = Arrays.stream(type).anyMatch(t -> t.getExtension().equalsIgnoreCase(FileUtils.getFileSuffix(songName)));
-        AssertUtils.isTure(match,"不支持的文件格式 = {}"+FileUtils.getFileSuffix(songName));
+        AssertUtils.assertTrue(match,"不支持的文件格式 = {}"+FileUtils.getFileSuffix(songName));
     }
 
     @Override

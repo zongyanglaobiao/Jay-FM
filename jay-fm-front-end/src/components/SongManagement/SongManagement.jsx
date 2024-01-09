@@ -3,7 +3,7 @@ import {getRandomColor, getRandomId, isArrayBlank, isEmail, isNullOrUndefined, i
 import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCardThunk} from "../../redux/thunk";
-import {deleteSongList, saveOrModifySongList, songListInfoParam} from "../../api/song-list-controller";
+import {deleteSongList, querySongList, saveOrModifySongList, songListInfoParam} from "../../api/song-list-controller";
 import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
@@ -253,27 +253,43 @@ const SongCardUI = memo(({setComponentType,type})=>{
 
 //播放相关的设置
 const playSettings = [
-	{text:'顺序播放',color:'geekblue',next:1},
-	{text:'随机播放',color:'green',id:2},
-	{text:'循环播放',color:'cyan',id:3},
-	{text:'重复播放',color:'magenta',id:4}]
+	{text:'顺序播放',id:0,nextId:1},
+	{text:'随机播放',id:1,nextId:2},
+	{text:'循环播放',id:2,nextId:3},
+	{text:'重复播放',id:3,nextId:0},
+]
 
 
 
 const PLAY_SETTING = "PLAY_SETTING";
 
-//存储信息
-localStorage.setItem(PLAY_SETTING,JSON.stringify(playSettings[0]));
+//默认是顺序播放
+localStorage.setItem(PLAY_SETTING,playSettings[0].text);
 
 const CardInfoUI = memo(({item,setComponentType})=>{
 	const [open, setOpen] = useState(false);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false)
 	const setAlert = useContext(AlertContext)
+	const [songs, setSongs] = useState([])
 
 	//解构信息
 	const {name,color,textDescribe,id,enableModify,enableDelete} = item
 	let form = useRef();
+
+	//查询歌单列表
+	const renderSongs = async () => {
+		const resp = await querySongList(id);
+		console.log('respap',resp)
+		if (isSuccess(resp.code)) {
+			setSongs([...resp.data])
+		}
+	}
+
+	useEffect(() => {
+		//初次渲染
+		renderSongs()
+	}, []);
 
 	//必须有耗时操作，否则无法触发state
 	const handleOk = async () => {
@@ -338,8 +354,15 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	}
 
 	const changeText = (e) => {
-		// e.currentTarget.innerText =
-        console.log(JSON.parse(localStorage.getItem(PLAY_SETTING)))
+		//比较取值
+		const  setting = playSettings.filter(item => item.text === e.currentTarget.innerText)[0]
+
+		//存储
+		const current = playSettings[setting.nextId]
+		localStorage.setItem(PLAY_SETTING,current.text);
+
+		e.currentTarget.innerText = current.text
+		//todo 排序依据  拖拽排序功能
 	}
 
 	let colors = null
@@ -388,20 +411,17 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			{/*歌曲列表部分*/}
 			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
 				{
-					(()=>{
-						const  arr =[]
-						for (let i = 0; i < 30; i++) {
-							arr.push(
-								<p key={getRandomId()} className= {'w-full flex '.concat(i % 2 === 0 ? 'bg-yellow-200' : 'bg-blue-400')}>
-									<span className='w-full text-center'>{i + 1}</span>
-									<span className='w-full text-center'>晴天</span>
-									<span className='w-full text-center'>周杰伦</span>
-									<span className='w-full text-center'><Button>删除</Button></span>
-								</p>
-							)
-						}
-						return arr
-					})()
+					songs.map((value, index) => {
+						return (
+							<p  key={getRandomId()}
+							   className={'w-full flex  '.concat(index % 2 === 0 ? ' bg-yellow-200' : ' bg-blue-400')}>
+								<span className='w-full text-center'>{index + 1}</span>
+								<span className='w-full text-center'>{value.songName}</span>
+								<span className='w-full text-center'>{value.singer}</span>
+								<span className='w-full text-center'><Button>删除</Button></span>
+							</p>
+						)
+					})
 				}
 			</div>
 			{/*歌曲功能部分*/}
@@ -409,10 +429,6 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 				 style={{
 					 backgroundColor:`rgb(${colors[0]},${colors[1]},${colors[2]})`
 				 }}>
-				{/*
-					todo 上传文件(新建页面)
-					todo  按钮切换
-				*/}
 				{
 					//偷懒采用匿名函数,目的区分hook
 					(()=>{
@@ -425,7 +441,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 						return <Flex gap='middle' vertical={false} className='w-full h-full' align='center' justify='center'>
 							<Button style={{
 								backgroundColor:'transparent'
-							}} onClick={changeText}>{JSON.parse(localStorage.getItem(PLAY_SETTING)).text}</Button>
+							}} onClick={changeText}>{localStorage.getItem(PLAY_SETTING)}</Button>
 							<Button style={{backgroundColor:'transparent'}}
 									onClick={()=>{_setOpen(true)}}
 									>
@@ -466,10 +482,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
 											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id);
-											// param.file = file
-											console.log('file',file)
 											const resp = await  saveSong(file,param)
-											console.log('resp',resp)
 											if (!isSuccess(resp.code)) {
 												setAlert(httpStatus(resp))
 												return
@@ -482,11 +495,12 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 										setLoading(false)
 									}
 
-									//todo  歌曲列表刷新歌曲
 									setAlert(createAlertMsg(SUCCESS, '上传成功'))
 									setLoading(false)
 									_setOpen(false)
 									setFileList([])
+									//请求重新渲染
+									renderSongs()
 								}}
 								destroyOnClose={true}
 								cancelText='取消上传'
@@ -570,7 +584,6 @@ function getComponent(type,obj = {}) {
 		}
 		case FIlE_UPLOAD_UI:{
 			const {setComponentType} = obj
-			//todo 单独写一个页面上传文件
 			return  (
 				<div className='w-full h-full mr-40 layout-center border-1 border-solid border-amber-400'>
 					<FileUploadUI setComponentType={setComponentType}/>

@@ -21,11 +21,9 @@ export const serviceAxios = axios.create({
 serviceAxios.interceptors.request.use(
 	(config) => {
 		config.headers['auth'] = globalConfig.headers.auth
-		console.log('1',config.headers)
 		if (isNullOrUndefined(config.headers['Content-Type'])) {
 			config.headers['Content-Type'] = 'application/json';
 		}
-		console.log('2',config.headers)
 		//Post是data
 		//get是params
 		return config;
