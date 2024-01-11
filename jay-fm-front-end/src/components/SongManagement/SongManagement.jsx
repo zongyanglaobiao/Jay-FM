@@ -10,6 +10,8 @@ import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
 import {saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
+import {DndContext} from "@dnd-kit/core";
+import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType})=>{
@@ -365,6 +367,16 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 		//todo 排序依据  拖拽排序功能
 	}
 
+	//拖拽组件触发函数
+	function dragEndEvent(props) {
+		const { active,over } = props
+		//todo 下标问题
+		const activeIndex = songs.indexOf(active.id)
+		const overIndex = songs.indexOf(over.id)
+		console.log('dragEndEvent','active==',active,'activeIndex ===',activeIndex,'over==',over)
+		setSongs(items=> arrayMove(items,activeIndex,overIndex))
+	}
+
 	let colors = null
 	try {
 		colors = color.split(',')
@@ -410,19 +422,17 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			</div>
 			{/*歌曲列表部分*/}
 			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
-				{
-					songs.map((value, index) => {
-						return (
-							<p  key={getRandomId()}
-							   className={'w-full flex  '.concat(index % 2 === 0 ? ' bg-yellow-200' : ' bg-blue-400')}>
-								<span className='w-full text-center'>{index + 1}</span>
-								<span className='w-full text-center'>{value.songName}</span>
-								<span className='w-full text-center'>{value.singer}</span>
-								<span className='w-full text-center'><Button>删除</Button></span>
-							</p>
-						)
-					})
-				}
+				<DndContext onDragEnd={dragEndEvent} >
+					<SortableContext items={songs} >
+						{
+							songs.map((value, index) => {
+								return (
+									<SortableItem key={getRandomId()} index={index} song={value}/>
+								)
+							})
+						}
+					</SortableContext>
+				</DndContext>
 			</div>
 			{/*歌曲功能部分*/}
 			<div className='bg-amber-200 absolute bottom-0 w-full h-[4rem] rounded-b-2xl'
@@ -537,6 +547,35 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 		</div>
 	)
 })
+
+const SortableItem = memo(({index,song}) => {
+	const id = index
+	const {setNodeRef,listeners,transform,transition,isDragging } =  useSortable({id})
+	//计算确定是否为X轴
+	const getCoordinate = (coordinate,isX) =>{
+		if (isX) {
+			return coordinate?.x === undefined ? 0 : coordinate?.x
+		}else {
+			return coordinate?.y === undefined ? 0 : coordinate?.y
+		}
+	}
+
+	const styles = {
+		transform: `translate3d(${getCoordinate(transform,true)}px, ${getCoordinate(transform,false)}px, 0)`
+	}
+
+	return (
+		<p   ref={setNodeRef}  {...listeners} style={styles}
+			className={'w-full flex  '.concat(index % 2 === 0 ? ' bg-yellow-200' : ' bg-blue-400')}>
+			<span className='w-full text-center'>{index + 1}</span>
+			<span className='w-full text-center'>{song.songName}</span>
+			<span className='w-full text-center'>{song.singer}</span>
+			<span className='w-full text-center'><Button>删除</Button></span>
+		</p>
+	)
+
+})
+
 
 const FileUploadUI = memo(({setComponentType})=>{
 	return (
