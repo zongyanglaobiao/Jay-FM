@@ -11,7 +11,7 @@ import {UploadOutlined} from "@ant-design/icons";
 import {saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
 import {DndContext} from "@dnd-kit/core";
-import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
+import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType})=>{
@@ -201,6 +201,7 @@ const SongCardUI = memo(({setComponentType,type})=>{
 	const cardArray = useSelector(state => state.cardArray);
 
 	useEffect(() => {
+		console.log('render')
 		loadList()
 	},[type]);
 
@@ -368,13 +369,35 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	}
 
 	//拖拽组件触发函数
-	function dragEndEvent(props) {
-		const { active,over } = props
-		//todo 下标问题
-		const activeIndex = songs.indexOf(active.id)
-		const overIndex = songs.indexOf(over.id)
-		console.log('dragEndEvent','active==',active,'activeIndex ===',activeIndex,'over==',over)
-		setSongs(items=> arrayMove(items,activeIndex,overIndex))
+	function dragEndEvent({active,over}) {
+		if (active.id === over.id) {
+			return
+		}
+
+		const  getSongById = (id)=> {
+			for (let song of songs) {
+				if (song.id === id) {
+					return songs[songs.indexOf(song)]
+				}
+			}
+		}
+
+		const activeIndex = getSongById(active.id)
+		const overIndex = getSongById(over.id)
+		setSongs(val=> {
+			const arr = []
+			for (let valElement of val) {
+				//todo 优化查找速度
+				if (valElement.id === activeIndex.id) {
+					arr.push(overIndex)
+				}else if (valElement.id === overIndex.id){
+					arr.push(activeIndex)
+				}else {
+					arr.push(valElement)
+				}
+			}
+			return arr
+		})
 	}
 
 	let colors = null
@@ -422,12 +445,15 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			</div>
 			{/*歌曲列表部分*/}
 			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
-				<DndContext onDragEnd={dragEndEvent} >
-					<SortableContext items={songs} >
+				<DndContext
+					onDragEnd={dragEndEvent} >
+					<SortableContext
+						strategy={verticalListSortingStrategy}
+						items={songs.map(it => it.id)} >
 						{
 							songs.map((value, index) => {
 								return (
-									<SortableItem key={getRandomId()} index={index} song={value}/>
+									<SortableItem key={getRandomId()} id={value.id} song={value} sortIndex={index + 1}/>
 								)
 							})
 						}
@@ -548,8 +574,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	)
 })
 
-const SortableItem = memo(({index,song}) => {
-	const id = index
+const SortableItem = memo(({id,song,sortIndex}) => {
 	const {setNodeRef,listeners,transform,transition,isDragging } =  useSortable({id})
 	//计算确定是否为X轴
 	const getCoordinate = (coordinate,isX) =>{
@@ -566,11 +591,14 @@ const SortableItem = memo(({index,song}) => {
 
 	return (
 		<p   ref={setNodeRef}  {...listeners} style={styles}
-			className={'w-full flex  '.concat(index % 2 === 0 ? ' bg-yellow-200' : ' bg-blue-400')}>
-			<span className='w-full text-center'>{index + 1}</span>
+			className={'w-full flex  '.concat(sortIndex % 2 === 0 ? ' bg-yellow-200' : ' bg-blue-400')}>
+			<span className='w-full text-center'>{sortIndex}</span>
 			<span className='w-full text-center'>{song.songName}</span>
 			<span className='w-full text-center'>{song.singer}</span>
-			<span className='w-full text-center'><Button>删除</Button></span>
+			<span className='w-full text-center'><Button  onMouseDown={(event)=>{
+				alert('年后')
+				event.stopPropagation()
+			}}>删除</Button></span>
 		</p>
 	)
 
@@ -645,6 +673,10 @@ const initValue= {type:TIP_UI,obj:{}}
 export default  function SongManagementUI() {
 	const [data, setComponentType] = useState(initValue)
 	const {type,obj} = data
+
+	useEffect(() => {
+		console.log('father render',data);
+	});
 
 	//修改颜色
 	return (
