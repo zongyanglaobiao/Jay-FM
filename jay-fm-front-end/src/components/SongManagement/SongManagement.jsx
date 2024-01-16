@@ -201,7 +201,6 @@ const SongCardUI = memo(({setComponentType,type})=>{
 	const cardArray = useSelector(state => state.cardArray);
 
 	useEffect(() => {
-		console.log('render')
 		loadList()
 	},[type]);
 
@@ -292,7 +291,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	useEffect(() => {
 		//初次渲染
 		renderSongs()
-	}, []);
+	}, [id]);
 
 	//必须有耗时操作，否则无法触发state
 	const handleOk = async () => {
@@ -626,14 +625,6 @@ const FIlE_UPLOAD_UI = "FIlE_UPLOAD";
  */
 function getComponent(type,obj = {}) {
 	switch (type) {
-		case CARD_DETAILS_UI:{
-			const {item,setComponentType} = obj
-			return (
-				<div className='w-full h-full mr-40 layout-center'>
-					<CardInfoUI item={item} setComponentType={setComponentType}/>
-				</div>
-			)
-		}
 		case CARD_ADD_FORM_UI:{
 			const {setComponentType} = obj
 			return (
@@ -658,7 +649,12 @@ function getComponent(type,obj = {}) {
 			)
 		}
 		default :{
-			return  <></>
+			const {item,setComponentType} = obj
+			return (
+				<div className='w-full h-full mr-40 layout-center'>
+					<CardInfoUI item={item} setComponentType={setComponentType}/>
+				</div>
+			)
 		}
 	}
 }
@@ -673,10 +669,6 @@ const initValue= {type:TIP_UI,obj:{}}
 export default  function SongManagementUI() {
 	const [data, setComponentType] = useState(initValue)
 	const {type,obj} = data
-
-	useEffect(() => {
-		console.log('father render',data);
-	});
 
 	//修改颜色
 	return (
