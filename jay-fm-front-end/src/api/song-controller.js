@@ -26,7 +26,7 @@ export function deleteSong(songId) {
 	return serviceAxios({
 		url: `/song/delete`,
 		method: "get",
-		params:songId
+		params: songId
 	})
 }
 

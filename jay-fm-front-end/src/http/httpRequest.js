@@ -24,7 +24,7 @@ serviceAxios.interceptors.request.use(
 		if (isNullOrUndefined(config.headers['Content-Type'])) {
 			config.headers['Content-Type'] = 'application/json';
 		}
-		//Post是data
+		//post是data
 		//get是params
 		return config;
 	},

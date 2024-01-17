@@ -8,9 +8,9 @@ import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
-import {saveSong, songInfoParam} from "../../api/song-controller";
+import {deleteSong, saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
-import {DndContext} from "@dnd-kit/core";
+import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
 import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
 
 
@@ -289,7 +289,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	}
 
 	useEffect(() => {
-		//初次渲染
+		//渲染
 		renderSongs()
 	}, [id]);
 
@@ -364,8 +364,18 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 		localStorage.setItem(PLAY_SETTING,current.text);
 
 		e.currentTarget.innerText = current.text
-		//todo 排序依据  拖拽排序功能
+		//每次切换都需要把这个重排序
+	    setSongs([...songs.reverse()])
 	}
+
+	//拖拽传感器
+	const dhdSensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 5,
+			},
+		})
+	)
 
 	//拖拽组件触发函数
 	function dragEndEvent({active,over}) {
@@ -445,6 +455,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			{/*歌曲列表部分*/}
 			<div className='overflow-scroll overflow-x-hidden grow rounded-b-2xl remove_the_scroll '>
 				<DndContext
+					sensors={dhdSensors}
 					onDragEnd={dragEndEvent} >
 					<SortableContext
 						strategy={verticalListSortingStrategy}
@@ -575,6 +586,27 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 const SortableItem = memo(({id,song,sortIndex}) => {
 	const {setNodeRef,listeners,transform,transition,isDragging } =  useSortable({id})
+	const setAlert = useContext(AlertContext)
+	const dispatch = useDispatch();
+
+
+	// 定义一个处理点击事件的函数
+	const handleClick = async () => {
+		try {
+			dispatch(getAllCardThunk())
+			//todo 删除出现问题
+			/*const resp = await deleteSong(id)
+			if (!isSuccess(resp.code)) {
+				setAlert(httpStatus(resp))
+			} else {
+				//刷新列表
+				dispatch(getAllCardThunk())
+			}*/
+		} catch (e) {
+			console.error(e)
+		}
+	}
+
 	//计算确定是否为X轴
 	const getCoordinate = (coordinate,isX) =>{
 		if (isX) {
@@ -594,10 +626,7 @@ const SortableItem = memo(({id,song,sortIndex}) => {
 			<span className='w-full text-center'>{sortIndex}</span>
 			<span className='w-full text-center'>{song.songName}</span>
 			<span className='w-full text-center'>{song.singer}</span>
-			<span className='w-full text-center'><Button  onMouseDown={(event)=>{
-				alert('年后')
-				event.stopPropagation()
-			}}>删除</Button></span>
+			<span className='w-full text-center'><Button onClick={handleClick}>删除</Button></span>
 		</p>
 	)
 
