@@ -1,5 +1,6 @@
 package com.jay.controller;
 
+import cn.hutool.core.io.FileUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
@@ -11,17 +12,18 @@ import com.jay.repository.entities.FileInfoEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author xxl
@@ -31,6 +33,7 @@ import java.util.Objects;
 @RequestMapping(value = "/song",produces = "application/json")
 @Tag(name = "歌曲控制器")
 @Validated
+@Slf4j
 @RequiredArgsConstructor
 public class SongInfoController  {
 
@@ -38,7 +41,8 @@ public class SongInfoController  {
 
     private final FileInfoService fileInfoService;
 
-    private final HttpServletRequest request;
+    private final ThreadPoolExecutor executor;
+
 
     @PostMapping(value = "/save")
     @Operation(summary = "新增")
@@ -76,6 +80,18 @@ public class SongInfoController  {
             FileInfoEntity byId = fileInfoService.getById(entity.getDownloadId());
             byId.setHasUsed(false);
             fileInfoService.saveOrUpdate(byId,FileInfoEntity::getId);
+
+            //删除文件
+            executor.execute(() -> {
+                String path = byId.getSavePath();
+                try {
+                    FileUtil.del(path);
+                } catch (Exception e) {
+                    log.error("歌曲文件删除失败 path = " + path);
+                    throw new CommonException("歌曲文件删除失败");
+                }
+            });
+
             return true;
         })));
     }

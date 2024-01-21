@@ -13,6 +13,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Indexed;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author: anyone
  * @since: 2023/9/16
@@ -42,5 +45,23 @@ public class Application {
     @Bean
     public static IPUtils ipUtils() {
         return IPUtils.getInstance("/data/ip2region.xdb");
+    }
+
+    @Bean
+    public static ThreadPoolExecutor threadPoolExecutor() {
+        int coreSize = 2;
+        int maximumPoolSize = 4;
+        int keepAliveTime = 60;
+        TimeUnit timeUnit = TimeUnit.SECONDS;
+        BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(50);
+        RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
+        return new ThreadPoolExecutor(coreSize, maximumPoolSize, keepAliveTime, timeUnit, queue, new ThreadFactory() {
+            private static final AtomicInteger COUNT = new AtomicInteger(0);
+            @Override
+            public Thread newThread(Runnable r) {
+                int i = COUNT.addAndGet(1);
+                return new Thread(r,"song-thread-" + i);
+            }
+        }, handler);
     }
 }

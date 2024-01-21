@@ -24,7 +24,7 @@ serviceAxios.interceptors.request.use(
 		if (isNullOrUndefined(config.headers['Content-Type'])) {
 			config.headers['Content-Type'] = 'application/json';
 		}
-		//post是data
+		//post是data 两者的数据格式必须是{}
 		//get是params
 		return config;
 	},

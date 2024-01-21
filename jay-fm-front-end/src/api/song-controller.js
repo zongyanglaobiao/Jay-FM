@@ -26,7 +26,7 @@ export function deleteSong(songId) {
 	return serviceAxios({
 		url: `/song/delete`,
 		method: "get",
-		params: songId
+		params: {songId}
 	})
 }
 
@@ -39,7 +39,7 @@ export function downloadSong(id) {
 	return serviceAxios({
 		url: `/song/download`,
 		method: "get",
-		params:id
+		params: {id}
 	})
 }
 
@@ -90,12 +90,11 @@ export function modifySong(params) {
  * @returns
  */
 export function saveSong(file, params) {
-	console.log('参数1',file)
 	const formData = new FormData();
 	formData.append('param',new Blob([JSON.stringify(params)],{type:'application/json'}));
 	formData.append('file',new Blob([JSON.stringify(file)],{type:'multipart/form-data'}),file.name);
 	// formData.append('file', file);
-	console.log('参数2',formData.get("file"))
+	console.log('',formData.get("file"))
 	// params.file = file
 	return serviceAxios({
 		url: `/song/save`,

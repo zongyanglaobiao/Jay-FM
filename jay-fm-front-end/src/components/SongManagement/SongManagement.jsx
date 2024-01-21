@@ -280,8 +280,8 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	let form = useRef();
 
 	//查询歌单列表
-	const renderSongs = async () => {
-		const resp = await querySongList(id);
+	const querySongs = async (lsId) => {
+		const resp = await querySongList(lsId);
 		console.log('respap',resp)
 		if (isSuccess(resp.code)) {
 			setSongs([...resp.data])
@@ -290,7 +290,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 	useEffect(() => {
 		//渲染
-		renderSongs()
+		querySongs(id)
 	}, [id]);
 
 	//必须有耗时操作，否则无法触发state
@@ -463,7 +463,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 						{
 							songs.map((value, index) => {
 								return (
-									<SortableItem key={getRandomId()} id={value.id} song={value} sortIndex={index + 1}/>
+									<SortableItem key={getRandomId()} querySongs={querySongs} listId={id}  id={value.id} song={value} sortIndex={index + 1}/>
 								)
 							})
 						}
@@ -546,7 +546,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									_setOpen(false)
 									setFileList([])
 									//请求重新渲染
-									renderSongs()
+									querySongs(id)
 								}}
 								destroyOnClose={true}
 								cancelText='取消上传'
@@ -584,26 +584,19 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	)
 })
 
-const SortableItem = memo(({id,song,sortIndex}) => {
+const SortableItem = memo(({id,song,sortIndex,querySongs,listId}) => {
 	const {setNodeRef,listeners,transform,transition,isDragging } =  useSortable({id})
 	const setAlert = useContext(AlertContext)
-	const dispatch = useDispatch();
-
 
 	// 定义一个处理点击事件的函数
-	const handleClick = async () => {
-		try {
-			dispatch(getAllCardThunk())
-			//todo 删除出现问题
-			/*const resp = await deleteSong(id)
-			if (!isSuccess(resp.code)) {
-				setAlert(httpStatus(resp))
-			} else {
-				//刷新列表
-				dispatch(getAllCardThunk())
-			}*/
-		} catch (e) {
-			console.error(e)
+	const handleClick = async  () => {
+		const resp =  await deleteSong(id)
+		console.log('resp',resp)
+		if (!isSuccess(resp.code)) {
+			setAlert(httpStatus(resp))
+		} else {
+			//刷新列表
+			querySongs(listId)
 		}
 	}
 
@@ -632,19 +625,9 @@ const SortableItem = memo(({id,song,sortIndex}) => {
 
 })
 
-
-const FileUploadUI = memo(({setComponentType})=>{
-	return (
-		<div>
-			文件上传页面
-		</div>
-	)
-})
-
 const CARD_DETAILS_UI = "CardInfoUI";
 const CARD_ADD_FORM_UI = "CARD_ADD_FORM_UI";
 const TIP_UI = "TIP_UI";
-const FIlE_UPLOAD_UI = "FIlE_UPLOAD";
 
 /**
  * 获取对应类型的组件
@@ -669,21 +652,16 @@ function getComponent(type,obj = {}) {
 				</div>
 			)
 		}
-		case FIlE_UPLOAD_UI:{
-			const {setComponentType} = obj
-			return  (
-				<div className='w-full h-full mr-40 layout-center border-1 border-solid border-amber-400'>
-					<FileUploadUI setComponentType={setComponentType}/>
-				</div>
-			)
-		}
-		default :{
+		case CARD_DETAILS_UI :{
 			const {item,setComponentType} = obj
 			return (
 				<div className='w-full h-full mr-40 layout-center'>
 					<CardInfoUI item={item} setComponentType={setComponentType}/>
 				</div>
 			)
+		}
+		default : {
+			return  <></>
 		}
 	}
 }
