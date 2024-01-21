@@ -85,9 +85,10 @@ public class SongInfoController  {
             executor.execute(() -> {
                 String path = byId.getSavePath();
                 try {
-                    FileUtil.del(path);
+                    boolean del = FileUtil.del(path);
+                    log.info("删除成功,path = {},isSuccess = {}",path,del);
                 } catch (Exception e) {
-                    log.error("歌曲文件删除失败 path = " + path);
+                    log.error("歌曲文件删除失败 path = {}",path);
                     throw new CommonException("歌曲文件删除失败");
                 }
             });
