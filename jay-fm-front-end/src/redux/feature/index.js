@@ -1,6 +1,6 @@
 import {generateSlice} from "../../lib/common/reduxUtil";
-import {getAllCardThunk} from "../thunk";
 import {songListInfoParam} from "../../api/song-list-controller";
+import {getAllSongListThunk} from "../thunk";
 
 /* ============================================ */
 /* =================总Slice文件================= */
@@ -38,7 +38,7 @@ const cardSlice = generateSlice('cardSlice'
 	,(builder)=>{
 	builder
 		//获取所有列表
-		.addCase(getAllCardThunk.fulfilled,(state,{payload})=>{
+		.addCase(getAllSongListThunk.fulfilled,(state,{payload})=>{
 			return payload.data.records.map(item=>{
 				const {name,color,textDescribe,creator,email,enableDelete,enableModify,id} = item
 				return songListInfoParam(id,name,color,textDescribe,creator,email,enableDelete,enableModify);

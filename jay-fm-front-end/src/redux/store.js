@@ -6,7 +6,7 @@ import {songListReducer, toggleBgColorReducer} from "./feature";
 export const store = configureStore({
 	reducer:{
 		theme:toggleBgColorReducer,
-		cardArray:songListReducer
+		songList:songListReducer
 	},
 	devTools:composeWithDevTools(),
 	middleware : (getDefaultMiddleware) => {

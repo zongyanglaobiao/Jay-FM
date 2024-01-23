@@ -2,7 +2,6 @@ import React, {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isArrayBlank, isEmail, isNullOrUndefined, isStrBlank} from "../../lib/common/util";
 import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
-import {getAllCardThunk} from "../../redux/thunk";
 import {deleteSongList, querySongList, saveOrModifySongList, songListInfoParam} from "../../api/song-list-controller";
 import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
@@ -12,6 +11,7 @@ import {deleteSong, saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
 import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
 import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {serviceInit} from "../MusicPlayer/MusicPlayer";
 
 
 const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType})=>{
@@ -19,7 +19,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 	const [colorPickerDisable, setColorPickerDisable] = useState(true)
 
 	//解构信息用于修改表单 modify form
-	const {cardName,color,creator,email,enableDelete,textDescribe,enableModify} = item
+	const {name,color,creator,email,enableDelete,textDescribe,enableModify} = item
 
 	//submit form
 	const onFinish = async (fromData) => {
@@ -61,7 +61,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 			}}
 			onFinish={onFinish}
 		>
-			<Form.Item initialValue={isNullOrUndefined(cardName) ? null : cardName}   name="cardName" label="列表名" rules={[
+			<Form.Item initialValue={isNullOrUndefined(name) ? null : name}   name="name" label="列表名" rules={[
 				{
 					required: true,
 					message: '卡片名不能为空',
@@ -197,18 +197,7 @@ const TipUI = memo(()=>{
  * @type {React.NamedExoticComponent<object>}
  */
 const SongCardUI = memo(({setComponentType,type})=>{
-	const dispatch = useDispatch();
-	const cardArray = useSelector(state => state.cardArray);
-
-	useEffect(() => {
-		loadList()
-	},[type]);
-
-	//初始化函数
-	function  loadList() {
-	  dispatch(getAllCardThunk())
-	}
-
+	const songList = useSelector(state => state.songList);
 	function selectMenu(targetType,obj) {
 		setComponentType(val =>{
 			const  {type} = val
@@ -231,8 +220,8 @@ const SongCardUI = memo(({setComponentType,type})=>{
 			</div>
            {
 			   //点击列表进入歌曲详情
-			   cardArray &&
-			   cardArray.map((item)=>{
+			   songList &&
+			   songList.map((item)=>{
 				   const split = item.color.split(',');
 				   return (
 					   <div key={`${getRandomId()}`}
@@ -338,7 +327,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 			content: '你确定删除音乐列表吗?',
 			async onOk() {
 				setLoading(true)
-				const resp = await deleteSongList({id})
+				const resp = await deleteSongList([id])
 				setAlert(httpStatus(resp))
 				setLoading(false)
 				setOpen(false)
@@ -675,7 +664,12 @@ const initValue= {type:TIP_UI,obj:{}}
 
 export default  function SongManagementUI() {
 	const [data, setComponentType] = useState(initValue)
+	var dispatch = useDispatch();
 	const {type,obj} = data
+
+	useEffect(() => {
+		serviceInit(dispatch)
+	}, [type]);
 
 	//修改颜色
 	return (
