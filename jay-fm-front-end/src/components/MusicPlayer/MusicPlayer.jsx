@@ -32,28 +32,63 @@ const SongLyricsUI = memo(({isShowLyrics}) => {
 const PopUpUI = memo(({isShowPopUp})=>{
 	const songList =  useSelector(state => state.songList);
 
+
 	// todo 选择歌曲列表
 	// todo 滚动事件
 
-    return (
+	//拖拽滚动
+	const [isDragging, setIsDragging] = useState(false);
+	const dragStartX = useRef(0);
+	const startScrollLeft = useRef(0);
+	const scrollContainerRef = useRef(null);
+
+	const onMouseDown = (event) => {
+		setIsDragging(true);
+		dragStartX.current = event.clientX;
+		startScrollLeft.current = scrollContainerRef.current.scrollLeft;
+		document.body.style.userSelect = 'none'; // 禁用文本选择
+		event.currentTarget.style.cursor = 'grabbing';
+	};
+
+	const onMouseUpOrLeave = () => {
+		setIsDragging(false);
+		document.body.style.userSelect = ''; // 恢复文本选择
+	};
+
+	const onMouseMove = (event) => {
+		if (!isDragging) return;
+		event.preventDefault();
+		const currentX = event.clientX;
+		const walk = (currentX - dragStartX.current) * 3; // 调整滚动速度
+		scrollContainerRef.current.scrollLeft = startScrollLeft.current - walk;
+	};
+
+	return (
         <>
             <div className="main h-[85%] w-[20%] " style={{display:isShowPopUp?'':'none'}} >
 				{/*选择歌曲列表*/}
-				<div className='border-solid border-2 border-emerald-400 layout-center p-2 h-[6rem] w-[18rem] overflow-scroll scroll-x' >
+				<div
+					ref={scrollContainerRef}
+					onMouseDown={onMouseDown}
+					onMouseLeave={onMouseUpOrLeave}
+					onMouseUp={onMouseUpOrLeave}
+					onMouseMove={onMouseMove}
+					className='border-solid border-2 border-emerald-400  p-2 h-[6rem] w-[18rem] layout-center overflow-x-scroll' >
 					{
-						songList && songList.map((item) => {
-							const  {name} =  item
-							return (
-								<>
-									<div  className='m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-									<div className=' m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-									<div className=' m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-									<div className=' m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-									<div className=' m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-									<div className=' m-2 bg-amber-300 w-[5rem] h-[4rem] rounded' key={getRandomId()}>{name}</div>
-								</>
-							)
-						})
+						(()=>{
+							const arr = []
+							for (let i = 0; i < 10; i++) {
+								arr.push(
+									<div
+										onClick={(event)=>{
+											event.currentTarget.style.cursor = 'grabbing'
+										}}
+										className='flex-shrink-0 float-right m-2 bg-amber-300 w-[5rem] h-[4rem] rounded cursor-grab'
+										key={getRandomId()}>{i}</div>
+								)
+							}
+							return arr
+						})()
 					}
 				</div>
 				{/*展示歌曲列表*/}
