@@ -33,7 +33,7 @@ const PopUpUI = memo(({isShowPopUp})=>{
 	const songList =  useSelector(state => state.songList);
 
 	// todo 选择歌曲列表
-	// todo 去除滚动条
+	// todo 不同屏幕大小兼容
 
 	//拖拽滚动
 	const [isDragging, setIsDragging] = useState(false);
@@ -66,7 +66,7 @@ const PopUpUI = memo(({isShowPopUp})=>{
 
 	return (
         <>
-            <div className="main h-[85%] w-[20%] " style={{display:isShowPopUp?'':'none'}} >
+            <div className="main h-[85%]  w-[20%] " style={{display:isShowPopUp?'':'none'}} >
 				{/*选择歌曲列表*/}
 				<div
 					ref={scrollContainerRef}
@@ -74,19 +74,13 @@ const PopUpUI = memo(({isShowPopUp})=>{
 					onMouseLeave={onMouseUpOrLeave}
 					onMouseUp={onMouseUpOrLeave}
 					onMouseMove={onMouseMove}
-					className='border-solid border-2 border-emerald-400  p-2 h-[6rem] w-[18rem] layout-center overflow-x-scroll remove_the_scroll' >
+					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex  overflow-x-scroll remove_the_scroll' >
 					{
-						(()=>{
-							const arr = []
-							for (let i = 0; i < 10; i++) {
-								arr.push(
-									<div
-										className='flex-shrink-0 float-right m-2 bg-amber-300 w-[5rem] h-[4rem] rounded'
-										key={getRandomId()}>{i}</div>
-								)
-							}
-							return arr
-						})()
+						songList.map((item)=>{
+							const {name,color} = item
+							const colorArr = color.split(',')
+							return (<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'  style={{backgroundColor:`rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`}} key={getRandomId()}>{name}</div>)
+						})
 					}
 				</div>
 				{/*展示歌曲列表*/}
