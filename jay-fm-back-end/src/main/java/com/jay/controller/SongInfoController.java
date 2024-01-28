@@ -76,6 +76,10 @@ public class SongInfoController  {
                 throw new CommonException("歌曲不存在");
             }
 
+            if (!entity.getEnableDelete()) {
+                throw new CommonException("已设置不允许删除");
+            }
+
             //设置歌曲文件不可用
             FileInfoEntity byId = fileInfoService.getById(entity.getDownloadId());
             byId.setHasUsed(false);

@@ -1,7 +1,7 @@
 import {serviceAxios} from "../http/httpRequest";
 
 
-export function songInfoParam(id,singer,songName,uploader,email,listId){
+export function songInfoParam(id,singer,songName,uploader,email,listId,isDelete){
 	return {
 		"id": id,
 		"singer": singer,
@@ -10,7 +10,7 @@ export function songInfoParam(id,singer,songName,uploader,email,listId){
 		"translatedLyrics": null,
 		"enableDownload": true,
 		"enableModify": true,
-		"enableDelete": true,
+		"enableDelete": isDelete,
 		"uploader": uploader,
 		"email": email,
 		"listId":listId

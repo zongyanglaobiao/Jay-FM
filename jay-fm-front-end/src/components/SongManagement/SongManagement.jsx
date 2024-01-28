@@ -1,6 +1,6 @@
 import React, {memo, useContext, useEffect, useRef, useState} from "react";
 import {getRandomColor, getRandomId, isArrayBlank, isEmail, isNullOrUndefined, isStrBlank} from "../../lib/common/util";
-import {Button, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
+import {Button, Checkbox, ColorPicker, Flex, Form, Input, Modal, Space, Switch, Tag, Tooltip, Upload,} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {deleteSongList, querySongList, saveOrModifySongList, songListInfoParam} from "../../api/song-list-controller";
 import {AlertContext} from "../../container/Pages/Home/Home";
@@ -472,6 +472,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 						const [fileList, setFileList] = useState([])
 						const uploaderRef = useRef();
 						const emailRef = useRef();
+						const isDeleteRef = useRef();
 
 						return <Flex gap='middle' vertical={false} className='w-full h-full' align='center' justify='center'>
 							<Button style={{
@@ -498,6 +499,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 								onOk={async ()=>{
 									const emailVal =  emailRef.current.input.value
 									const uploaderVal =  uploaderRef.current.input.value
+									const isDelete = isDeleteRef.current.input.checked
 
 									const check =  isStrBlank(emailVal) || isStrBlank(uploaderVal) ||  isArrayBlank(fileList)
 									if (check) {
@@ -516,7 +518,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									try {
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
-											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id);
+											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id,isDelete);
 											const resp = await  saveSong(file,param)
 											if (!isSuccess(resp.code)) {
 												setAlert(httpStatus(resp))
@@ -552,6 +554,9 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 										<Tag color='green'>所有上传文件规范：[ 歌曲名_歌手 ]！！支持多个文件上传</Tag>
 										<Input ref={uploaderRef} placeholder='上传者'/>
 										<Input ref={emailRef}  placeholder='邮箱'/>
+										<Space>
+											是否允许被删除<Checkbox  ref={isDeleteRef}/>
+										</Space>
 										<Upload
 											name="personfile"
 											fileList={fileList}
