@@ -32,9 +32,8 @@ const SongLyricsUI = memo(({isShowLyrics}) => {
 const PopUpUI = memo(({isShowPopUp})=>{
 	const songList =  useSelector(state => state.songList);
 
-
 	// todo 选择歌曲列表
-	// todo 滚动事件
+	// todo 去除滚动条
 
 	//拖拽滚动
 	const [isDragging, setIsDragging] = useState(false);
@@ -47,13 +46,15 @@ const PopUpUI = memo(({isShowPopUp})=>{
 		dragStartX.current = event.clientX;
 		startScrollLeft.current = scrollContainerRef.current.scrollLeft;
 		document.body.style.userSelect = 'none'; // 禁用文本选择
-		event.currentTarget.style.cursor = 'grabbing';
+		event.currentTarget.style.cursor = 'grab';
 	};
 
 	const onMouseUpOrLeave = () => {
 		setIsDragging(false);
 		document.body.style.userSelect = ''; // 恢复文本选择
 	};
+
+
 
 	const onMouseMove = (event) => {
 		if (!isDragging) return;
@@ -73,17 +74,14 @@ const PopUpUI = memo(({isShowPopUp})=>{
 					onMouseLeave={onMouseUpOrLeave}
 					onMouseUp={onMouseUpOrLeave}
 					onMouseMove={onMouseMove}
-					className='border-solid border-2 border-emerald-400  p-2 h-[6rem] w-[18rem] layout-center overflow-x-scroll' >
+					className='border-solid border-2 border-emerald-400  p-2 h-[6rem] w-[18rem] layout-center overflow-x-scroll remove_the_scroll' >
 					{
 						(()=>{
 							const arr = []
 							for (let i = 0; i < 10; i++) {
 								arr.push(
 									<div
-										onClick={(event)=>{
-											event.currentTarget.style.cursor = 'grabbing'
-										}}
-										className='flex-shrink-0 float-right m-2 bg-amber-300 w-[5rem] h-[4rem] rounded cursor-grab'
+										className='flex-shrink-0 float-right m-2 bg-amber-300 w-[5rem] h-[4rem] rounded'
 										key={getRandomId()}>{i}</div>
 								)
 							}
