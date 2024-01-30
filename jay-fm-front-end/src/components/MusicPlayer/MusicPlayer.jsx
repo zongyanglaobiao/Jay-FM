@@ -2,7 +2,8 @@ import {memo, useCallback, useEffect, useRef, useState} from "react";
 import {parseFlacFile} from "../../lib/songUtils";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllSongListThunk} from "../../redux/thunk";
-import {getRandomId} from "../../lib/common/util";
+import {getRandomColor, getRandomId} from "../../lib/common/util";
+import {querySongList} from "../../api/song-list-controller";
 
 /**
  * 列表，使用组件缓存
@@ -50,11 +51,9 @@ const PopUpUI = memo(({isShowPopUp})=>{
 	};
 
 	const onMouseUpOrLeave = () => {
-		setIsDragging(false);
+		// setIsDragging(false);
 		document.body.style.userSelect = ''; // 恢复文本选择
 	};
-
-
 
 	const onMouseMove = (event) => {
 		if (!isDragging) return;
@@ -76,15 +75,32 @@ const PopUpUI = memo(({isShowPopUp})=>{
 					onMouseMove={onMouseMove}
 					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex  overflow-x-scroll remove_the_scroll' >
 					{
-						songList.map((item)=>{
-							const {name,color} = item
+						/*songList.map((item)=>{
+							const {name,color,id} = item
 							const colorArr = color.split(',')
-							return (<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'  style={{backgroundColor:`rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`}} key={getRandomId()}>{name}</div>)
-						})
+							return (<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
+										 style={{backgroundColor:`rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`}}
+										 key={getRandomId()}
+										 onClick={ (id)=>{
+											 //查询歌曲列表
+											 // const resp = await querySongList(id)
+											 console.log('repsrep')
+										 }}>{name}</div>)
+						})*/
+						(()=>{
+							const arr = []
+							for (let i = 0; i < 10; i++) {
+								arr.push(<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
+											  style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()}`}}>i</div>)
+							}
+							return arr
+						})()
 					}
 				</div>
 				{/*展示歌曲列表*/}
-				<div></div>
+				<div>
+
+				</div>
 			</div>
 		</>
 	)
