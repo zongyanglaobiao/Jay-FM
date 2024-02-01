@@ -37,30 +37,41 @@ const PopUpUI = memo(({isShowPopUp})=>{
 	// todo 不同屏幕大小兼容
 
 	//拖拽滚动
-	const [isDragging, setIsDragging] = useState(false);
 	const dragStartX = useRef(0);
 	const startScrollLeft = useRef(0);
 	const scrollContainerRef = useRef(null);
 
+	//判断鼠标是否点击
+	let isDown = false;
+
+	//鼠标点击
 	const onMouseDown = (event) => {
-		setIsDragging(true);
 		dragStartX.current = event.clientX;
 		startScrollLeft.current = scrollContainerRef.current.scrollLeft;
 		document.body.style.userSelect = 'none'; // 禁用文本选择
 		event.currentTarget.style.cursor = 'grab';
+		isDown = true
 	};
 
-	const onMouseUpOrLeave = () => {
-		// setIsDragging(false);
+	//鼠标离开某个元素
+	const onMouseLeave = () => {
 		document.body.style.userSelect = ''; // 恢复文本选择
+		isDown = false
 	};
 
+	//鼠标松开
+	const onMouseUp = () => {
+		isDown = false
+	};
+
+	//鼠标在某个元素中移动
 	const onMouseMove = (event) => {
-		if (!isDragging) return;
-		event.preventDefault();
-		const currentX = event.clientX;
-		const walk = (currentX - dragStartX.current) * 3; // 调整滚动速度
-		scrollContainerRef.current.scrollLeft = startScrollLeft.current - walk;
+		if (isDown) {
+			event.preventDefault();
+			const currentX = event.clientX;
+			const walk = (currentX - dragStartX.current) * 3; // 调整滚动速度
+			scrollContainerRef.current.scrollLeft = startScrollLeft.current - walk;
+		}
 	};
 
 	return (
@@ -70,8 +81,8 @@ const PopUpUI = memo(({isShowPopUp})=>{
 				<div
 					ref={scrollContainerRef}
 					onMouseDown={onMouseDown}
-					onMouseLeave={onMouseUpOrLeave}
-					onMouseUp={onMouseUpOrLeave}
+					onMouseLeave={onMouseLeave}
+					onMouseUp={onMouseUp}
 					onMouseMove={onMouseMove}
 					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex  overflow-x-scroll remove_the_scroll' >
 					{
@@ -91,7 +102,10 @@ const PopUpUI = memo(({isShowPopUp})=>{
 							const arr = []
 							for (let i = 0; i < 10; i++) {
 								arr.push(<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
-											  style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()}`}}>i</div>)
+											  style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()}`}}
+											  onClick={()=>{
+												  console.log('click' + i)
+											  }}>i</div>)
 							}
 							return arr
 						})()
