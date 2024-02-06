@@ -33,7 +33,7 @@ const SongLyricsUI = memo(({isShowLyrics}) => {
 const PopUpUI = memo(({isShowPopUp})=>{
 	const songList =  useSelector(state => state.songList);
 
-	// todo 选择歌曲列表
+	// todo 查询歌曲列表
 	// todo 不同屏幕大小兼容
 
 	//拖拽滚动
@@ -86,34 +86,30 @@ const PopUpUI = memo(({isShowPopUp})=>{
 					onMouseMove={onMouseMove}
 					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex  overflow-x-scroll remove_the_scroll' >
 					{
-						/*songList.map((item)=>{
+						songList.map((item)=>{
 							const {name,color,id} = item
 							const colorArr = color.split(',')
 							return (<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
 										 style={{backgroundColor:`rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`}}
 										 key={getRandomId()}
-										 onClick={ (id)=>{
-											 //查询歌曲列表
-											 // const resp = await querySongList(id)
-											 console.log('repsrep')
+										 onClick={ async (event)=>{
+											 const resp = await querySongList(id)
+											 console.log('repsrep',resp)
 										 }}>{name}</div>)
-						})*/
-						(()=>{
-							const arr = []
-							for (let i = 0; i < 10; i++) {
-								arr.push(<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
-											  style={{backgroundColor:`rgb(${getRandomColor()},${getRandomColor()},${getRandomColor()}`}}
-											  onClick={()=>{
-												  console.log('click' + i)
-											  }}>i</div>)
-							}
-							return arr
-						})()
+						})
 					}
 				</div>
 				{/*展示歌曲列表*/}
-				<div>
-
+				<div className='h-[85%] w-[20%] mt-2 border-solid border-1 overflow-y-scroll remove_the_scroll'>
+					<div className="pfp">
+						<div className="playing">
+							<div className="greenline line-1"></div>
+							<div className="greenline line-2"></div>
+							<div className="greenline line-3"></div>
+							<div className="greenline line-4"></div>
+							<div className="greenline line-5"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</>
@@ -124,33 +120,48 @@ const PopUpUI = memo(({isShowPopUp})=>{
  * 播放器侧边栏UI，使用组件缓存
  * @constructor
  */
-const MusicPlayerNavUI = memo(({isShowLyrics,setLyrics})=>{
-    const [isLike, setIsLike] = useState(false)
-    const [isShowPopUp, setIsShow] = useState(false)
-    //打开/关闭弹窗
-    const openOrClosePopUp = () => setIsShow(!isShowPopUp)
+const MusicPlayerNavUI = memo(({isShowLyrics, setLyrics}) => {
+	const [isLike, setIsLike] = useState(false)
+	const [isShowPopUp, setIsShow] = useState(false)
+	//打开/关闭弹窗
+	const openOrClosePopUp = () => setIsShow(!isShowPopUp)
 
-    //是否给歌曲爱心
-    const setLike = () => setIsLike(!isLike)
+	//是否给歌曲爱心
+	const setLike = () => setIsLike(!isLike)
 
-    return (
-        <div className='music-player-nav-container'>
-            {
-                isLike ?
-                    <svg onClick={setLike} t="1699199793924" className='music-player-nav-container-star music-player-nav-container-common'   viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4458" width="200" height="200">
-                        <path d="M729.068827 119.55798c-94.686523 0-176.905082 48.314379-217.069851 118.640074-40.163745-70.325695-122.382305-118.640074-217.044268-118.640074-143.767358 0-229.665727 123.660414-229.665727 243.219417 0 283.128359 415.870616 527.841803 433.576883 538.126031 4.062526 2.363837 8.584516 3.538593 13.132088 3.538593 4.547573 0 9.070586-1.174756 13.132088-3.538593 17.706267-10.283204 433.576883-254.997672 433.576883-538.126031C958.708971 243.218394 872.811626 119.55798 729.068827 119.55798z" fill="#ff0303" p-id="4459"></path>
-                    </svg>
-                    :
-                    <svg onClick={setLike} t="1699199753205" className='music-player-nav-container-star music-player-nav-container-common'  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3180" width="200" height="200">
-                        <path d="M171.712 571.648l0.352 0.32 287.904 252.8a64 64 0 0 0 82.912 1.344l296.832-244.544a215.584 215.584 0 1 0-301.824-300.576L512 316.672l-25.888-35.616a215.584 215.584 0 1 0-314.4 290.624zM32 407.584a279.584 279.584 0 0 1 480-194.944 279.584 279.584 0 0 1 480 194.944 278.144 278.144 0 0 1-113.024 224.512l-295.36 243.392a128 128 0 0 1-165.888-2.592L129.984 620.16A278.976 278.976 0 0 1 32 407.584z" fill="#ccc" p-id="3181"></path>
-                    </svg>
-            }
-            <svg t="1699360349459" className='music-player-nav-container-refresh music-player-nav-container-common' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2314" width="200" height="200">
-                <path d="M911.402 607.602c-21.244-4.25-46.738 8.498-50.987 29.742-42.49 174.208-195.452 293.179-373.909 293.179-212.448 0-386.655-174.208-386.655-386.656s174.207-386.655 386.655-386.655c97.726 0 195.453 38.24 263.436 106.224H571.485c-21.244 0-42.49 16.996-42.49 42.49 0 21.244 16.997 42.489 42.49 42.489h263.436c21.245 0 42.49-16.996 42.49-42.49V42.49C877.41 21.245 860.415 0 834.92 0c-21.245 0-42.49 16.996-42.49 42.49v148.713c-84.979-76.481-195.452-118.97-310.174-118.97-259.186 0-471.635 212.447-471.635 471.634s212.449 471.635 471.635 471.635c216.697 0 403.652-148.714 458.888-356.913 4.25-21.245-8.498-42.49-29.743-50.987z" fill="#ccc" p-id="2315"></path>
-            </svg>
-            {
-                isShowPopUp ?
-                    <svg  onClick={openOrClosePopUp}   t="1699361746235" className="music-player-nav-container-star music-player-nav-container-common" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2324" width="200" height="200"><path d="M170.666667 213.333333h682.666666v85.333334H170.666667V213.333333z m0 512h426.666666v85.333334H170.666667v-85.333334z m0-256h682.666666v85.333334H170.666667v-85.333334z" fill="#000000" p-id="2325"></path></svg>
+	return (
+		<div className='music-player-nav-container'>
+			{
+				isLike ?
+					<svg onClick={setLike} t="1699199793924"
+						 className='music-player-nav-container-star music-player-nav-container-common'
+						 viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4458"
+						 width="200" height="200">
+						<path
+							d="M729.068827 119.55798c-94.686523 0-176.905082 48.314379-217.069851 118.640074-40.163745-70.325695-122.382305-118.640074-217.044268-118.640074-143.767358 0-229.665727 123.660414-229.665727 243.219417 0 283.128359 415.870616 527.841803 433.576883 538.126031 4.062526 2.363837 8.584516 3.538593 13.132088 3.538593 4.547573 0 9.070586-1.174756 13.132088-3.538593 17.706267-10.283204 433.576883-254.997672 433.576883-538.126031C958.708971 243.218394 872.811626 119.55798 729.068827 119.55798z"
+							fill="#ff0303" p-id="4459"></path>
+					</svg>
+					:
+					<svg onClick={setLike} t="1699199753205"
+						 className='music-player-nav-container-star music-player-nav-container-common'
+						 viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3180"
+						 width="200" height="200">
+						<path
+							d="M171.712 571.648l0.352 0.32 287.904 252.8a64 64 0 0 0 82.912 1.344l296.832-244.544a215.584 215.584 0 1 0-301.824-300.576L512 316.672l-25.888-35.616a215.584 215.584 0 1 0-314.4 290.624zM32 407.584a279.584 279.584 0 0 1 480-194.944 279.584 279.584 0 0 1 480 194.944 278.144 278.144 0 0 1-113.024 224.512l-295.36 243.392a128 128 0 0 1-165.888-2.592L129.984 620.16A278.976 278.976 0 0 1 32 407.584z"
+							fill="#ccc" p-id="3181"></path>
+					</svg>
+			}
+			<svg t="1699360349459" className='music-player-nav-container-refresh music-player-nav-container-common'
+				 viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2314" width="200"
+				 height="200">
+				<path
+					d="M911.402 607.602c-21.244-4.25-46.738 8.498-50.987 29.742-42.49 174.208-195.452 293.179-373.909 293.179-212.448 0-386.655-174.208-386.655-386.656s174.207-386.655 386.655-386.655c97.726 0 195.453 38.24 263.436 106.224H571.485c-21.244 0-42.49 16.996-42.49 42.49 0 21.244 16.997 42.489 42.49 42.489h263.436c21.245 0 42.49-16.996 42.49-42.49V42.49C877.41 21.245 860.415 0 834.92 0c-21.245 0-42.49 16.996-42.49 42.49v148.713c-84.979-76.481-195.452-118.97-310.174-118.97-259.186 0-471.635 212.447-471.635 471.634s212.449 471.635 471.635 471.635c216.697 0 403.652-148.714 458.888-356.913 4.25-21.245-8.498-42.49-29.743-50.987z"
+					fill="#ccc" p-id="2315"></path>
+			</svg>
+			{
+				isShowPopUp ?
+					<svg onClick={openOrClosePopUp} t="1699361746235"
+						 className="music-player-nav-container-star music-player-nav-container-common" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2324" width="200" height="200"><path d="M170.666667 213.333333h682.666666v85.333334H170.666667V213.333333z m0 512h426.666666v85.333334H170.666667v-85.333334z m0-256h682.666666v85.333334H170.666667v-85.333334z" fill="#000000" p-id="2325"></path></svg>
                     :
                     <svg  onClick={openOrClosePopUp}   t="1699361746235" className="music-player-nav-container-star music-player-nav-container-common" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2324" width="200" height="200"><path d="M170.666667 213.333333h682.666666v85.333334H170.666667V213.333333z m0 512h426.666666v85.333334H170.666667v-85.333334z m0-256h682.666666v85.333334H170.666667v-85.333334z" fill="#ccc" p-id="2325"></path></svg>
             }
