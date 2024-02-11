@@ -46,6 +46,8 @@ const PopUpUI = memo(({isShowPopUp}) => {
 	//默认歌曲列表
 	const DEFAULT_LIST = "DEFAULT_LIST";
 	const songList = useSelector(state => state.songList);
+	//歌单中的歌曲
+	const [songs, setSongs] = useState(null)
 	//弹窗警告
 	const setAlert = useContext(AlertContext)
 	//拖拽滚动
@@ -59,6 +61,26 @@ const PopUpUI = memo(({isShowPopUp}) => {
 		listId = songList[getRandomNumber(songList.length)].id
 		localStoragePut(DEFAULT_LIST,listId)
 	}
+
+	async function querySongByListId(listId) {
+		const resp = await querySongList(listId)
+		let data;
+		if(!isSuccess(resp.code)){
+			setAlert(createAlertMsg(ERROR,resp.message))
+			data = []
+		}else {
+			data = resp.data
+		}
+		setSongs(data)
+	}
+
+
+	//如果为空就请求歌曲
+	if (isNullOrUndefined(songs)) {
+		querySongByListId(listId)
+	}
+
+	console.log('songs',songs)
 
 	//判断鼠标是否点击
 	let isDown = false;
@@ -93,8 +115,6 @@ const PopUpUI = memo(({isShowPopUp}) => {
 		}
 	};
 
-	console.log("nishfishedf",songList)
-
 	return (
 		<>
 			<div className="main h-[85%]  w-[20%] " style={{display: isShowPopUp ? '' : 'none'}}>
@@ -122,13 +142,9 @@ const PopUpUI = memo(({isShowPopUp}) => {
 								return (<div  className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
 											  style={{backgroundColor: `rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`, ...style}}
 											  key={getRandomId()}
-											  onClick={async (event) => {
-												  const resp = await querySongList(id)
-												  if (!isSuccess(resp.code)) {
-													  setAlert(createAlertMsg(ERROR, resp.message))
-													  localStoragePut(DEFAULT_LIST,id)
-													  return
-												  }
+											  onClick={ (event) => {
+												  querySongByListId(id)
+												  localStoragePut(DEFAULT_LIST,id)
 											  }}>{name}</div>)})
 							return isArrayBlank(divArr) ? <div>暂无歌单，请去创建</div> : divArr
 						})()
@@ -139,13 +155,14 @@ const PopUpUI = memo(({isShowPopUp}) => {
 					<div className='layout-center flex-col '>
 						{
 							(() => {
-								const arr = []
+								return isNullOrUndefined(songs) ? <div>暂无歌曲</div>
+									: isArrayBlank(songs) ? <div>暂无歌曲</div> : songs.map((item) => {
+										const {songName,singer} = item
 
-								for (let i = 0; i < 20; i++) {
-									arr.push(
-										<div key={getRandomId()}
-											 className='flex-shrink-0 w-[90%] h-[2.5em] items-center m-[5px] flex justify-between border-[rgb(249,195,195)] border-solid border-[0px] border-b-[1px]'>
-											<div className='flex items-center'>
+										return (
+											<div key={getRandomId()}
+												 className='flex-shrink-0 w-[90%] h-[2.5em] items-center m-[5px] flex justify-between border-[rgb(249,195,195)] border-solid border-[0px] border-b-[1px]'>
+												<div className='flex items-center'>
 												<span className="playing">
 													<span className="greenline line-1"></span>
 													<span className="greenline line-2"></span>
@@ -153,18 +170,16 @@ const PopUpUI = memo(({isShowPopUp}) => {
 													<span className="greenline line-4"></span>
 													<span className="greenline line-5"></span>
 												</span>
-												<span><strong>晴天</strong></span>
-											</div>
-											<div>
+													<span><strong>{songName}</strong></span>
+												</div>
+												<div>
 												<span className='text-sm text-center'>
-													周杰伦
+													{singer}
 												</span>
+												</div>
 											</div>
-										</div>
-									)
-								}
-
-								return arr
+										)
+								})
 							})()
 						}
 					</div>
