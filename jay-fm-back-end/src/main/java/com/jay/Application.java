@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Indexed;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.HashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,6 +56,8 @@ public class Application {
         TimeUnit timeUnit = TimeUnit.SECONDS;
         BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(50);
         RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
+
+        HashMap<String, String> map = new HashMap<>();
         return new ThreadPoolExecutor(coreSize, maximumPoolSize, keepAliveTime, timeUnit, queue, new ThreadFactory() {
             private static final AtomicInteger COUNT = new AtomicInteger(0);
             @Override

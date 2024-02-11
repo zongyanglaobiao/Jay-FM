@@ -81,6 +81,15 @@ export function getRandomId() {
 }
 
 /**
+ * 获取指定范围的随机一个数字
+ * @param range 范围
+ */
+export   function getRandomNumber(range) {
+	return Math.floor(Math.random() * range);
+}
+
+
+/**
  * 检查对象是否为空，空则报错
  * @param obj
  * @returns {*}
@@ -105,3 +114,6 @@ export function isEmail(str) {
 	// 使用正则表达式验证email格式
 	return /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/.test(str);
 }
+
+
+

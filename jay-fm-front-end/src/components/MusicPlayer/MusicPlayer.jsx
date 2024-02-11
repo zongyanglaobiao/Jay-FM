@@ -1,9 +1,21 @@
-import {memo, useCallback, useEffect, useRef, useState} from "react";
+import {memo, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {parseFlacFile} from "../../lib/songUtils";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllSongListThunk} from "../../redux/thunk";
-import {getRandomColor, getRandomId} from "../../lib/common/util";
+import {
+	getRandomColor,
+	getRandomId,
+	getRandomNumber,
+	isArrayBlank,
+	isNullOrUndefined,
+	isUndefined
+} from "../../lib/common/util";
 import {querySongList} from "../../api/song-list-controller";
+import {isSuccess} from "../../http/httpRequest";
+import {AlertContext} from "../../container/Pages/Home/Home";
+import {createAlertMsg, ERROR, SUCCESS} from "../PromptBox/PromptBox";
+import {localStorageGet, localStoragePut} from "../../lib/common/windowUtils";
+
 
 /**
  * 列表，使用组件缓存
@@ -30,16 +42,23 @@ const SongLyricsUI = memo(({isShowLyrics}) => {
  * 歌曲列表，使用组件缓存
  * @type {React.NamedExoticComponent<{readonly isShowPopUp?: *}>}
  */
-const PopUpUI = memo(({isShowPopUp})=>{
-	const songList =  useSelector(state => state.songList);
-
-	// todo 查询歌曲列表
-	// todo 不同屏幕大小兼容
-
+const PopUpUI = memo(({isShowPopUp}) => {
+	//默认歌曲列表
+	const DEFAULT_LIST = "DEFAULT_LIST";
+	const songList = useSelector(state => state.songList);
+	//弹窗警告
+	const setAlert = useContext(AlertContext)
 	//拖拽滚动
 	const dragStartX = useRef(0);
 	const startScrollLeft = useRef(0);
 	const scrollContainerRef = useRef(null);
+
+	let listId = localStorageGet(DEFAULT_LIST);
+	if (isNullOrUndefined(listId) && !isArrayBlank(songList)) {
+		//获取今日推荐,随机获取歌曲列表的其中之一
+		listId = songList[getRandomNumber(songList.length)].id
+		localStoragePut(DEFAULT_LIST,listId)
+	}
 
 	//判断鼠标是否点击
 	let isDown = false;
@@ -74,9 +93,11 @@ const PopUpUI = memo(({isShowPopUp})=>{
 		}
 	};
 
+	console.log("nishfishedf",songList)
+
 	return (
-        <>
-            <div className="main h-[85%]  w-[20%] " style={{display:isShowPopUp?'':'none'}} >
+		<>
+			<div className="main h-[85%]  w-[20%] " style={{display: isShowPopUp ? '' : 'none'}}>
 				{/*选择歌曲列表*/}
 				<div
 					ref={scrollContainerRef}
@@ -84,37 +105,74 @@ const PopUpUI = memo(({isShowPopUp})=>{
 					onMouseLeave={onMouseLeave}
 					onMouseUp={onMouseUp}
 					onMouseMove={onMouseMove}
-					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex  overflow-x-scroll remove_the_scroll' >
+					className='rounded-lg  bg-[#ffdde1] p-2 space-x-2 flex overflow-x-scroll remove_the_scroll'>
 					{
-						songList.map((item)=>{
-							const {name,color,id} = item
-							const colorArr = color.split(',')
-							return (<div className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
-										 style={{backgroundColor:`rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`}}
-										 key={getRandomId()}
-										 onClick={ async (event)=>{
-											 const resp = await querySongList(id)
-											 console.log('repsrep',resp)
-										 }}>{name}</div>)
-						})
+						(()=>{
+							const divArr = songList.map((item) => {
+								const {name, color, id} = item
+								const colorArr = color.split(',')
+
+								let style = null
+								if (listId === id) {
+									style = {
+										borderRadius:"30px"
+									}
+								}
+
+								return (<div  className='flex-shrink-0 w-[5rem] h-[4rem] shadow-md rounded layout-center'
+											  style={{backgroundColor: `rgb(${colorArr[0]},${colorArr[1]},${colorArr[2]}`, ...style}}
+											  key={getRandomId()}
+											  onClick={async (event) => {
+												  const resp = await querySongList(id)
+												  if (!isSuccess(resp.code)) {
+													  setAlert(createAlertMsg(ERROR, resp.message))
+													  localStoragePut(DEFAULT_LIST,id)
+													  return
+												  }
+											  }}>{name}</div>)})
+							return isArrayBlank(divArr) ? <div>暂无歌单，请去创建</div> : divArr
+						})()
 					}
 				</div>
 				{/*展示歌曲列表*/}
-				<div className='h-[85%] w-[20%] mt-2 border-solid border-1 overflow-y-scroll remove_the_scroll'>
-					<div className="pfp">
-						<div className="playing">
-							<div className="greenline line-1"></div>
-							<div className="greenline line-2"></div>
-							<div className="greenline line-3"></div>
-							<div className="greenline line-4"></div>
-							<div className="greenline line-5"></div>
-						</div>
+				<div className=' mt-2 h-[85%] w-[100%] overflow-y-scroll'>
+					<div className='layout-center flex-col '>
+						{
+							(() => {
+								const arr = []
+
+								for (let i = 0; i < 20; i++) {
+									arr.push(
+										<div key={getRandomId()}
+											 className='flex-shrink-0 w-[90%] h-[2.5em] items-center m-[5px] flex justify-between border-[rgb(249,195,195)] border-solid border-[0px] border-b-[1px]'>
+											<div className='flex items-center'>
+												<span className="playing">
+													<span className="greenline line-1"></span>
+													<span className="greenline line-2"></span>
+													<span className="greenline line-3"></span>
+													<span className="greenline line-4"></span>
+													<span className="greenline line-5"></span>
+												</span>
+												<span><strong>晴天</strong></span>
+											</div>
+											<div>
+												<span className='text-sm text-center'>
+													周杰伦
+												</span>
+											</div>
+										</div>
+									)
+								}
+
+								return arr
+							})()
+						}
 					</div>
 				</div>
 			</div>
 		</>
 	)
-})
+});
 
 /**
  * 播放器侧边栏UI，使用组件缓存

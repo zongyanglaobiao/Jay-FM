@@ -137,7 +137,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
  */
 const CardAddForm = memo(({setComponentType})=>{
 	return (
-		<div className="card-from-container playing">
+		<div className="card-from-container">
 			<div className="wave"></div>
 			<div className="wave"></div>
 			<div className="wave"></div>
