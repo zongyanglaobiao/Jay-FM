@@ -4,7 +4,10 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body {
+  font-family: "Microsoft YaHei", 微软雅黑, SimHei, 宋体, sans-serif;
 }
 
 
@@ -579,7 +582,8 @@
   display: flex;
   position: relative;
   justify-content: center;
-  gap: 1px;
+  /*flex布局使用会左右有间隔*/
+  gap: 2px;
   width: 30px;
   height: 20px;
 }

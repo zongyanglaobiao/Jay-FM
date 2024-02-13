@@ -151,17 +151,16 @@ const PopUpUI = memo(({isShowPopUp}) => {
 					}
 				</div>
 				{/*展示歌曲列表*/}
-				<div className=' mt-2 h-[85%] w-[100%] overflow-y-scroll'>
-					<div className='layout-center flex-col '>
+				<div className=' mt-2 h-[85%] w-[100%] overflow-y-scroll scroll_style'>
+					<div className='layout-center flex-col'>
 						{
 							(() => {
 								return isNullOrUndefined(songs) ? <div>暂无歌曲</div>
 									: isArrayBlank(songs) ? <div>暂无歌曲</div> : songs.map((item) => {
 										const {songName,singer} = item
-
 										return (
 											<div key={getRandomId()}
-												 className='flex-shrink-0 w-[90%] h-[2.5em] items-center m-[5px] flex justify-between border-[rgb(249,195,195)] border-solid border-[0px] border-b-[1px]'>
+												 className='flex-shrink-0 w-[90%] cursor-pointer hover:bg-gray-300 h-[2.5em] items-center m-[5px] flex justify-between border-[rgb(249,195,195)] border-solid border-[0px] border-b-[1px]'>
 												<div className='flex items-center'>
 												<span className="playing">
 													<span className="greenline line-1"></span>
@@ -170,16 +169,17 @@ const PopUpUI = memo(({isShowPopUp}) => {
 													<span className="greenline line-4"></span>
 													<span className="greenline line-5"></span>
 												</span>
-													<span><strong>{songName}</strong></span>
+													<span className='text-[17px]'>{songName}</span>
 												</div>
-												<div>
-												<span className='text-sm text-center'>
-													{singer}
-												</span>
+												<div className='mr-[5px]'>
+													<span className='text-sm text-center text-[#969191]'>
+														{singer}
+													</span>
 												</div>
 											</div>
 										)
 								})
+
 							})()
 						}
 					</div>
