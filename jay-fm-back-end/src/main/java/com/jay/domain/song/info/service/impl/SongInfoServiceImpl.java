@@ -67,14 +67,21 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public String deleteSong(List<String> songIds) {
+        return this.deleteSong(songIds,false);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public String deleteSong(List<String> songIds, boolean isDeleteList) {
         return String.valueOf(this.removeBatchByIdsBefore(songIds, t -> {
             SongInfoEntity entity = this.getById(t);
+
             if (Objects.isNull(entity)) {
                 throw new CommonException("歌曲不存在");
             }
 
-            if (Objects.equals(entity.getEnableDelete(), CommonEntity.Enable.DISABLE)) {
-                throw new CommonException("已设置不允许删除");
+            if (Objects.equals(entity.getEnableDelete(), CommonEntity.Enable.DISABLE) && !isDeleteList) {
+                throw new CommonException("歌曲已设置不允许删除");
             }
 
             //设置歌曲文件不可用

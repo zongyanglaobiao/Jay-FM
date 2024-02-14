@@ -46,7 +46,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 	return (
 		<Form
 			preserve={false}
-			disabled={isNullOrUndefined(enableModify) ? false : !enableModify}
+			disabled={isNullOrUndefined(enableModify) ? false : enableModify === DISABLE}
 			ref={getForm}
 			labelCol={{
 				span: 4,
@@ -93,12 +93,12 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 			<Form.Item label="能否删除/修改"  tooltip='默认任何人都可以删除/修改' >
 				<Space>
 					<Tooltip title="删除">
-						<Form.Item name='enableDelete' valuePropName='checked' initialValue={isNullOrUndefined(enableDelete) ? true : enableDelete}>
+						<Form.Item name='enableDelete' valuePropName='checked' initialValue={isNullOrUndefined(enableDelete) ? true : enableDelete === DISABLE}>
 							<Switch className='ml-2' defaultChecked />
 						</Form.Item>
 					</Tooltip>
 					<Tooltip title="修改">
-						<Form.Item name='enableModify' valuePropName='checked' initialValue={isNullOrUndefined(enableModify) ? true : enableModify}>
+						<Form.Item name='enableModify' valuePropName='checked' initialValue={isNullOrUndefined(enableModify) ? true : enableModify === DISABLE}>
 							<Switch className='ml-2' defaultChecked />
 						</Form.Item>
 					</Tooltip>
@@ -116,7 +116,7 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 							null
 					}
 					<Form.Item name='color'>
-						<ColorPicker className='ml-2' disabled={isNullOrUndefined(color) ? colorPickerDisable : !enableModify}  />
+						<ColorPicker className='ml-2' disabled={isNullOrUndefined(color) ? colorPickerDisable : enableModify === DISABLE}  />
 					</Form.Item>
 				</Space>
 			</Form.Item>
@@ -272,7 +272,6 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	//查询歌单列表
 	const querySongs = async (lsId) => {
 		const resp = await querySongList(lsId);
-		console.log('respap',resp)
 		if (isSuccess(resp.code)) {
 			setSongs([...resp.data])
 		}
@@ -303,6 +302,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 		const dto = {...form.getFieldsValue(),color:_color,id}
 		dto['enableDelete'] = enableDelete ? 1 : 0
 		dto['enableModify'] = enableModify ? 1 : 0
+		console.log('dto',dto)
 		const resp = await saveOrModifySongList([dto])
 		const {code} = resp
 

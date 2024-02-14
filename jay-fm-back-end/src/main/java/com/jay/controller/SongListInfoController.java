@@ -41,14 +41,7 @@ public class SongListInfoController  {
     @Operation(summary = "保存/修改")
     @ApiOperationSupport(order = 2)
     public RespEntity<String> save(@RequestBody @JsonView(Param.NOT_IGNORE.class) List<SongListInfoEntity> param){
-        return RespEntity.success(String.valueOf(service.
-            saveOrUpdateBatchAround(param, SongListInfoEntity::getId,(t,e)-> {
-                SongListInfoEntity one = service.lambdaQuery().
-                    eq(SongListInfoEntity::getName, e.getName()).one();
-                if (!Objects.isNull(one)) {
-                    throw  new CommonException("歌单已存在");
-                }
-            },null)));
+        return RespEntity.success(String.valueOf(service.saveOrUpdateBatch(param, SongListInfoEntity::getId)));
     }
 
     @PostMapping(value = "/delete")
@@ -71,7 +64,7 @@ public class SongListInfoController  {
                 map(SongInfoEntity::getId).
                 toList();
 
-            songInfoService.deleteSong(list);
+            songInfoService.deleteSong(list,true);
 
             return true;
         })));

@@ -20,4 +20,12 @@ public interface SongInfoService extends ICommonService<SongInfoEntity> {
     void downloadSong(String id);
 
     String deleteSong(List<String> songIds);
+
+    /**
+     * 删除歌曲
+     * @param songIds 删除歌曲的ID
+     * @param isDeleteList 是不是删除歌单
+     * @return true 删除成功 false 删除失败
+     */
+    String deleteSong(List<String> songIds,boolean isDeleteList);
 }

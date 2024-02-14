@@ -3,6 +3,14 @@ import {serviceAxios} from "../http/httpRequest";
 export const ENABLE = "1"
 export const DISABLE = "0"
 
+export function  numberToBoolean(number) {
+	if (number === ENABLE) {
+		return true
+	}
+
+	if
+}
+
 export function songInfoParam(id,singer,songName,uploader,email,listId,isDelete){
 	return {
 		"id": id,

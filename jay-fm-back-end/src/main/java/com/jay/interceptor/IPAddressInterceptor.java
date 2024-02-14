@@ -44,6 +44,7 @@ public class IPAddressInterceptor implements HandlerInterceptor {
         if (!redisUtils.hasKey(ip) && ObjectUtil.isNull(one = service.getOne(Wrappers.<IPAddressEntity>lambdaQuery().eq(IPAddressEntity::getIp, ip)))) {
             log.info("ip = {},city = {}",ip,city);
             IPAddressEntity entity = new IPAddressEntity();
+            entity.setDisable(CommonEntity.Enable.ENABLE);
             entity.setIp(ip);
             entity.setAddress(city);
             service.save(entity);
