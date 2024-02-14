@@ -7,7 +7,7 @@ import {AlertContext} from "../../container/Pages/Home/Home";
 import {createAlertMsg, ERROR, httpStatus, SUCCESS} from "../PromptBox/PromptBox";
 import {isSuccess} from "../../http/httpRequest";
 import {UploadOutlined} from "@ant-design/icons";
-import {deleteSong, saveSong, songInfoParam} from "../../api/song-controller";
+import {deleteSong, DISABLE, saveSong, songInfoParam} from "../../api/song-controller";
 import {parseFileName} from "../../lib/songUtils";
 import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
 import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
@@ -32,7 +32,8 @@ const ListForm = memo(({showButton,showColorSelect,item,getForm,setComponentType
 			str = `${getRandomColor()},${getRandomColor()},${getRandomColor()}`
 		}
 
-		const card =  songListInfoParam(null,name,str,textDescribe,creator,email,enableDelete,enableModify)
+
+		const card =  songListInfoParam(null,name,str,textDescribe,creator,email,enableDelete ? 1 : 0,enableModify ? 1 : 0)
 		const resp = await saveOrModifySongList([card])
 		setAlert(httpStatus(resp))
 
@@ -285,7 +286,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 	//必须有耗时操作，否则无法触发state
 	const handleOk = async () => {
 		//不允许修改
-		if (!enableModify) {
+		if (enableModify === DISABLE) {
 			setAlert(createAlertMsg(ERROR, '作者已设置不允许修改'))
 			return
 		}
@@ -299,7 +300,10 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 		//加载动画
 		setConfirmLoading(true);
-		const resp = await saveOrModifySongList([{...form.getFieldsValue(),color:_color,id}])
+		const dto = {...form.getFieldsValue(),color:_color,id}
+		dto['enableDelete'] = enableDelete ? 1 : 0
+		dto['enableModify'] = enableModify ? 1 : 0
+		const resp = await saveOrModifySongList([dto])
 		const {code} = resp
 
 		//请求成功则更新音乐列表
@@ -316,7 +320,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 
 	//删除音乐列表
 	const handleDelete = () => {
-		if (!enableDelete) {
+		if (enableDelete === DISABLE) {
 			setAlert(createAlertMsg(ERROR, '作者已设置不允许删除'))
 			return
 		}
@@ -518,7 +522,7 @@ const CardInfoUI = memo(({item,setComponentType})=>{
 									try {
 										for (let file of fileList) {
 											const {singer, songName} = parseFileName(file.name)
-											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id,isDelete);
+											const param = songInfoParam(null,singer, songName, uploaderVal, emailVal,id,isDelete ? 1 : 0);
 											const resp = await  saveSong(file,param)
 											if (!isSuccess(resp.code)) {
 												setAlert(httpStatus(resp))

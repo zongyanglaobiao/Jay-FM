@@ -1,5 +1,7 @@
 import {serviceAxios} from "../http/httpRequest";
 
+export const ENABLE = "1"
+export const DISABLE = "0"
 
 export function songInfoParam(id,singer,songName,uploader,email,listId,isDelete){
 	return {
@@ -8,8 +10,8 @@ export function songInfoParam(id,singer,songName,uploader,email,listId,isDelete)
 		"songName": songName,
 		"lyrics": null,
 		"translatedLyrics": null,
-		"enableDownload": true,
-		"enableModify": true,
+		"enableDownload": 1,
+		"enableModify": 1,
 		"enableDelete": isDelete,
 		"uploader": uploader,
 		"email": email,
