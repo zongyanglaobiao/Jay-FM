@@ -2,6 +2,7 @@ package com.jay.domain.song.info.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileMagicNumber;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jay.core.utils.AssertUtils;
@@ -9,6 +10,7 @@ import com.jay.core.utils.FileUtils;
 import com.jay.domain.file.service.FileInfoService;
 import com.jay.domain.song.info.service.SongInfoService;
 import com.jay.exception.CommonException;
+import com.jay.repository.common.CommonEntity;
 import com.jay.repository.entities.FileInfoEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import com.jay.repository.mapper.SongInfoMapper;
@@ -22,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static cn.hutool.core.io.FileMagicNumber.FLAC;
 import static cn.hutool.core.io.FileMagicNumber.MP3;
@@ -44,18 +49,53 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
 
     private final FileInfoService fileInfoService;
 
+    private final ThreadPoolExecutor executor;
 
     @Override
     public void downloadSong(String id) throws CommonException {
         SongInfoEntity entity = this.getById(id);
         AssertUtils.notNull(entity,"歌曲不存在");
 
-        if (!entity.getEnableDownload()) {
+        if (Objects.equals(entity.getEnableDownload(), CommonEntity.Enable.DISABLE)) {
             throw new CommonException("文件不支持下载");
         }
 
         FileInfoEntity one = fileInfoService.lambdaQuery().eq(FileInfoEntity::getId, entity.getDownloadId()).one();
         FileUtils.webDownload(one.getSavePath(),response,FileUtils.getFileName(songSavePath));
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public String deleteSong(List<String> songIds) {
+        return String.valueOf(this.removeBatchByIdsBefore(songIds, t -> {
+            SongInfoEntity entity = this.getById(t);
+            if (Objects.isNull(entity)) {
+                throw new CommonException("歌曲不存在");
+            }
+
+            if (Objects.equals(entity.getEnableDelete(), CommonEntity.Enable.DISABLE)) {
+                throw new CommonException("已设置不允许删除");
+            }
+
+            //设置歌曲文件不可用
+            FileInfoEntity byId = fileInfoService.getById(entity.getDownloadId());
+            byId.setHasUsed(CommonEntity.Enable.DISABLE);
+            fileInfoService.saveOrUpdate(byId,FileInfoEntity::getId);
+
+            //删除文件
+            executor.execute(() -> {
+                String path = byId.getSavePath();
+                try {
+                    boolean del = FileUtil.del(path);
+                    log.info("删除成功,path = {},isSuccess = {}",path,del);
+                } catch (Exception e) {
+                    log.error("歌曲文件删除失败 path = {}",path);
+                    throw new CommonException("歌曲文件删除失败");
+                }
+            });
+
+            return true;
+        }));
     }
 
     private void check(String songName, FileMagicNumber ...type)  {
@@ -99,7 +139,7 @@ public class SongInfoServiceImpl extends ServiceImpl<SongInfoMapper, SongInfoEnt
         SongInfoEntity byId = this.getById(param.getId());
         AssertUtils.notNull(byId,"歌曲不存在");
 
-        if (!byId.getEnableModify()) {
+        if (Objects.equals(byId.getEnableModify(), CommonEntity.Enable.DISABLE)) {
             throw new CommonException("已设置不能修改");
         }
 

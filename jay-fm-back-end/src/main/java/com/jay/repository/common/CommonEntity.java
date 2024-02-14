@@ -20,11 +20,17 @@ public class CommonEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -3311980309727025131L;
 
+    /**
+     *  1 可以修改 0 不可以修改
+     */
     @JsonView({Param.NOT_IGNORE.class,Param.INSERT.class,Param.UPDATE.class})
-    private Boolean enableModify;
+    private Integer enableModify;
 
+    /**
+     * 1 可以删除 0 不可以删除
+     */
     @JsonView({Param.NOT_IGNORE.class,Param.INSERT.class,Param.UPDATE.class})
-    private Boolean enableDelete;
+    private Integer enableDelete;
 
     /** 创建时间 */
     @TableField(fill = FieldFill.INSERT)
@@ -35,4 +41,12 @@ public class CommonEntity implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     @JsonView(Param.IGNORE.class)
     private Date updateTime;
+
+    /**
+     * 表示可行 不可行
+     */
+    public static interface Enable {
+        Integer ENABLE = 1;
+        Integer DISABLE = 0;
+    }
 }

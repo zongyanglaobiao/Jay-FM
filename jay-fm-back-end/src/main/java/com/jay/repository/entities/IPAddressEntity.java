@@ -1,22 +1,19 @@
 package com.jay.repository.entities;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jay.repository.common.CommonEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * @author xxl
  * @since 2023/11/9
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("ip_address")
 @Schema(name = "IP模型对象")
@@ -31,8 +28,11 @@ public class IPAddressEntity extends CommonEntity implements Serializable {
 
     private String address;
 
+    /**
+     * 1 禁止 0 不禁止
+     */
     @Schema(description = "是否禁止访问")
-    private boolean disable;
+    private Integer disable;
 
     private Integer visitsCount;
 }

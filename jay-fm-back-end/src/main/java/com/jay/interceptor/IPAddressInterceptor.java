@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jay.core.redis.RedisUtils;
 import com.jay.domain.ip.service.IPAddressService;
+import com.jay.repository.common.CommonEntity;
 import com.jay.repository.entities.IPAddressEntity;
 import com.jay.utils.IPUtils;
 import jakarta.annotation.Resource;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Objects;
 
 /**
  * 最外层的拦截器
@@ -54,7 +57,7 @@ public class IPAddressInterceptor implements HandlerInterceptor {
         }
 
         IPAddressEntity convert = redisUtils.get(ip, IPAddressEntity.class);
-        if (convert.isDisable()) {
+        if (Objects.equals(convert.getDisable(), CommonEntity.Enable.DISABLE)) {
             response.getWriter().write("""
             <div style='width:  100%;height: 100%;display: flex;justify-content: center;align-items: center;'>
             <h1>您的IP被禁止访问</h1>

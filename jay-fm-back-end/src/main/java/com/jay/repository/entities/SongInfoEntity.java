@@ -1,16 +1,13 @@
 package com.jay.repository.entities;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jay.domain.common.param.Param;
 import com.jay.repository.common.CommonEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -53,8 +50,11 @@ public class SongInfoEntity extends CommonEntity implements Serializable {
     @JsonView(Param.IGNORE.class)
     private Integer playCount;
 
+    /**
+     *  1 可以删除 0 不可以删除
+     */
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
-    private Boolean enableDownload;
+    private Integer enableDownload;
 
     @JsonView({Param.INSERT.class,Param.UPDATE.class})
     private String uploader;

@@ -24,7 +24,7 @@ public class AddSongInfoParam implements Serializable {
     @NotBlank(message = "歌手名不能为空")
     private String singer;
 
-    private Boolean enableDownload;
+    private Integer enableDownload;
 
     private String lyrics;
 
@@ -33,9 +33,9 @@ public class AddSongInfoParam implements Serializable {
     @NotBlank(message = "上传人不能为空")
     private String uploader;
 
-    private Boolean enableModify;
+    private Integer enableModify;
 
-    private Boolean enableDelete;
+    private Integer enableDelete;
 
     @Email(message = "邮箱格式不正确")
     private String email;

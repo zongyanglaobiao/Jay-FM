@@ -10,6 +10,7 @@ import com.jay.domain.common.param.SearchParam;
 import com.jay.domain.song.info.service.SongInfoService;
 import com.jay.domain.song.list.service.SongListInfoService;
 import com.jay.exception.CommonException;
+import com.jay.repository.common.CommonEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import com.jay.repository.entities.SongListInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author xxl
@@ -58,9 +58,21 @@ public class SongListInfoController  {
         return RespEntity.success(String.valueOf(service.removeBatchByIdsBefore(ids,t->{
             SongListInfoEntity one = service.getById(t);
             AssertUtils.notNull(one,"歌单不存在");
-            if (!one.getEnableDelete()) {
+            if (Objects.equals(one.getEnableDelete(), CommonEntity.Enable.DISABLE)) {
                 throw  new CommonException("已设置不能被删除,歌单名："+one.getName());
             }
+
+
+            //相关联的音乐也需要删除
+            List<String> list = songInfoService.
+                lambdaQuery().
+                eq(SongInfoEntity::getListId, one.getId()).
+                list().stream().
+                map(SongInfoEntity::getId).
+                toList();
+
+            songInfoService.deleteSong(list);
+
             return true;
         })));
     }

@@ -1,14 +1,11 @@
 package com.jay.controller;
 
-import cn.hutool.core.io.FileUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.jay.core.resp.RespEntity;
 import com.jay.domain.common.param.Param;
-import com.jay.domain.file.service.FileInfoService;
 import com.jay.domain.song.info.service.SongInfoService;
 import com.jay.exception.CommonException;
-import com.jay.repository.entities.FileInfoEntity;
 import com.jay.repository.entities.SongInfoEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author xxl
@@ -38,11 +33,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class SongInfoController  {
 
     private final SongInfoService service;
-
-    private final FileInfoService fileInfoService;
-
-    private final ThreadPoolExecutor executor;
-
 
     @PostMapping(value = "/save")
     @Operation(summary = "新增")
@@ -70,34 +60,6 @@ public class SongInfoController  {
     @Operation(summary = "删除歌曲")
     @ApiOperationSupport(order = 4)
     public RespEntity<String> deleteSong(@RequestParam @NotBlank(message = "歌曲ID不能为空" ) String songId) throws CommonException {
-        return RespEntity.success(String.valueOf(service.removeBatchByIdsBefore(List.of(songId), t -> {
-            SongInfoEntity entity = service.getById(songId);
-            if (Objects.isNull(entity)) {
-                throw new CommonException("歌曲不存在");
-            }
-
-            if (!entity.getEnableDelete()) {
-                throw new CommonException("已设置不允许删除");
-            }
-
-            //设置歌曲文件不可用
-            FileInfoEntity byId = fileInfoService.getById(entity.getDownloadId());
-            byId.setHasUsed(false);
-            fileInfoService.saveOrUpdate(byId,FileInfoEntity::getId);
-
-            //删除文件
-            executor.execute(() -> {
-                String path = byId.getSavePath();
-                try {
-                    boolean del = FileUtil.del(path);
-                    log.info("删除成功,path = {},isSuccess = {}",path,del);
-                } catch (Exception e) {
-                    log.error("歌曲文件删除失败 path = {}",path);
-                    throw new CommonException("歌曲文件删除失败");
-                }
-            });
-
-            return true;
-        })));
+        return RespEntity.success(service.deleteSong(List.of(songId)));
     }
 }

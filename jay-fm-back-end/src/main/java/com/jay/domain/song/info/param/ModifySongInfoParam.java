@@ -1,10 +1,7 @@
 package com.jay.domain.song.info.param;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,7 +20,7 @@ public class ModifySongInfoParam implements Serializable {
 
     private String singer;
 
-    private Boolean enableDownload;
+    private Integer enableDownload;
 
     private String lyrics;
 
@@ -31,9 +28,9 @@ public class ModifySongInfoParam implements Serializable {
 
     private String uploader;
 
-    private Boolean enableModify;
+    private Integer enableModify;
 
-    private Boolean enableDelete;
+    private Integer enableDelete;
 
     private String email;
 
